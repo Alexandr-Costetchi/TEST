@@ -83,7 +83,8 @@
       "Bash(sed -n '45,65p' src/gas/Код.gs)",
       "Bash(cd \"D:\\\\ПРОБА GIT+CLAUDE\" && rm -f src/gas/temp*.gs \"src/gas/код_orig.txt\" \"src/gas/код_temp1.gs\" \"src/gas/код_updated.gs\" \"src/gas/код_updated.gs.bak\" && ls src/gas/)",
       "WebFetch(domain:docs.google.com)",
-      "Bash(cd \"D:\\\\ПРОБА GIT+CLAUDE\" && git show HEAD~1:src/gas/generateTestHTML.gs > /tmp/generateTestHTML.gs && wc -l /tmp/generateTestHTML.gs)"
+      "Bash(cd \"D:\\\\ПРОБА GIT+CLAUDE\" && git show HEAD~1:src/gas/generateTestHTML.gs > /tmp/generateTestHTML.gs && wc -l /tmp/generateTestHTML.gs)",
+      "Bash(env)"
     ]
   }
 }

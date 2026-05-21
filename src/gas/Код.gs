@@ -105,13 +105,24 @@ function getTestQuestions(testId) {
 
   for (const row of data) {
     if (row[0] == testId) {
-      questions.push({
-        num: row[1],
-        text: row[2],
-        options: [row[3], row[4], row[5], row[6], row[7]],
-        correct: JSON.parse(row[8]), // массив [1,3]
-        comment: row[9]
-      });
+      try {
+        // Парсить correct ответы с обработкой ошибок
+        let correctArray = [];
+        if (row[8]) {
+          const parsed = JSON.parse(row[8]);
+          correctArray = Array.isArray(parsed) ? parsed : [parsed];
+        }
+
+        questions.push({
+          num: row[1],
+          text: row[2],
+          options: [row[3], row[4], row[5], row[6], row[7]],
+          correct: correctArray,
+          comment: row[9] || ''
+        });
+      } catch (e) {
+        Logger.log(`⚠️ Ошибка при парсинге вопроса ${row[1]}: ${e.message}`);
+      }
     }
   }
 
@@ -164,9 +175,34 @@ function saveTestResults(testId, studentName, answers) {
   const totalQuestions = questions.length;
   const scorePercent = Math.round((correctCount / totalQuestions) * 100);
 
-  // Строка результата: timestamp | студент | тест | оценка | верно | частично | неверно | пусто | [детали]
+  // Получить номер строки для колонки "№"
+  const rowNum = resultsSheet.getLastRow();
+
+  // Получить URL теста для ссылки на отчёт
+  const archiveSheet = ss.getSheetByName(SHEET_ARCHIVE);
+  let testUrl = '';
+  if (archiveSheet) {
+    const archiveData = archiveSheet.getRange(2, 1, archiveSheet.getLastRow() - 1, 5).getValues();
+    for (const row of archiveData) {
+      if (row[0] == testId) {
+        testUrl = row[4] || ''; // Получить URL из колонки 5
+        break;
+      }
+    }
+  }
+
+  // Строка результата: № | дата | ФИ | №/ID | % | верно | частично | неверно | вопросов | ссылка | [детали]
   const resultRow = [
-    timestamp, studentName, testId, scorePercent, correctCount, partialCount, wrongCount, '',
+    rowNum,           // № (порядковый номер)
+    timestamp,        // Дата
+    studentName,      // ФИ
+    testId,           // №/ID
+    scorePercent,     // %
+    correctCount,     // Верных
+    partialCount,     // Частично
+    wrongCount,       // Не верных
+    totalQuestions,   // Вопросов в тесте
+    testUrl,          // Ссылка на отчёт
     ...detailArray
   ];
 
@@ -237,14 +273,14 @@ function initializeSheets() {
   if (!resultsSheet) {
     resultsSheet = ss.insertSheet(SHEET_RESULTS);
     const headers = [
-      'Дата', 'Студент', 'Тест', 'Оценка %', 'Верно', 'Частично', 'Неверно', 'Резерв'
+      '№', 'Дата', 'ФИ', '№/ID', '%', 'Верных', 'Частично', 'Не верных', 'Вопросов в тесте', 'Ссылка на отчёт'
     ];
     // Добавить заголовки для 26 вопросов × 3 колонки (ответ|верно|статус)
     for (let i = 1; i <= 26; i++) {
       headers.push(`Q${i}_ответ`, `Q${i}_верно`, `Q${i}_статус`);
     }
     resultsSheet.getRange(1, 1, 1, headers.length).setValues([headers]);
-    resultsSheet.getRange(1, 1, 1, headers.length).setBackground('#4472C4').setFontColor('white').setFontWeight('bold');
+    resultsSheet.getRange(1, 1, 1, headers.length).setBackground('#2c5f8a').setFontColor('white').setFontWeight('bold');
   }
 
   SpreadsheetApp.getUi().alert('✅ Листы инициализированы успешно!');
