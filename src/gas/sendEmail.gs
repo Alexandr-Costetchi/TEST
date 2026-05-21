@@ -308,7 +308,7 @@ function buildEmailHTML(testId, studentName, score, testConfig, studentResults, 
     <div class="footer">
       <p>Это автоматическое письмо из системы тестирования verny-kurs.ru</p>
       <p>Полные результаты доступны в Google Sheet:</p>
-      <p><a href="https://docs.google.com/spreadsheets/d/1nP5GTP9sg8yqgOetbytOTYu5ahFfUOgVjw_NDl5Mi_A/">Открыть Google Sheet</a></p>
+      <p><a href="https://docs.google.com/spreadsheets/d/19BlhyKO3Wazo2b8ZxrqXpJKPm728CNrv9QBxURwKOKw/">Открыть Google Sheet</a></p>
       <p style="margin-top: 15px; color: #999;">
         ID результата: ${resultId}<br>
         Отправлено: ${new Date().toISOString()}

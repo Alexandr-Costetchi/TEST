@@ -11,10 +11,11 @@
  */
 
 // === КОНФИГУРАЦИЯ ===
-const SPREADSHEET_ID = '1nP5GTP9sg8yqgOetbytOTYu5ahFfUOgVjw_NDl5Mi_A';
+// НОВАЯ версия Google Sheet (лучше организована)
+const SPREADSHEET_ID = '19BlhyKO3Wazo2b8ZxrqXpJKPm728CNrv9QBxURwKOKw';
+const SHEET_ARCHIVE = 'Архив';        // Новое: управление тестами
 const SHEET_QUESTIONS = 'Вопросы';
 const SHEET_RESULTS = 'Результаты теста';
-const SHEET_TESTS = 'Тесты';
 
 // === ENTRY POINT ===
 function doGet(e) {
@@ -65,22 +66,22 @@ function doPost(e) {
   }
 }
 
-// === Получить конфигурацию теста из листа "Тесты" ===
+// === Получить конфигурацию теста из листа "Архив" ===
 function getTestConfig(testId) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const testsSheet = ss.getSheetByName(SHEET_TESTS);
+  const archiveSheet = ss.getSheetByName(SHEET_ARCHIVE);
 
-  if (!testsSheet) return null;
+  if (!archiveSheet) return null;
 
-  const data = testsSheet.getRange(2, 1, testsSheet.getLastRow() - 1, 5).getValues();
+  const data = archiveSheet.getRange(2, 1, archiveSheet.getLastRow() - 1, 5).getValues();
   for (const row of data) {
     if (row[0] == testId) {
       return {
-        id: row[0],
-        title: row[1],
-        questionCount: row[2],
-        timeLimit: row[3],
-        instructions: row[4]
+        id: row[0],           // №/ID
+        title: row[2],        // Тема
+        block: row[1],        // Блок программы
+        purpose: row[3],      // Назначение (Итоговый, Промежуточный и т.д.)
+        url: row[4]           // URL ссылка на скрипт
       };
     }
   }
@@ -201,13 +202,13 @@ function onOpen() {
 function initializeSheets() {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
 
-  // Создать лист "Тесты" если нет
-  let testsSheet = ss.getSheetByName(SHEET_TESTS);
-  if (!testsSheet) {
-    testsSheet = ss.insertSheet(SHEET_TESTS);
-    const headers = ['ID Теста', 'Название', 'Кол-во вопросов', 'Лимит времени (мин)', 'Инструкции'];
-    testsSheet.getRange(1, 1, 1, headers.length).setValues([headers]);
-    testsSheet.getRange(1, 1, 1, headers.length).setBackground('#4472C4').setFontColor('white').setFontWeight('bold');
+  // Создать лист "Архив" (управление тестами) если нет
+  let archiveSheet = ss.getSheetByName(SHEET_ARCHIVE);
+  if (!archiveSheet) {
+    archiveSheet = ss.insertSheet(SHEET_ARCHIVE);
+    const headers = ['№/ID', 'Блок', 'Тема', 'Назначение', 'URL ссылка'];
+    archiveSheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+    archiveSheet.getRange(1, 1, 1, headers.length).setBackground('#4472C4').setFontColor('white').setFontWeight('bold');
   }
 
   // Создать лист "Вопросы" если нет
