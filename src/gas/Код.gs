@@ -175,8 +175,9 @@ function saveTestResults(testId, studentName, answers) {
   const totalQuestions = questions.length;
   const scorePercent = Math.round((correctCount / totalQuestions) * 100);
 
-  // Получить номер строки для колонки "№"
-  const rowNum = resultsSheet.getLastRow();
+  // ✅ ИСПРАВЛЕНИЕ #4: Получить ПОРЯДКОВЫЙ номер результата (не номер строки листа)
+  // Строка 1 = заголовки, поэтому первый результат в строке 2 = номер 1
+  const rowNum = resultsSheet.getLastRow() - 1;
 
   // Получить URL теста для ссылки на отчёт
   const archiveSheet = ss.getSheetByName(SHEET_ARCHIVE);
@@ -275,12 +276,17 @@ function initializeSheets() {
     const headers = [
       '№', 'Дата', 'ФИ', '№/ID', '%', 'Верных', 'Частично', 'Не верных', 'Вопросов в тесте', 'Ссылка на отчёт'
     ];
-    // Добавить заголовки для 26 вопросов × 3 колонки (ответ|верно|статус)
-    for (let i = 1; i <= 26; i++) {
+    // ✅ ИСПРАВЛЕНИЕ #3, #5, #6: Добавить заголовки для максимум 50 вопросов
+    // Это позволяет системе работать с тестами любого размера (до 50 вопросов)
+    // Каждый вопрос занимает 3 колонки: Q_ответ | Q_верно | Q_статус
+    const MAX_QUESTIONS = 50;
+    for (let i = 1; i <= MAX_QUESTIONS; i++) {
       headers.push(`Q${i}_ответ`, `Q${i}_верно`, `Q${i}_статус`);
     }
     resultsSheet.getRange(1, 1, 1, headers.length).setValues([headers]);
     resultsSheet.getRange(1, 1, 1, headers.length).setBackground('#2c5f8a').setFontColor('white').setFontWeight('bold');
+
+    Logger.log('✅ Лист "Результаты теста" создан с поддержкой до ' + MAX_QUESTIONS + ' вопросов');
   }
 
   SpreadsheetApp.getUi().alert('✅ Листы инициализированы успешно!');
@@ -492,6 +498,20 @@ function addTest1Questions(ss) {
 
   if (!questionsSheet) throw new Error('Лист "Вопросы" не найден');
 
+  // ✅ ИСПРАВЛЕНИЕ #2: Проверка - существуют ли уже вопросы Test 1
+  const lastRow = questionsSheet.getLastRow();
+  if (lastRow > 1) {
+    const existingData = questionsSheet.getRange(2, 1, Math.max(0, lastRow - 1), 1).getValues();
+    let test1Count = 0;
+    for (const row of existingData) {
+      if (row[0] == 1) test1Count++;
+    }
+    if (test1Count > 0) {
+      Logger.log('ℹ️ Test 1 вопросы уже добавлены (' + test1Count + ' вопросов). Пропускаю добавление.');
+      throw new Error('Вопросы теста 1 уже существуют в таблице');
+    }
+  }
+
   // Все 26 вопросов в формате [тест, №, текст, вар1, вар2, вар3, вар4, вар5, правильные, комментарий]
   const questions = [
     [1, 1, 'Выберите верные суждения о социальном статусе и запишите цифры, под которыми они указаны.', 'Статусные символы определяют то, что носитель данного статуса может делать и что он должен делать.', 'Статусный диапазон определяет рамки, в которых осуществляются статусные права и обязанности индивида.', 'В современном обществе социальный статус многих людей многократно меняется.', 'Принадлежность к различным социальным группам определяет социальные статусы человека.', 'Социальный статус может быть как индивидуальным, так и групповым.', '[2,3,4,5]', '3.4 Социальный статус и социальная роль'],
@@ -523,10 +543,10 @@ function addTest1Questions(ss) {
   ];
 
   // Добавить все вопросы
-  const lastRow = questionsSheet.getLastRow() + 1;
-  questionsSheet.getRange(lastRow, 1, questions.length, 10).setValues(questions);
+  const insertRow = lastRow + 1;
+  questionsSheet.getRange(insertRow, 1, questions.length, 10).setValues(questions);
 
-  Logger.log('✅ ' + questions.length + ' вопросов добавлено в "Вопросы" (с строки ' + lastRow + ')');
+  Logger.log('✅ ' + questions.length + ' вопросов добавлено в "Вопросы" (с строки ' + insertRow + ')');
 }
 
 /**
