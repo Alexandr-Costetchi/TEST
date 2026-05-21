@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавить действия в Dashboard</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0d1117;
+            color: #c9d1d9;
+            padding: 30px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #58a6ff;
+            margin-bottom: 30px;
+        }
+        .action-item {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .action-text {
+            flex: 1;
+        }
+        .action-text p {
+            margin: 5px 0;
+            font-size: 13px;
+        }
+        .action-text .time {
+            color: #8b949e;
+        }
+        .action-text .status {
+            color: #1ab15b;
+            font-weight: bold;
+        }
+        button {
+            padding: 10px 20px;
+            background: #58a6ff;
+            color: #0d1117;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            white-space: nowrap;
+            margin-left: 10px;
+        }
+        button:hover {
+            background: #79c0ff;
+        }
+        .info-box {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .info-box h2 {
+            color: #58a6ff;
+            margin-bottom: 10px;
+        }
+        .success {
+            color: #1ab15b;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Добавить мои действия в Dashboard</h1>
+
+        <div class="info-box">
+            <h2>Описание</h2>
+            <p>Эта страница добавляет записи о всей проделанной работе в dashboard для визуализации ADMIN-ADMIN мониторинга.</p>
+            <p>Нажмите кнопку ниже, чтобы заполнить dashboard записями о всех выполненных действиях.</p>
+        </div>
+
+        <div id="actions"></div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button onclick="addAllActions()">✅ Добавить ВСЕ действия в Dashboard</button>
+        </div>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const actions = [
+            {
+                timestamp: '2026-05-21 18:25',
+                type: '🔧 BUG FIX',
+                description: 'Обнаружена критическая ошибка: generateTestHTML() не определена, код её вызывает',
+                status: 'COMPLETED',
+                actions: 'Восстановил функцию из git истории',
+                result: '✅ Функция восстановлена, параметры добавлены (questionCount, instructions), коммит 5920b1a'
+            },
+            {
+                timestamp: '2026-05-21 18:30',
+                type: '✨ FEATURE',
+                description: 'Реализована функция addTest33Questions() с 26 вопросами',
+                status: 'COMPLETED',
+                actions: 'Встроены все 26 вопросов с ответами и комментариями',
+                result: '✅ Функция готова к использованию, коммит 039486a'
+            },
+            {
+                timestamp: '2026-05-21 18:35',
+                type: '🔴 ISSUE',
+                description: 'Обнаружена ошибка в getTestLink()',
+                status: 'COMPLETED',
+                actions: 'Функция требует ручного добавления ссылки в таблицу вместо автоматического',
+                result: '✅ Определена проблема для исправления'
+            },
+            {
+                timestamp: '2026-05-21 18:36',
+                type: '✅ FIX',
+                description: 'Исправлена getTestLink() для автоматического добавления ссылки',
+                status: 'COMPLETED',
+                actions: 'Переписал функцию для поиска теста в листе "Архив" и автоматического заполнения URL',
+                result: '✅ Ссылка теперь добавляется автоматически, коммит e334272'
+            },
+            {
+                timestamp: '2026-05-21 18:45',
+                type: '🔍 ANALYSIS',
+                description: 'Проверка всех функций на требования ручного вмешательства',
+                status: 'COMPLETED',
+                actions: 'Проанализирован весь код (Код.gs, sendEmail.gs, addTest1.gs)',
+                result: '✅ Обнаружена проблема: getTestLink() жёстко привязана к test 33'
+            },
+            {
+                timestamp: '2026-05-21 18:46',
+                type: '🔧 REFACTOR',
+                description: 'Рефакторинг getTestLink() в универсальную функцию',
+                status: 'COMPLETED',
+                actions: 'Создана функция getTestLinkGeneric(testId), рефакторены getTestLink() и getTestLink1()',
+                result: '✅ Обе версии (Test 1 и Test 33) теперь поддерживаются одинаково'
+            },
+            {
+                timestamp: '2026-05-21 18:47',
+                type: '✨ FEATURE',
+                description: 'Добавлена поддержка Test 1 в меню',
+                status: 'COMPLETED',
+                actions: 'Расширено меню с отдельными функциями для Test 1 и Test 33',
+                result: '✅ Новое меню: Инициализация → Test 1 + Test 33 секции, коммит 392ad98'
+            },
+            {
+                timestamp: '2026-05-21 18:48',
+                type: '📊 DOCUMENTATION',
+                description: 'Обновлены логи ADMIN-ADMIN и статус проекта',
+                status: 'COMPLETED',
+                actions: 'Обновлены файлы admin_log.md и CURRENT_STATUS.md с полной информацией о проделанной работе',
+                result: '✅ Документация актуальна, коммит 5321866'
+            },
+            {
+                timestamp: '2026-05-21 18:49',
+                type: '✅ AUTONOMY CHECK',
+                description: 'Финальная проверка: все функции полностью автономны',
+                status: 'COMPLETED',
+                actions: 'Проверка каждой функции на требования ручного вмешательства или диалогов',
+                result: '✅ Все функции готовы к развёртыванию без ручного вмешательства'
+            }
+        ];
+
+        function renderActions() {
+            const container = document.getElementById('actions');
+            container.innerHTML = actions.map(action => `
+                <div class="action-item">
+                    <div class="action-text">
+                        <p><strong>${action.type}</strong> — ${action.description}</p>
+                        <p class="time">⏰ ${action.timestamp}</p>
+                        <p><strong>Мои действия:</strong> ${action.actions}</p>
+                        <p class="status">📍 ${action.result}</p>
+                    </div>
+                    <button onclick="addAction(${actions.indexOf(action)})">Добавить</button>
+                </div>
+            `).join('');
+        }
+
+        function addAction(index) {
+            const action = actions[index];
+            const tasks = JSON.parse(localStorage.getItem('adminTasks') || '[]');
+
+            const newTask = {
+                id: Date.now() + Math.random(),
+                timestamp: action.timestamp,
+                type: action.type,
+                description: action.description,
+                status: action.status,
+                actions: action.actions,
+                result: action.result
+            };
+
+            tasks.unshift(newTask);
+            localStorage.setItem('adminTasks', JSON.stringify(tasks));
+
+            alert('✅ Действие добавлено в dashboard!');
+            renderActions();
+        }
+
+        function addAllActions() {
+            const tasks = JSON.parse(localStorage.getItem('adminTasks') || '[]');
+
+            actions.forEach(action => {
+                const newTask = {
+                    id: Date.now() + Math.random(),
+                    timestamp: action.timestamp,
+                    type: action.type,
+                    description: action.description,
+                    status: action.status,
+                    actions: action.actions,
+                    result: action.result
+                };
+                tasks.unshift(newTask);
+            });
+
+            localStorage.setItem('adminTasks', JSON.stringify(tasks));
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `
+                <div class="info-box success" style="margin-top: 30px;">
+                    <h2>✅ Успешно добавлено!</h2>
+                    <p>Добавлено ${actions.length} записей о проделанной работе в dashboard</p>
+                    <p>Откройте dashboard.html чтобы увидеть полную историю ADMIN-ADMIN действий</p>
+                    <p style="margin-top: 15px; color: #58a6ff;">
+                        <strong>Все действия:</strong>
+                    </p>
+                    ${actions.map(a => `
+                        <p style="font-size: 12px; margin: 5px 0;">
+                            ⏰ ${a.timestamp} | ${a.type} | ${a.description}
+                        </p>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        renderActions();
+    </script>
+</body>
+</html>
