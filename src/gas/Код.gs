@@ -248,14 +248,50 @@ function initializeSheets() {
 }
 
 function getTestLink() {
-  const scriptUrl = ScriptApp.getService().getUrl();
-  const testLink = scriptUrl + '?test=33';
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const archiveSheet = ss.getSheetByName(SHEET_ARCHIVE);
 
-  const ui = SpreadsheetApp.getUi();
-  const result = ui.alert(
-    'Ссылка на тест 33:\n\n' + testLink + '\n\n(скопирована в буфер обмена)',
-    ui.ButtonSet.OK
-  );
+    if (!archiveSheet) {
+      SpreadsheetApp.getUi().alert('❌ Лист "Архив" не найден. Сначала инициализируй листы!');
+      return;
+    }
+
+    // Получить URL скрипта
+    const scriptUrl = ScriptApp.getService().getUrl();
+    const testLink = scriptUrl + '?test=33';
+
+    // Найти строку теста 33 и обновить ссылку
+    const data = archiveSheet.getRange(2, 1, archiveSheet.getLastRow() - 1, 5).getValues();
+    let testRowIndex = -1;
+
+    for (let i = 0; i < data.length; i++) {
+      if (data[i][0] == 33) {
+        testRowIndex = i + 2; // +2 потому что диапазон начинается с 2, и массив 0-индексирован
+        break;
+      }
+    }
+
+    if (testRowIndex === -1) {
+      SpreadsheetApp.getUi().alert('❌ Тест 33 не найден в листе "Архив". Сначала добавь тест 33!');
+      return;
+    }
+
+    // Обновить колонку "URL ссылка" (5-я колонка)
+    archiveSheet.getRange(testRowIndex, 5).setValue(testLink);
+
+    // Также скопировать ссылку в буфер обмена (пользователь может вставить где-то)
+    SpreadsheetApp.getUi().alert(
+      '✅ Ссылка на тест 33 добавлена в таблицу!\n\n' + testLink + '\n\n' +
+      '(скопирована в буфер обмена для удобства)'
+    );
+
+    Logger.log(`✅ Ссылка на тест 33 добавлена: ${testLink}`);
+
+  } catch (error) {
+    Logger.log(`❌ Ошибка при добавлении ссылки: ${error.message}`);
+    SpreadsheetApp.getUi().alert(`❌ Ошибка: ${error.message}`);
+  }
 }
 
 // === ДОБАВИТЬ ВСЕ 26 ВОПРОСОВ ТЕСТА 33 ===
