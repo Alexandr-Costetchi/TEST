@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git *)",
+      "Bash(node *)",
+      "Bash(npm *)",
+      "Bash(ls *)",
+      "Bash(find *)",
+      "Bash(cat *)",
+      "Bash(cp *)",
+      "Bash(mv *)",
+      "Bash(mkdir *)",
+      "Bash(rm *)",
+      "Bash(rm -f *)",
+      "Bash(rm -rf *)",
+      "Bash(cd *)",
+      "Bash(pwd)",
+      "Read",
+      "Edit",
+      "Write",
+      "Glob",
+      "Grep"
+    ],
+    "defaultMode": "acceptEdits",
+    "additionalDirectories": [
+      "D:\\ПРОБА GIT+CLAUDE\\src",
+      "D:\\ПРОБА GIT+CLAUDE",
+      "D:\\ПРОБА GIT+CLAUDE\\.git"
+    ]
+  }
+}

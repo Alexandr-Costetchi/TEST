@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор КТП — Верный Курс</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: #f8f9fa;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        header {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            color: #1a5490;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Левая панель */
+        .settings-panel {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 1rem;
+        }
+
+        .settings-panel h2 {
+            font-size: 1.1rem;
+            color: #1a5490;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #1a5490;
+            padding-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.6rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #1a5490;
+            box-shadow: 0 0 0 2px rgba(26, 84, 144, 0.1);
+        }
+
+        .frequency-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .freq-btn {
+            padding: 0.6rem;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .freq-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .freq-btn.active {
+            background: #1a5490;
+            color: white;
+            border-color: #1a5490;
+        }
+
+        .checkbox-group {
+            margin-bottom: 1rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.6rem;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            margin-right: 0.6rem;
+            width: auto;
+            cursor: pointer;
+        }
+
+        .checkbox-item label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 400;
+            font-size: 0.9rem;
+        }
+
+        .section-selector {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .section-item {
+            padding: 0.6rem;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+
+        .section-item:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-weight: 600;
+            color: #1a5490;
+            margin: 0.8rem 0 0.4rem 0;
+        }
+
+        .theme-item {
+            margin-left: 1.2rem;
+            padding: 0.3rem 0;
+            font-size: 0.85rem;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 0.6rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 0.7rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #1a5490;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #14416f;
+            box-shadow: 0 2px 8px rgba(26, 84, 144, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #2c3e50;
+            border: 1px solid #ddd;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        /* Правая панель */
+        .results-panel {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #1a5490;
+            padding-bottom: 1rem;
+        }
+
+        .results-header h2 {
+            font-size: 1.3rem;
+            color: #1a5490;
+        }
+
+        .export-buttons {
+            display: flex;
+            gap: 0.6rem;
+        }
+
+        .btn-export {
+            padding: 0.6rem 1rem;
+            border: 1px solid #1a5490;
+            background: white;
+            color: #1a5490;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-export:hover {
+            background: #1a5490;
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 1rem;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .stat-card.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            opacity: 0.8;
+            margin-bottom: 0.4rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        thead {
+            background: #f8f9fa;
+            border-bottom: 2px solid #1a5490;
+        }
+
+        th {
+            padding: 0.8rem;
+            text-align: left;
+            font-weight: 600;
+            color: #1a5490;
+        }
+
+        td {
+            padding: 0.8rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        tbody tr:nth-child(odd) {
+            background: white;
+        }
+
+        .date-cell {
+            font-weight: 500;
+            color: #1a5490;
+        }
+
+        .type-badge {
+            display: inline-block;
+            padding: 0.3rem 0.6rem;
+            background: #e3f2fd;
+            color: #1a5490;
+            border-radius: 3px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .type-badge.theory {
+            background: #c8e6c9;
+            color: #2e7d32;
+        }
+
+        .type-badge.test {
+            background: #ffe0b2;
+            color: #e65100;
+        }
+
+        .warning-box {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 4px;
+            color: #e65100;
+            font-size: 0.9rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #999;
+        }
+
+        .empty-state p {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            .settings-panel {
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .frequency-buttons {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            table {
+                font-size: 0.8rem;
+            }
+
+            th, td {
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>📚 Генератор КТП — Верный Курс</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="layout">
+            <!-- Левая панель настроек -->
+            <div class="settings-panel">
+                <h2>Настройки плана</h2>
+
+                <div class="form-group">
+                    <label>Предмет</label>
+                    <select id="subject">
+                        <option value="social">Обществознание</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Уровень экзамена</label>
+                    <select id="examLevel">
+                        <option value="ege">ЕГЭ (профильный)</option>
+                        <option value="ege-base">ЕГЭ (базовый)</option>
+                        <option value="oge">ОГЭ</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Начало обучения</label>
+                    <input type="date" id="startDate" value="2026-05-21">
+                </div>
+
+                <div class="form-group">
+                    <label>Окончание обучения</label>
+                    <input type="date" id="endDate" value="2026-06-09">
+                </div>
+
+                <div class="form-group">
+                    <label>Занятия в неделю</label>
+                    <div class="frequency-buttons">
+                        <button class="freq-btn" data-day="0">ПН</button>
+                        <button class="freq-btn" data-day="2">СР</button>
+                        <button class="freq-btn active" data-day="3">ЧТ</button>
+                        <button class="freq-btn active" data-day="4">ПТ</button>
+                    </div>
+                </div>
+
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="excludeHolidays" checked>
+                        <label for="excludeHolidays">Исключить праздничные дни</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Выберите разделы</label>
+                    <div class="section-selector" id="sectionSelector">
+                        <!-- Будет заполнено JS -->
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Вводные занятия</label>
+                    <input type="number" id="introLessons" min="0" value="0">
+                </div>
+
+                <div class="form-group">
+                    <label>Финальное повторение</label>
+                    <input type="number" id="finalReview" min="0" value="0">
+                </div>
+
+                <div class="form-group">
+                    <label>Резервные занятия</label>
+                    <input type="number" id="reserveLessons" min="0" value="0">
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="generatePlan()">Сформировать план</button>
+                    <button class="btn btn-secondary" onclick="resetForm()">Сбросить</button>
+                </div>
+            </div>
+
+            <!-- Правая панель результатов -->
+            <div class="results-panel">
+                <div class="results-header">
+                    <h2>Календарно-тематический план</h2>
+                    <div class="export-buttons">
+                        <button class="btn-export" onclick="copyToClipboard()">📋 Копировать</button>
+                        <button class="btn-export" onclick="exportPDF()">📄 PDF</button>
+                        <button class="btn-export" onclick="exportExcel()">📊 Excel</button>
+                    </div>
+                </div>
+
+                <div id="statsContainer" class="stats-grid">
+                    <!-- Будет заполнено JS -->
+                </div>
+
+                <div id="warningContainer"></div>
+
+                <div id="tableContainer">
+                    <div class="empty-state">
+                        <p>👈 Настройте параметры слева и нажмите «Сформировать план»</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Структура данных по разделам
+        const curriculum = {
+            sections: [
+                {
+                    id: 1,
+                    title: "Человек в обществе. Духовная культура",
+                    subtitle: "Введение в социальную психологию. Введение в социальную философию",
+                    themes: [
+                        "Человек как результат биологической и социокультурной эволюции...",
+                        "Мировоззрение, его роль в жизнедеятельности человека...",
+                        "Деятельность и её структура. Мотивация деятельности...",
+                        "Познавательная деятельность. Познание мира...",
+                        "Понятие истины, её критерии...",
+                        "Общество как система. Общественные отношения...",
+                        "Общественные потребности и социальные институты...",
+                        "Типы обществ. Постиндустриальное общество...",
+                        "Многообразие путей и форм общественного развития...",
+                        "Духовная деятельность человека. Культура...",
+                        "Мораль как общечеловеческая ценность...",
+                        "Наука. Естественные и гуманитарные науки...",
+                        "Образование в современном обществе...",
+                        "Религия, её роль в жизни общества...",
+                        "Искусство, его основные функции..."
+                    ]
+                },
+                {
+                    id: 2,
+                    title: "Экономическая жизнь общества",
+                    subtitle: "Введение в экономику",
+                    themes: [
+                        "Роль экономики в жизни общества...",
+                        "Экономические институты и их роль...",
+                        "Типы экономических систем...",
+                        "Экономическая деятельность и её субъекты...",
+                        "Институт рынка. Функционирование рынков...",
+                        "Конкуренция как основа функционирования рынка...",
+                        "Рынок труда. Заработная плата...",
+                        "Предприятие (фирма) в экономике...",
+                        "Институт предпринимательства...",
+                        "Финансовый рынок, виды и функции...",
+                        "Финансовые услуги. Вклады и кредиты...",
+                        "Инфляция: причины, виды...",
+                        "Государство в экономике...",
+                        "Государственный бюджет...",
+                        "Налоговая система Российской Федерации...",
+                        "Экономический рост и пути его достижения...",
+                        "Понятие экономического цикла...",
+                        "Мировая экономика..."
+                    ]
+                },
+                {
+                    id: 3,
+                    title: "Социальная сфера",
+                    subtitle: "Введение в социологию",
+                    themes: [
+                        "Социальные общности, группы, их типы...",
+                        "Этнические общности. Этнокультурные ценности...",
+                        "Молодёжь как социальная группа...",
+                        "Положение индивида в обществе. Социальные статусы...",
+                        "Семья и брак. Функции и типы семьи...",
+                        "Социализация личности и её этапы...",
+                        "Социальные нормы и отклоняющееся поведение...",
+                        "Социальный конфликт...",
+                        "Государственная поддержка социально незащищённых слоёв...",
+                        "Особенности профессиональной деятельности..."
+                    ]
+                },
+                {
+                    id: 4,
+                    title: "Политическая сфера",
+                    subtitle: "Введение в политологию",
+                    themes: [
+                        "Политическая власть и субъекты политики...",
+                        "Политическая система общества...",
+                        "Государство как основной институт политической системы...",
+                        "Понятие формы государства...",
+                        "Федеративное устройство Российской Федерации...",
+                        "Субъекты государственной власти...",
+                        "Государственное управление в Российской Федерации...",
+                        "Политическая культура и политическое участие...",
+                        "Политическая идеология и политические партии...",
+                        "Избирательная система...",
+                        "Политическая элита и политическое лидерство...",
+                        "Роль средств массовой информации в политической жизни..."
+                    ]
+                },
+                {
+                    id: 5,
+                    title: "Правовое регулирование",
+                    subtitle: "Введение в правоведение",
+                    themes: [
+                        "Право как социальный институт...",
+                        "Источники права...",
+                        "Система права. Отрасли права...",
+                        "Понятие и признаки правоотношений...",
+                        "Правомерное поведение и правонарушение...",
+                        "Конституция Российской Федерации...",
+                        "Личные, политические и социально-экономические права...",
+                        "Гражданское право...",
+                        "Семейное право...",
+                        "Трудовое право...",
+                        "Законодательство о налогах и сборах...",
+                        "Образовательное право...",
+                        "Административное право...",
+                        "Экологическое законодательство...",
+                        "Уголовное право...",
+                        "Гражданское процессуальное право...",
+                        "Административный процесс...",
+                        "Уголовное процессуальное право...",
+                        "Конституционное и арбитражное судопроизводство...",
+                        "Правоохранительные органы Российской Федерации..."
+                    ]
+                }
+            ]
+        };
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSectionSelector();
+        });
+
+        function initializeSectionSelector() {
+            const container = document.getElementById('sectionSelector');
+            container.innerHTML = '';
+
+            curriculum.sections.forEach((section, idx) => {
+                const sectionDiv = document.createElement('div');
+                sectionDiv.className = 'section-item';
+                sectionDiv.innerHTML = `
+                    <input type="checkbox" id="section${section.id}" checked data-section-id="${section.id}">
+                    <label for="section${section.id}" style="margin: 0; margin-left: 0.5rem;">
+                        <strong>${section.id}. ${section.title}</strong>
+                    </label>
+                `;
+                container.appendChild(sectionDiv);
+            });
+        }
+
+        function getSelectedDays() {
+            const selected = [];
+            document.querySelectorAll('.freq-btn.active').forEach(btn => {
+                selected.push(parseInt(btn.dataset.day));
+            });
+            return selected.length > 0 ? selected : [3, 4]; // ЧТ и ПТ по умолчанию
+        }
+
+        function generatePlan() {
+            const startDate = new Date(document.getElementById('startDate').value);
+            const endDate = new Date(document.getElementById('endDate').value);
+            const selectedDays = getSelectedDays();
+            const selectedSections = Array.from(document.querySelectorAll('#sectionSelector input:checked'))
+                .map(input => parseInt(input.dataset.sectionId));
+
+            // Сбор всех тем
+            let allThemes = [];
+            selectedSections.forEach(sectionId => {
+                const section = curriculum.sections.find(s => s.id === sectionId);
+                if (section) {
+                    allThemes = allThemes.concat(section.themes.map((theme, idx) => ({
+                        text: theme,
+                        sectionId: sectionId,
+                        sectionTitle: section.title
+                    })));
+                }
+            });
+
+            // Генерация дат
+            let dates = [];
+            let currentDate = new Date(startDate);
+            while (currentDate <= endDate) {
+                const dayOfWeek = currentDate.getDay();
+                if (selectedDays.includes(dayOfWeek)) {
+                    dates.push(new Date(currentDate));
+                }
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+
+            const intro = parseInt(document.getElementById('introLessons').value) || 0;
+            const finalReview = parseInt(document.getElementById('finalReview').value) || 0;
+            const reserve = parseInt(document.getElementById('reserveLessons').value) || 0;
+            const totalTheoryLessons = dates.length - intro - finalReview - reserve;
+
+            // Формирование плана
+            let plan = [];
+            let themeIdx = 0;
+            let lessonIdx = 0;
+
+            // Вводные занятия
+            for (let i = 0; i < intro && lessonIdx < dates.length; i++, lessonIdx++) {
+                plan.push({
+                    date: dates[lessonIdx],
+                    type: 'Введение',
+                    theme: 'Вводное занятие'
+                });
+            }
+
+            // Теория
+            const themesPerLesson = Math.ceil(allThemes.length / Math.max(totalTheoryLessons, 1));
+            for (let i = 0; i < totalTheoryLessons && lessonIdx < dates.length; i++, lessonIdx++) {
+                const themes = [];
+                for (let j = 0; j < themesPerLesson && themeIdx < allThemes.length; j++, themeIdx++) {
+                    themes.push(allThemes[themeIdx].text);
+                }
+                plan.push({
+                    date: dates[lessonIdx],
+                    type: 'Теория',
+                    theme: themes.join('; ')
+                });
+            }
+
+            // Финальное повторение
+            for (let i = 0; i < finalReview && lessonIdx < dates.length; i++, lessonIdx++) {
+                plan.push({
+                    date: dates[lessonIdx],
+                    type: 'Повторение',
+                    theme: 'Финальное повторение'
+                });
+            }
+
+            // Резервные
+            for (let i = 0; i < reserve && lessonIdx < dates.length; i++, lessonIdx++) {
+                plan.push({
+                    date: dates[lessonIdx],
+                    type: 'Резерв',
+                    theme: 'Резервное занятие'
+                });
+            }
+
+            // Отображение результатов
+            displayStats(plan, allThemes.length);
+            displayTable(plan);
+        }
+
+        function displayStats(plan, totalThemes) {
+            const stats = {
+                total: plan.length,
+                theory: plan.filter(p => p.type === 'Теория').length,
+                intro: plan.filter(p => p.type === 'Введение').length,
+                review: plan.filter(p => p.type === 'Повторение').length,
+                reserve: plan.filter(p => p.type === 'Резерв').length,
+                themes: totalThemes
+            };
+
+            const container = document.getElementById('statsContainer');
+            container.innerHTML = `
+                <div class="stat-card active">
+                    <div class="stat-label">ВСЕГО ЗАНЯТИЙ</div>
+                    <div class="stat-value">${stats.total}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">ТЕОРИЯ</div>
+                    <div class="stat-value">${stats.theory}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">ВВЕДЕНИЕ</div>
+                    <div class="stat-value">${stats.intro}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">ПОВТОРЕНИЕ</div>
+                    <div class="stat-value">${stats.review}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">РЕЗЕРВ</div>
+                    <div class="stat-value">${stats.reserve}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">ВСЕГО ТЕМ</div>
+                    <div class="stat-value">${stats.themes}</div>
+                </div>
+            `;
+
+            // Проверка на перегрузку
+            const avgThemesPerLesson = stats.theory > 0 ? Math.ceil(stats.themes / stats.theory) : 0;
+            const warning = document.getElementById('warningContainer');
+            if (avgThemesPerLesson > 3) {
+                warning.innerHTML = `<div class="warning-box">⚠️ План очень плотный. На занятие приходится ~${avgThemesPerLesson} тем. Рекомендуем добавить занятия или уменьшить количество разделов.</div>`;
+            } else {
+                warning.innerHTML = '';
+            }
+        }
+
+        function displayTable(plan) {
+            const dayNames = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+            let html = `
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>№</th>
+                                <th>Дата</th>
+                                <th>День</th>
+                                <th>Тип занятия</th>
+                                <th>Темы</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            plan.forEach((item, idx) => {
+                const dateStr = item.date.toLocaleDateString('ru-RU');
+                const dayStr = dayNames[item.date.getDay()];
+                const typeBadge = item.type === 'Теория' ? 'theory' :
+                                item.type === 'Введение' ? 'intro' : 'test';
+
+                html += `
+                    <tr>
+                        <td>${idx + 1}</td>
+                        <td class="date-cell">${dateStr}</td>
+                        <td>${dayStr}</td>
+                        <td><span class="type-badge ${typeBadge}">${item.type}</span></td>
+                        <td>${item.theme}</td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            document.getElementById('tableContainer').innerHTML = html;
+        }
+
+        function copyToClipboard() {
+            const table = document.querySelector('table');
+            if (!table) return alert('Сформируйте план!');
+
+            const range = document.createRange();
+            range.selectNode(table);
+            window.getSelection().addRange(range);
+            document.execCommand('copy');
+            window.getSelection().removeAllRanges();
+
+            alert('✅ План скопирован в буфер обмена!');
+        }
+
+        function exportPDF() {
+            alert('📄 Функция экспорта в PDF будет доступна в следующей версии');
+        }
+
+        function exportExcel() {
+            alert('📊 Функция экспорта в Excel будет доступна в следующей версии');
+        }
+
+        function resetForm() {
+            document.getElementById('introLessons').value = '0';
+            document.getElementById('finalReview').value = '0';
+            document.getElementById('reserveLessons').value = '0';
+            document.getElementById('tableContainer').innerHTML = `
+                <div class="empty-state">
+                    <p>👈 Настройте параметры слева и нажмите «Сформировать план»</p>
+                </div>
+            `;
+            document.getElementById('statsContainer').innerHTML = '';
+            document.getElementById('warningContainer').innerHTML = '';
+        }
+
+        // Обработчики для кнопок дней
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.freq-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

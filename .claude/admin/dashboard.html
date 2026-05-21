@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADMIN-ADMIN Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0d1117;
+            color: #c9d1d9;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            margin-bottom: 30px;
+            border-bottom: 1px solid #30363d;
+            padding-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: #58a6ff;
+        }
+
+        .header-info {
+            display: flex;
+            gap: 30px;
+            font-size: 14px;
+        }
+
+        .info-block {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .info-label {
+            color: #8b949e;
+        }
+
+        .info-value {
+            color: #58a6ff;
+            font-weight: bold;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .filter-label {
+            color: #8b949e;
+            font-size: 13px;
+        }
+
+        .filter-btn {
+            padding: 6px 12px;
+            border: 1px solid #30363d;
+            background: #0d1117;
+            color: #c9d1d9;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            border-color: #58a6ff;
+            color: #58a6ff;
+        }
+
+        .filter-btn.active {
+            background: #58a6ff;
+            color: #0d1117;
+            border-color: #58a6ff;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: bold;
+            color: #58a6ff;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #8b949e;
+            text-transform: uppercase;
+        }
+
+        .table-container {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        thead {
+            background: #0d1117;
+            border-bottom: 1px solid #30363d;
+        }
+
+        th {
+            padding: 12px 15px;
+            text-align: left;
+            color: #8b949e;
+            font-weight: 600;
+            border-right: 1px solid #30363d;
+        }
+
+        th:last-child {
+            border-right: none;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #30363d;
+            border-right: 1px solid #30363d;
+        }
+
+        td:last-child {
+            border-right: none;
+        }
+
+        tbody tr:hover {
+            background: #0d1117;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background: rgba(88, 166, 255, 0.2);
+            color: #58a6ff;
+        }
+
+        .status-completed {
+            background: rgba(26, 177, 91, 0.2);
+            color: #1ab15b;
+        }
+
+        .status-correcting {
+            background: rgba(230, 176, 41, 0.2);
+            color: #e6b01f;
+        }
+
+        .status-error {
+            background: rgba(248, 81, 73, 0.2);
+            color: #f85449;
+        }
+
+        .description {
+            color: #c9d1d9;
+            max-width: 250px;
+        }
+
+        .timestamp {
+            color: #8b949e;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .actions-text {
+            color: #79c0ff;
+            font-size: 12px;
+            max-width: 200px;
+        }
+
+        .result-text {
+            color: #79c0ff;
+            font-size: 12px;
+            max-width: 200px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #8b949e;
+        }
+
+        .chart-container {
+            margin-bottom: 30px;
+        }
+
+        .chart-title {
+            color: #8b949e;
+            font-size: 12px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .timeline {
+            display: flex;
+            gap: 5px;
+            height: 50px;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 8px;
+            align-items: center;
+        }
+
+        .timeline-bar {
+            flex: 1;
+            height: 100%;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .timeline-bar:hover {
+            opacity: 0.8;
+        }
+
+        .timeline-bar.active {
+            background: #58a6ff;
+        }
+
+        .timeline-bar.completed {
+            background: #1ab15b;
+        }
+
+        .timeline-bar.correcting {
+            background: #e6b01f;
+        }
+
+        .timeline-bar.error {
+            background: #f85449;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>🤖 ADMIN-ADMIN Dashboard</h1>
+            <div class="header-info">
+                <div class="info-block">
+                    <span class="info-label">Статус:</span>
+                    <span class="info-value">🟢 Активен</span>
+                </div>
+                <div class="info-block">
+                    <span class="info-label">Последнее обновление:</span>
+                    <span class="info-value" id="lastUpdate">—</span>
+                </div>
+                <div class="info-block">
+                    <span class="info-label">Дата:</span>
+                    <span class="info-value" id="currentDate">—</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- СТАТИСТИКА -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="statTotal">0</div>
+                <div class="stat-label">Всего задач</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="statActive">0</div>
+                <div class="stat-label">Активных</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="statCompleted">0</div>
+                <div class="stat-label">Завершено</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="statCorrecting">0</div>
+                <div class="stat-label">Корректировки</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="statError">0</div>
+                <div class="stat-label">Ошибок</div>
+            </div>
+        </div>
+
+        <!-- ТАЙМЛАЙН -->
+        <div class="chart-container">
+            <div class="chart-title">📈 Активность (последние 12 часов)</div>
+            <div class="timeline" id="timeline"></div>
+        </div>
+
+        <!-- ФИЛЬТРЫ -->
+        <div class="controls">
+            <div class="filter-group">
+                <span class="filter-label">Фильтр по статусу:</span>
+                <button class="filter-btn active" data-filter="all">Все</button>
+                <button class="filter-btn" data-filter="active">Активные</button>
+                <button class="filter-btn" data-filter="completed">Завершено</button>
+                <button class="filter-btn" data-filter="correcting">Корректировка</button>
+                <button class="filter-btn" data-filter="error">Ошибки</button>
+            </div>
+        </div>
+
+        <!-- ТАБЛИЦА -->
+        <div class="table-container">
+            <table id="tasksTable">
+                <thead>
+                    <tr>
+                        <th style="width: 140px;">Дата / Время</th>
+                        <th style="width: 100px;">Тип</th>
+                        <th>Описание задачи</th>
+                        <th style="width: 80px;">Статус</th>
+                        <th>Мои действия</th>
+                        <th>Результат</th>
+                    </tr>
+                </thead>
+                <tbody id="tasksBody">
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: #8b949e; padding: 40px;">
+                            Нет задач. Ожидание входящих...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Инициализация
+        function initDashboard() {
+            updateDate();
+            loadTasks();
+            setupFilters();
+            setInterval(updateDate, 60000); // Обновление даты каждую минуту
+        }
+
+        function updateDate() {
+            const now = new Date();
+            document.getElementById('currentDate').textContent = now.toLocaleString('ru-RU', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            document.getElementById('lastUpdate').textContent = now.toLocaleTimeString('ru-RU');
+        }
+
+        function loadTasks() {
+            const tasks = getTasksFromStorage();
+            renderTasks(tasks);
+            updateStats(tasks);
+            renderTimeline(tasks);
+        }
+
+        function getTasksFromStorage() {
+            const stored = localStorage.getItem('adminTasks');
+            return stored ? JSON.parse(stored) : [];
+        }
+
+        function saveTasks(tasks) {
+            localStorage.setItem('adminTasks', JSON.stringify(tasks));
+        }
+
+        function addTask(task) {
+            const tasks = getTasksFromStorage();
+            const newTask = {
+                id: Date.now(),
+                timestamp: new Date().toLocaleString('ru-RU', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }),
+                type: task.type || 'Task',
+                description: task.description || '',
+                status: task.status || 'ACTIVE',
+                actions: task.actions || '',
+                result: task.result || ''
+            };
+            tasks.unshift(newTask); // Новые задачи сверху
+            saveTasks(tasks);
+            loadTasks();
+        }
+
+        function updateTask(id, updates) {
+            const tasks = getTasksFromStorage();
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+                Object.assign(task, updates);
+                saveTasks(tasks);
+                loadTasks();
+            }
+        }
+
+        function renderTasks(tasks) {
+            const tbody = document.getElementById('tasksBody');
+            const filter = document.querySelector('.filter-btn.active')?.dataset.filter || 'all';
+
+            let filtered = tasks;
+            if (filter !== 'all') {
+                filtered = tasks.filter(t => t.status.toLowerCase() === filter.toUpperCase());
+            }
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #8b949e; padding: 40px;">Нет задач для отображения</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(task => `
+                <tr>
+                    <td class="timestamp">${task.timestamp}</td>
+                    <td><span style="color: #79c0ff; font-size: 12px;">${task.type}</span></td>
+                    <td class="description">${task.description}</td>
+                    <td>
+                        <span class="status-badge status-${task.status.toLowerCase()}">
+                            ${task.status}
+                        </span>
+                    </td>
+                    <td class="actions-text">${task.actions}</td>
+                    <td class="result-text">${task.result}</td>
+                </tr>
+            `).join('');
+        }
+
+        function updateStats(tasks) {
+            const total = tasks.length;
+            const active = tasks.filter(t => t.status === 'ACTIVE').length;
+            const completed = tasks.filter(t => t.status === 'COMPLETED').length;
+            const correcting = tasks.filter(t => t.status === 'CORRECTING').length;
+            const error = tasks.filter(t => t.status === 'ERROR').length;
+
+            document.getElementById('statTotal').textContent = total;
+            document.getElementById('statActive').textContent = active;
+            document.getElementById('statCompleted').textContent = completed;
+            document.getElementById('statCorrecting').textContent = correcting;
+            document.getElementById('statError').textContent = error;
+        }
+
+        function renderTimeline(tasks) {
+            const timeline = document.getElementById('timeline');
+            const last12h = tasks.slice(0, 12);
+
+            timeline.innerHTML = last12h.map(task => {
+                const statusClass = `timeline-bar ${task.status.toLowerCase()}`;
+                return `<div class="${statusClass}" title="${task.timestamp}: ${task.description}"></div>`;
+            }).join('');
+
+            if (last12h.length === 0) {
+                timeline.innerHTML = '<div style="width: 100%; text-align: center; color: #8b949e; font-size: 12px;">Нет данных</div>';
+            }
+        }
+
+        function setupFilters() {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    const tasks = getTasksFromStorage();
+                    renderTasks(tasks);
+                });
+            });
+        }
+
+        // Экспортируем функции для внешнего использования
+        window.AdminDashboard = {
+            addTask,
+            updateTask,
+            loadTasks
+        };
+
+        // Инициализация при загрузке
+        initDashboard();
+    </script>
+</body>
+</html>
