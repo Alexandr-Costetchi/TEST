@@ -48,10 +48,14 @@ function doPost(e) {
     // Вычислить оценку
     const score = calculateScore(testId, answers);
 
+    // ✅ ОТПРАВИТЬ РЕЗУЛЬТАТЫ НА ПОЧТУ
+    sendResultsEmail(testId, studentName, score, resultId);
+
     return ContentService.createTextOutput(JSON.stringify({
       success: true,
       resultId: resultId,
-      score: score
+      score: score,
+      emailSent: true
     })).setMimeType(ContentService.MimeType.JSON);
   } catch (error) {
     return ContentService.createTextOutput(JSON.stringify({
