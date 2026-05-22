@@ -84,7 +84,15 @@
       "Bash(cd \"D:\\\\ПРОБА GIT+CLAUDE\" && rm -f src/gas/temp*.gs \"src/gas/код_orig.txt\" \"src/gas/код_temp1.gs\" \"src/gas/код_updated.gs\" \"src/gas/код_updated.gs.bak\" && ls src/gas/)",
       "WebFetch(domain:docs.google.com)",
       "Bash(cd \"D:\\\\ПРОБА GIT+CLAUDE\" && git show HEAD~1:src/gas/generateTestHTML.gs > /tmp/generateTestHTML.gs && wc -l /tmp/generateTestHTML.gs)",
-      "Bash(env)"
+      "Bash(env)",
+      "Bash(cd \"/d/ПРОБА GIT+CLAUDE\" && grep -A 10 \"function addTest1Data\" src/gas/Код.gs | head -15)",
+      "Bash(cd \"/d/ПРОБА GIT+CLAUDE\" && grep -A 20 \"function addTest1ToArchive\" src/gas/Код.gs)",
+      "Bash(python -m pip list)",
+      "PowerShell(python --version 2>&1)",
+      "PowerShell($env:PYTHONIOENCODING='utf-8'; cd \"D:\\\\ПРОБА GIT+CLAUDE\"; py deploy_real_working.py 2>&1 | Select-Object -First 100)",
+      "Bash(py add_tests_to_sheet.py)",
+      "Bash(PYTHONIOENCODING=utf-8 py add_tests_to_sheet.py)",
+      "Bash(chmod +x setup_git_remotes.sh sync_tests.py)"
     ]
   }
 }

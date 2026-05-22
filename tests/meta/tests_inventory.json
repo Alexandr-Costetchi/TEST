@@ -1,0 +1,87 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-05-22T12:47:58Z",
+  "subject": "Обществознание ЕГЭ",
+  "totalTests": 6,
+  "totalQuestions": 106,
+  "tests": [
+    {
+      "testId": 1,
+      "testName": "Социальный статус и роль",
+      "topics": "3.4-3.6 Статус, роль, стратификация, социализация",
+      "questionsCount": 26,
+      "format": "EGE Task 20",
+      "status": "ready",
+      "createdDate": "2026-05-21",
+      "exportFile": "tests_1_sociologiya.json",
+      "url": "test=1"
+    },
+    {
+      "testId": 31,
+      "testName": "Итоговый повтор 3.1",
+      "topics": "3.1-3.4 Социальная дифференциация, стратификация, традиционные ценности",
+      "questionsCount": 15,
+      "format": "EGE Task 20",
+      "status": "ready",
+      "createdDate": "2026-05-22",
+      "exportFile": "tests_31_35_sociologiya.json",
+      "url": "test=31"
+    },
+    {
+      "testId": 32,
+      "testName": "Итоговый повтор 3.2",
+      "topics": "3.4-3.5 Социальные роли, статус, семья и её функции",
+      "questionsCount": 15,
+      "format": "EGE Task 20",
+      "status": "ready",
+      "createdDate": "2026-05-22",
+      "exportFile": "tests_31_35_sociologiya.json",
+      "url": "test=32"
+    },
+    {
+      "testId": 33,
+      "testName": "Итоговый повтор 3.3",
+      "topics": "3.5-3.6 Семья, социальные нормы, девиантное поведение, конфликты",
+      "questionsCount": 15,
+      "format": "EGE Task 20",
+      "status": "ready",
+      "createdDate": "2026-05-22",
+      "exportFile": "tests_31_35_sociologiya.json",
+      "url": "test=33"
+    },
+    {
+      "testId": 34,
+      "testName": "Итоговый повтор 3.4",
+      "topics": "3.6-3.7 Наука, образование, искусство, социальная политика РФ",
+      "questionsCount": 15,
+      "format": "EGE Task 20",
+      "status": "ready",
+      "createdDate": "2026-05-22",
+      "exportFile": "tests_31_35_sociologiya.json",
+      "url": "test=34"
+    },
+    {
+      "testId": 35,
+      "testName": "Итоговый повтор 3.5",
+      "topics": "3.7 Социальная политика РФ, социальные группы, нормы, санкции",
+      "questionsCount": 15,
+      "format": "EGE Task 20",
+      "status": "ready",
+      "createdDate": "2026-05-22",
+      "exportFile": "tests_31_35_sociologiya.json",
+      "url": "test=35"
+    }
+  ],
+  "googleSheetId": "19BlhyKO3Wazo2b8ZxrqXpJKPm728CNrv9QBxURwKOKw",
+  "sheets": {
+    "archive": "Архив",
+    "questions": "Вопросы",
+    "results": "Результаты теста"
+  },
+  "repositories": {
+    "testRepo": "https://github.com/Alexandr-Costetchi/TEST",
+    "websiteRepo": "https://github.com/Alexandr-Costetchi/my-website"
+  },
+  "syncStatus": "ready",
+  "notes": "Тесты готовы к импорту в Google Sheet и синхронизации с вебсайтом"
+}
