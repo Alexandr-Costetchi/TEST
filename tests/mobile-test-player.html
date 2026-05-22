@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#007BFF">
+    <title>Тесты ЕГЭ - Обществознание</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Test Selection Screen */
+        .test-selection {
+            padding: 20px;
+        }
+
+        .test-selection h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .test-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .test-card {
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .test-card:active {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .test-info h3 {
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .test-info p {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .test-questions {
+            font-size: 14px;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        /* Test Screen */
+        .test-screen {
+            display: none;
+            padding: 20px;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .test-screen.active {
+            display: block;
+        }
+
+        .test-header {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 13px;
+            color: #666;
+            text-align: center;
+        }
+
+        .question-container {
+            margin-bottom: 30px;
+        }
+
+        .question-number {
+            font-size: 14px;
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .question-text {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 15px;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .option {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .option:active {
+            background: #f0f4ff;
+            border-color: #667eea;
+        }
+
+        .option input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            margin-top: 2px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .option label {
+            flex: 1;
+            cursor: pointer;
+            font-size: 15px;
+            line-height: 1.4;
+            color: #333;
+        }
+
+        .option input[type="checkbox"]:checked + label {
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.95);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:active {
+            background: #d0d0d0;
+            transform: scale(0.95);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Results Screen */
+        .results-screen {
+            display: none;
+            padding: 20px;
+        }
+
+        .results-screen.active {
+            display: block;
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .score-circle .score {
+            font-size: 48px;
+            font-weight: bold;
+        }
+
+        .results-header h2 {
+            font-size: 22px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .results-header p {
+            font-size: 15px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .result-details {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .detail-value {
+            color: #333;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .back-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .back-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Responsive adjustments */
+        @media (max-height: 600px) {
+            .test-header {
+                margin-bottom: 10px;
+                padding-bottom: 10px;
+            }
+
+            .question-container {
+                margin-bottom: 15px;
+            }
+
+            .question-text {
+                font-size: 14px;
+                margin-bottom: 10px;
+            }
+
+            .nav-buttons {
+                margin-top: 15px;
+                padding-top: 10px;
+            }
+        }
+
+        /* Loading state */
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Safe area for notch phones */
+        @supports (padding: max(0px)) {
+            body {
+                padding: max(10px, env(safe-area-inset-left)) max(10px, env(safe-area-inset-right))
+                         max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-top));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Тесты ЕГЭ</h1>
+            <p>Обществознание</p>
+        </div>
+
+        <!-- Test Selection Screen -->
+        <div id="selectionScreen" class="test-selection active">
+            <h2>Выберите тест</h2>
+            <div id="testList" class="test-list">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Загрузка тестов...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Screen -->
+        <div id="testScreen" class="test-screen">
+            <div class="test-header">
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+                </div>
+                <div class="progress-text">
+                    Вопрос <span id="currentQuestion">1</span> из <span id="totalQuestions">15</span>
+                </div>
+            </div>
+            <div id="questionsContainer"></div>
+            <div class="nav-buttons">
+                <button id="prevBtn" class="btn btn-secondary" onclick="previousQuestion()">← Назад</button>
+                <button id="nextBtn" class="btn btn-primary" onclick="nextQuestion()">Далее →</button>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="resultsScreen" class="results-screen">
+            <div class="results-header">
+                <div class="score-circle">
+                    <div class="score" id="scoreValue">0</div>
+                </div>
+                <h2>Результаты теста</h2>
+                <p id="resultMessage">Спасибо за прохождение теста!</p>
+            </div>
+            <div class="result-details">
+                <div class="detail-row">
+                    <span class="detail-label">Правильных ответов:</span>
+                    <span class="detail-value" id="correctCount">0</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Неправильных ответов:</span>
+                    <span class="detail-value" id="incorrectCount">0</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Процент правильных:</span>
+                    <span class="detail-value" id="percentage">0%</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Время прохождения:</span>
+                    <span class="detail-value" id="timeSpent">0 мин</span>
+                </div>
+            </div>
+            <button class="back-btn" onclick="backToSelection()">Вернуться к тестам</button>
+        </div>
+    </div>
+
+    <script>
+        let testsData = null;
+        let currentTest = null;
+        let currentQuestionIndex = 0;
+        let userAnswers = {};
+        let startTime = null;
+
+        // Load tests from JSON
+        async function loadTests() {
+            try {
+                // Try to load from exported tests
+                const response = await fetch('./exported/tests_31_35_sociologiya.json');
+                const data = await response.json();
+                testsData = data;
+                initializeTests();
+            } catch (error) {
+                console.error('Error loading tests:', error);
+                document.getElementById('testList').innerHTML =
+                    '<p style="padding: 20px; color: red;">Ошибка загрузки тестов. Проверьте подключение.</p>';
+            }
+        }
+
+        function initializeTests() {
+            if (!testsData || !testsData.tests_metadata) {
+                console.error('Invalid test data structure');
+                return;
+            }
+
+            const testList = document.getElementById('testList');
+            testList.innerHTML = '';
+
+            testsData.tests_metadata.forEach(test => {
+                const card = document.createElement('div');
+                card.className = 'test-card';
+                card.onclick = () => startTest(test.test_id);
+                card.innerHTML = `
+                    <div class="test-info">
+                        <h3>Тест ${test.test_id}: ${test.test_name}</h3>
+                        <p>${test.topics}</p>
+                    </div>
+                    <div class="test-questions">${test.questions_count}</div>
+                `;
+                testList.appendChild(card);
+            });
+        }
+
+        function startTest(testId) {
+            currentTest = testsData.tests_metadata.find(t => t.test_id === testId);
+
+            if (!currentTest) {
+                alert('Тест не найден');
+                return;
+            }
+
+            // Get questions for this test
+            const testQuestions = testsData.questions.filter(q => q.test_id === testId);
+            currentTest.questions = testQuestions;
+
+            currentQuestionIndex = 0;
+            userAnswers = {};
+            startTime = Date.now();
+
+            // Hide selection screen, show test screen
+            document.getElementById('selectionScreen').classList.remove('active');
+            document.getElementById('testScreen').classList.add('active');
+            document.getElementById('resultsScreen').classList.remove('active');
+
+            document.getElementById('totalQuestions').textContent = testQuestions.length;
+
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            if (!currentTest || !currentTest.questions) return;
+
+            const question = currentTest.questions[currentQuestionIndex];
+            const container = document.getElementById('questionsContainer');
+
+            container.innerHTML = `
+                <div class="question-container">
+                    <div class="question-number">Вопрос ${currentQuestionIndex + 1}</div>
+                    <div class="question-text">${question.question_text}</div>
+                    <div class="options" id="optionsContainer"></div>
+                </div>
+            `;
+
+            const options = JSON.parse(question.options);
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+
+            options.forEach((option, index) => {
+                const optionId = `option_${currentQuestionIndex}_${index}`;
+                const isChecked = userAnswers[currentQuestionIndex]?.includes(index + 1) || false;
+
+                const label = document.createElement('label');
+                label.className = 'option';
+                label.innerHTML = `
+                    <input type="checkbox" id="${optionId}" data-index="${index}"
+                           ${isChecked ? 'checked' : ''}>
+                    <label for="${optionId}">${option}</label>
+                `;
+
+                label.querySelector('input').addEventListener('change', (e) => {
+                    if (!userAnswers[currentQuestionIndex]) {
+                        userAnswers[currentQuestionIndex] = [];
+                    }
+                    if (e.target.checked) {
+                        if (!userAnswers[currentQuestionIndex].includes(index + 1)) {
+                            userAnswers[currentQuestionIndex].push(index + 1);
+                        }
+                    } else {
+                        userAnswers[currentQuestionIndex] = userAnswers[currentQuestionIndex].filter(i => i !== index + 1);
+                    }
+                });
+
+                optionsContainer.appendChild(label);
+            });
+
+            // Update progress
+            const progress = ((currentQuestionIndex + 1) / currentTest.questions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+
+            // Update buttons
+            document.getElementById('prevBtn').disabled = currentQuestionIndex === 0;
+            document.getElementById('nextBtn').textContent =
+                currentQuestionIndex === currentTest.questions.length - 1 ? 'Завершить ✓' : 'Далее →';
+        }
+
+        function nextQuestion() {
+            if (!currentTest || !currentTest.questions) return;
+
+            if (currentQuestionIndex < currentTest.questions.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion();
+                document.getElementById('testScreen').scrollTop = 0;
+            } else {
+                finishTest();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion();
+                document.getElementById('testScreen').scrollTop = 0;
+            }
+        }
+
+        function finishTest() {
+            // Calculate results
+            const totalQuestions = currentTest.questions.length;
+            let correctCount = 0;
+
+            currentTest.questions.forEach((question, index) => {
+                const correctAnswers = JSON.parse(question.correct_answers).sort((a, b) => a - b);
+                const userAnswerSet = (userAnswers[index] || []).sort((a, b) => a - b);
+
+                if (JSON.stringify(correctAnswers) === JSON.stringify(userAnswerSet)) {
+                    correctCount++;
+                }
+            });
+
+            const incorrectCount = totalQuestions - correctCount;
+            const percentage = Math.round((correctCount / totalQuestions) * 100);
+            const timeSpent = Math.round((Date.now() - startTime) / 60000); // minutes
+
+            // Show results
+            document.getElementById('scoreValue').textContent = correctCount;
+            document.getElementById('correctCount').textContent = correctCount;
+            document.getElementById('incorrectCount').textContent = incorrectCount;
+            document.getElementById('percentage').textContent = percentage + '%';
+            document.getElementById('timeSpent').textContent = timeSpent + ' мин';
+
+            let message = '';
+            if (percentage === 100) {
+                message = '🎉 Отлично! Все ответы верны!';
+            } else if (percentage >= 80) {
+                message = '👏 Отлично! Хороший результат!';
+            } else if (percentage >= 60) {
+                message = '✓ Хорошо! Есть над чем поработать.';
+            } else {
+                message = '📚 Рекомендуем повторить материал.';
+            }
+            document.getElementById('resultMessage').textContent = message;
+
+            // Switch screens
+            document.getElementById('testScreen').classList.remove('active');
+            document.getElementById('resultsScreen').classList.add('active');
+            document.getElementById('resultsScreen').scrollTop = 0;
+        }
+
+        function backToSelection() {
+            document.getElementById('selectionScreen').classList.add('active');
+            document.getElementById('resultsScreen').classList.remove('active');
+            currentTest = null;
+            currentQuestionIndex = 0;
+            userAnswers = {};
+        }
+
+        // Initialize on load
+        window.addEventListener('load', loadTests);
+    </script>
+</body>
+</html>
