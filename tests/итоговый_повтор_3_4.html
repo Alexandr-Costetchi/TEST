@@ -303,7 +303,6 @@ function showResults(results) {
 }
 
 function sendResults(results) {
-  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('__')) return;
   const st = document.getElementById('send-status');
   st.className = 'send-status sending'; st.textContent = '⏳ Отправка результатов...';
   const cc=results.filter(r=>r.status==='correct').length;
@@ -311,9 +310,21 @@ function sendResults(results) {
   const wc=results.filter(r=>r.status==='wrong').length;
   const pct=Math.round(cc/QUESTIONS.length*100);
   const now=new Date(), ds=now.toLocaleDateString('ru-RU')+' '+now.toLocaleTimeString('ru-RU');
-  const payload={name:studentName,date:ds,score_pct:pct,correct:cc,partial:pc,wrong:wc,total:QUESTIONS.length,
-    details:JSON.stringify(results.map(r=>({q:r.q.id,chosen:[...r.chosen].join(''),correct:[...r.correct].join(''),status:r.status})))};
-  fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+  const testTitle = document.title;
+  fetch('https://formsubmit.co/ajax/gascfif@yandex.com', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+    body: JSON.stringify({
+      _subject: '📊 ' + studentName + ' — ' + testTitle,
+      name: studentName,
+      email: 'test@noreply.com',
+      'Ученик': studentName,
+      'Тест': testTitle,
+      'Результат': cc + ' из ' + QUESTIONS.length + ' (' + pct + '%)',
+      'Верно': cc, 'Частично': pc, 'Неверно': wc,
+      'Дата и время': ds
+    })
+  })
     .then(()=>{st.className='send-status sent'; st.textContent='✓ Результаты отправлены учителю';})
     .catch(()=>{st.className='send-status error'; st.textContent='⚠ Не удалось отправить (проверьте интернет)';});
 }
