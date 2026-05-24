@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#667eea">
+    <title>Тест: Налоговые льготы и вычеты</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 26px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .menu-screen {
+            display: block;
+        }
+
+        .menu-screen.hidden {
+            display: none;
+        }
+
+        .test-btn {
+            width: 100%;
+            padding: 18px;
+            margin: 10px 0;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+
+        .test-btn:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+
+        .question-screen {
+            display: none;
+        }
+
+        .question-screen.active {
+            display: block;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 12px;
+            color: #888;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .question-text {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .question-subtitle {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 12px;
+            font-style: italic;
+        }
+
+        .matching-header {
+            background: #f5f5f5;
+            padding: 10px 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .option-label:active {
+            background: #f0f0f0;
+        }
+
+        .option-label.checked {
+            border-color: #667eea;
+            background: #f0ebff;
+        }
+
+        .option-checkbox {
+            width: 18px;
+            height: 18px;
+            min-width: 18px;
+            margin-right: 10px;
+            margin-top: 2px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .option-text {
+            font-size: 13px;
+            color: #333;
+            line-height: 1.4;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            min-height: 44px;
+        }
+
+        .prev-btn {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .prev-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .next-btn, .finish-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .results-screen {
+            display: none;
+            text-align: center;
+        }
+
+        .results-screen.active {
+            display: block;
+        }
+
+        .score-circle {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            font-size: 36px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .result-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #333;
+            margin: 20px 0;
+        }
+
+        .result-text {
+            font-size: 15px;
+            color: #666;
+            margin: 15px 0;
+        }
+
+        .back-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            min-height: 44px;
+            margin-top: 20px;
+        }
+
+        .correct-count {
+            font-size: 14px;
+            color: #888;
+            margin: 10px 0;
+        }
+
+
+        .review-section {
+            margin-top: 24px;
+            text-align: left;
+        }
+        .review-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 14px;
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .review-question {
+            margin-bottom: 18px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .review-qheader {
+            padding: 10px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+            line-height: 1.4;
+        }
+        .review-qheader.correct { background: linear-gradient(135deg, #43a047, #2e7d32); }
+        .review-qheader.incorrect { background: linear-gradient(135deg, #e53935, #b71c1c); }
+        .review-qbody { padding: 12px 14px; background: #fafafa; }
+        .rev-opt {
+            display: flex; gap: 8px; padding: 5px 8px;
+            border-radius: 6px; margin-bottom: 4px;
+            font-size: 13px; line-height: 1.4;
+        }
+        .rev-opt.uc { background: #e8f5e9; color: #2e7d32; font-weight: 600; }
+        .rev-opt.uw { background: #ffebee; color: #c62828; font-weight: 600; }
+        .rev-opt.ms { background: #fff3e0; color: #e65100; font-weight: 600; border-left: 3px solid #ff9800; }
+        .rev-opt.nn { color: #888; }
+        .correct-answer-box {
+            background: #e8f5e9;
+            border: 1.5px solid #43a047;
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: #1b5e20;
+        }
+        .correct-answer-box strong { display: block; margin-bottom: 3px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .rev-legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: 11px; margin-bottom: 10px; color: #666; }
+        .rev-legend span { display: flex; align-items: center; gap: 4px; }
+        .rev-pair {
+            display: flex; gap: 8px; padding: 6px 8px;
+            border-radius: 6px; margin-bottom: 5px; font-size: 13px;
+        }
+        .rev-pair.pc { background: #e8f5e9; }
+        .rev-pair.pw { background: #ffebee; }
+        .rev-pair-ltr { font-weight: 700; min-width: 20px; }
+        .rev-pair-info { flex: 1; }
+        .rev-pair-ans { font-size: 12px; margin-top: 2px; }
+        .rev-pair-ans .ua { color: #c62828; }
+        .rev-pair-ans .ca { color: #2e7d32; font-weight: 600; }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            .header h1 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Экран 1: Выбор типа вопросов -->
+        <div class="menu-screen hidden" id="menu-screen">
+            <div class="header">
+                <h1>📋 Налоговые льготы и вычеты</h1>
+                <p>Тест ЕГЭ по обществознанию</p>
+            </div>
+            <div style="margin-bottom: 10px; font-size: 13px; color: #666; text-align: center;">
+                Выберите тип вопросов:
+            </div>
+            <button class="test-btn" onclick="startTest('all')">🔀 Все вопросы (12 заданий)</button>
+            <button class="test-btn" onclick="startTest('multiple')">✓ Выбор нескольких ответов</button>
+            <button class="test-btn" onclick="startTest('matching')">↔ Установление соответствия</button>
+        </div>
+
+        <!-- Экран 2: Вопросы -->
+        <div class="question-screen" id="question-screen">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div class="progress-text" id="progress-text"></div>
+            <div class="question-text" id="question-text"></div>
+            <div class="question-subtitle" id="question-subtitle"></div>
+            <div class="options" id="options-container"></div>
+            <div class="nav-buttons">
+                <button class="nav-btn prev-btn" id="prev-btn" onclick="prevQuestion()">← Назад</button>
+                <button class="nav-btn next-btn" id="next-btn" onclick="nextQuestion()">Дальше →</button>
+                <button class="nav-btn finish-btn" id="finish-btn" onclick="showResults()">Завершить</button>
+            </div>
+        </div>
+
+        <!-- Экран 3: Результаты -->
+        <div class="results-screen" id="results-screen">
+            <div class="result-title">Результаты теста</div>
+            <div class="score-circle" id="score-circle">0%</div>
+            <p class="result-text" id="result-text"></p>
+            <div class="correct-count">Правильно: <strong id="correct-count">0/0</strong></div>
+            <div id="review-container" class="review-section"></div>
+            <button class="back-btn" onclick="backToMenu()">← Вернуться к меню</button>
+        </div>
+    </div>
+
+    <script>
+        const testData = {
+            all: [
+                {
+                    id: 1,
+                    num: "1",
+                    text: "Выберите верные суждения о налоговой системе Российской Федерации",
+                    type: "multiple",
+                    options: [
+                        "Налоговые льготы распространяются только на юридических лиц",
+                        "Социальный налоговый вычет предоставляется по расходам на благотворительность, обучение, лечение и приобретение медикаментов",
+                        "Основным назначением налоговых льгот и вычетов является наполнение государственного бюджета",
+                        "Согласно законодательству РФ, некоторые доходы физических лиц не подлежат налогообложению",
+                        "С помощью налоговых льгот и налоговых вычетов государство облегчает положение социально-незащищенных слоёв населения"
+                    ],
+                    correct: [1, 3, 4]
+                },
+                {
+                    id: 2,
+                    num: "2",
+                    text: "Выберите верные суждения о налоговой системе Российской Федерации",
+                    type: "multiple",
+                    options: [
+                        "Налоговый вычет – это уменьшение налогооблагаемого дохода при исчислении НДФЛ, либо возврат части ранее уплаченного НДФЛ",
+                        "С помощью налоговых льгот и налоговых вычетов реализуется стимулирующая функция налогов",
+                        "Государственные пенсии не подлежат налогообложению",
+                        "Размер налогового вычета никогда не зависит от размера налоговой базы",
+                        "Для получения некоторых налоговых льгот и вычетов следует обратиться в Федеральную налоговую службу"
+                    ],
+                    correct: [0, 1, 2, 4]
+                },
+                {
+                    id: 3,
+                    num: "3",
+                    text: "Установите соответствие между примерами лиц и правовым статусом",
+                    type: "matching",
+                    pairs: [
+                        { letter: "А", desc: "Константин потерял ногу в автомобильной аварии и является инвалидом I группы", correct: 0 },
+                        { letter: "Б", desc: "Айгуль выполнила нормативы ГТО и прошла медицинскую диспансеризацию", correct: 0 },
+                        { letter: "В", desc: "Ирина окончила ВУЗ с красным дипломом и стала системным администратором", correct: 1 },
+                        { letter: "Г", desc: "Сергей приобрёл новый автомобиль LADA Granta", correct: 1 },
+                        { letter: "Д", desc: "Родители оплачивают обучение Тимура на первом курсе медицинского университета", correct: 0 }
+                    ],
+                    options: ["имеют право на налоговый вычет", "не имеют право на налоговый вычет"]
+                },
+                {
+                    id: 4,
+                    num: "4",
+                    text: "Установите соответствие между примерами лиц и правовым статусом",
+                    type: "matching",
+                    pairs: [
+                        { letter: "А", desc: "Ахмад участвовал в ликвидации последствий аварии на Чернобыльской АЭС", correct: 0 },
+                        { letter: "Б", desc: "Николай приобрёл туристическую путёвку на остров Бали", correct: 1 },
+                        { letter: "В", desc: "Анастасия попала в аварию и потратила на лечение более 1 миллиона рублей", correct: 0 },
+                        { letter: "Г", desc: "Марина воспитывает сына в возрасте 8 лет", correct: 0 },
+                        { letter: "Д", desc: "Александр пожертвовал 50000 рублей приходу русской православной церкви", correct: 0 }
+                    ],
+                    options: ["имеют право на налоговый вычет", "не имеют право на налоговый вычет"]
+                },
+                {
+                    id: 5,
+                    num: "5",
+                    text: "Установите соответствие между примерами лиц, владеющих недвижимостью, и их правовым статусом",
+                    type: "matching",
+                    pairs: [
+                        { letter: "А", desc: "Семидесятилетняя София Александровна получает пенсию по старости", correct: 0 },
+                        { letter: "Б", desc: "Виктор слеп от рождения", correct: 0 },
+                        { letter: "В", desc: "Тридцатилетний Артём сдаёт свою квартиру в аренду на длительный срок", correct: 1 },
+                        { letter: "Г", desc: "Аркадий служит оператором дронов в зоне СВО", correct: 0 },
+                        { letter: "Д", desc: "Сорокадвухлетний Чингис занимается разведением овец на своём земельном участке", correct: 1 }
+                    ],
+                    options: ["имеют право на налоговую льготу по статье 407 НК РФ", "не имеют право на налоговую льготу по статье 407 НК РФ"]
+                },
+                {
+                    id: 6,
+                    num: "6",
+                    text: "Установите соответствие между примерами доходов и их налоговым статусом",
+                    type: "matching",
+                    pairs: [
+                        { letter: "А", desc: "Мария получила сертификат на материнский капитал", correct: 0 },
+                        { letter: "Б", desc: "Иван работает водителем автобуса и получает заработную плату", correct: 1 },
+                        { letter: "В", desc: "ИП Батыр выполнил контракт и получил прибыль", correct: 1 },
+                        { letter: "Г", desc: "Зухра получает вознаграждение за сдачу крови", correct: 1 },
+                        { letter: "Д", desc: "Иннокентий получает стипендию от государства", correct: 0 }
+                    ],
+                    options: ["не облагаются налогами", "облагаются налогами"]
+                },
+                {
+                    id: 7,
+                    num: "7",
+                    text: "Установите соответствие между примерами доходов и их налоговым статусом",
+                    type: "matching",
+                    pairs: [
+                        { letter: "А", desc: "Ратибор выиграл в лотерею 75000 рублей", correct: 1 },
+                        { letter: "Б", desc: "Иосиф унаследовал автомобиль своего отца", correct: 0 },
+                        { letter: "В", desc: "Эльза получила премию от своего работодателя", correct: 1 },
+                        { letter: "Г", desc: "Армен получил пособие по безработице", correct: 0 },
+                        { letter: "Д", desc: "Елена получила дивиденды от своих акций", correct: 1 }
+                    ],
+                    options: ["не облагаются налогами", "облагаются налогами"]
+                },
+                {
+                    id: 8,
+                    num: "8",
+                    text: "Что из перечисленного Вы включили бы в слайд 'Доходы, не подлежащие налогообложению'?",
+                    type: "multiple",
+                    options: [
+                        "Гранты для поддержки образования, науки и искусства",
+                        "Пособия по беременности и родам",
+                        "Сдельная заработная плата",
+                        "Купонный доход владельца облигаций",
+                        "Выигрыши от ставок на спорт, превышающие 4000 рублей",
+                        "Доход от сдачи квартиры в аренду"
+                    ],
+                    correct: [0, 1]
+                },
+                {
+                    id: 9,
+                    num: "9",
+                    text: "Что из перечисленного Вы расположили бы на плакате 'Доходы, не подлежащие налогообложению'?",
+                    type: "multiple",
+                    options: [
+                        "Прибыль индивидуальных предпринимателей",
+                        "Пособия по рождению первого и второго ребёнка",
+                        "Пенсии по государственному пенсионному обеспечению",
+                        "Дивиденды, получаемые налогоплательщиками",
+                        "Алименты, получаемые налогоплательщиками",
+                        "Доходы, полученные от членов семьи в порядке дарения"
+                    ],
+                    correct: [1, 2, 4, 5]
+                },
+                {
+                    id: 10,
+                    num: "10",
+                    text: "Какие действия позволяют Оксане получить налоговый вычет?",
+                    type: "multiple",
+                    options: [
+                        "Оксана сама оплатила медицинские процедуры в клинике",
+                        "Оксана оплачивает обучение дочери в балетной школе",
+                        "Оксана исповедует буддизм",
+                        "Оксана вместе с мужем воспитывают маленького сына",
+                        "Оксана владеет мотоциклом",
+                        "Оксана проголосовала на выборах Президента РФ"
+                    ],
+                    correct: [0, 1, 3]
+                },
+                {
+                    id: 11,
+                    num: "11",
+                    text: "Какие действия позволяют Константину получить налоговый вычет?",
+                    type: "multiple",
+                    options: [
+                        "Константин состоит в политической партии 'Единая Россия'",
+                        "Константин приобрёл собаку породы 'русская борзая'",
+                        "Константин пожертвовал деньги благотворительной организации",
+                        "Константин заплатил за лечение своей дочери",
+                        "Константин приобретает абонемент на посещение бассейна для сына",
+                        "Константин приобрёл ноутбук"
+                    ],
+                    correct: [2, 3, 4]
+                },
+                {
+                    id: 12,
+                    num: "12",
+                    text: "Какие действия позволяют Аслану получить налоговые льготы по статье 407 НК РФ?",
+                    type: "multiple",
+                    options: [
+                        "Аслан оказывает услуги грузоперевозок",
+                        "Аслан признан участником СВО",
+                        "У Аслана трое детей",
+                        "Аслан владеет грузовым автомобилем",
+                        "Аслан – военный пенсионер",
+                        "Аслан увлечён охотой и рыбалкой"
+                    ],
+                    correct: [1, 4]
+                }
+            ]
+        };
+
+        // Создаём отфильтрованные наборы
+        testData.multiple = testData.all.filter(q => q.type === "multiple");
+        testData.matching = testData.all.filter(q => q.type === "matching");
+
+        let currentTestType = 'all';
+        let currentQuestionIndex = 0;
+        let userAnswers = {};
+        let questions = [];
+
+        function startTest(type) {
+            currentTestType = type;
+            currentQuestionIndex = 0;
+            userAnswers = {};
+            questions = testData[type];
+
+            document.getElementById('menu-screen').classList.add('hidden');
+            document.getElementById('question-screen').classList.add('active');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = questions[currentQuestionIndex];
+            const percent = Math.round((currentQuestionIndex + 1) / questions.length * 100);
+
+            document.getElementById('progress-fill').style.width = percent + '%';
+            document.getElementById('progress-text').textContent = `Вопрос ${currentQuestionIndex + 1} из ${questions.length}`;
+            document.getElementById('question-text').textContent = `№${q.num}. ${q.text}`;
+
+            const subtitle = q.type === 'matching' ? 'Установите соответствие' : 'Выберите все верные ответы';
+            document.getElementById('question-subtitle').textContent = subtitle;
+
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+
+            // Для вопросов на соответствие добавляем полное описание
+            if (q.type === 'matching') {
+                const header = document.createElement('div');
+                header.className = 'matching-header';
+                header.innerHTML = `<strong>ВАРИАНТЫ ОТВЕТОВ:</strong><br>`;
+                q.options.forEach((opt, idx) => {
+                    header.innerHTML += `${idx + 1}) ${opt}<br>`;
+                });
+                container.appendChild(header);
+            }
+
+            if (q.type === 'multiple') {
+                q.options.forEach((opt, idx) => {
+                    const checked = userAnswers[currentQuestionIndex]?.includes(idx) || false;
+                    const label = document.createElement('label');
+                    label.className = 'option-label' + (checked ? ' checked' : '');
+                    label.innerHTML = `<input type="checkbox" class="option-checkbox" ${checked ? 'checked' : ''}><span class="option-text">${idx + 1}) ${opt}</span>`;
+                    label.querySelector('input').onchange = () => updateAnswer(currentQuestionIndex, idx, label);
+                    container.appendChild(label);
+                });
+            } else {
+                q.pairs.forEach((pair, idx) => {
+                    const selected = userAnswers[currentQuestionIndex]?.[idx] ?? -1;
+                    const div = document.createElement('div');
+                    div.style.marginBottom = '16px';
+                    div.style.padding = '12px';
+                    div.style.border = '2px solid #e0e0e0';
+                    div.style.borderRadius = '8px';
+                    div.style.backgroundColor = '#fafafa';
+
+                    const desc = document.createElement('div');
+                    desc.style.fontSize = '13px';
+                    desc.style.marginBottom = '10px';
+                    desc.style.color = '#333';
+                    desc.style.lineHeight = '1.4';
+                    desc.innerHTML = `<strong>${pair.letter})</strong> ${pair.desc}`;
+                    div.appendChild(desc);
+
+                    const selectContainer = document.createElement('div');
+                    selectContainer.style.display = 'flex';
+                    selectContainer.style.gap = '8px';
+                    selectContainer.style.alignItems = 'center';
+
+                    const label = document.createElement('span');
+                    label.textContent = 'Ответ:';
+                    label.style.fontSize = '12px';
+                    label.style.color = '#666';
+                    label.style.fontWeight = '600';
+                    selectContainer.appendChild(label);
+
+                    const select = document.createElement('select');
+                    select.style.flex = '1';
+                    select.style.padding = '8px 10px';
+                    select.style.border = '2px solid #e0e0e0';
+                    select.style.borderRadius = '6px';
+                    select.style.fontSize = '13px';
+                    select.style.cursor = 'pointer';
+                    select.style.fontWeight = '500';
+                    select.style.color = '#333';
+
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = '-1';
+                    defaultOption.textContent = '-- Выберите ответ --';
+                    defaultOption.selected = selected === -1;
+                    select.appendChild(defaultOption);
+
+                    q.options.forEach((opt, optIdx) => {
+                        const option = document.createElement('option');
+                        option.value = optIdx;
+                        option.textContent = `${optIdx + 1}) ${opt}`;
+                        option.selected = selected === optIdx;
+                        select.appendChild(option);
+                    });
+
+                    select.onchange = () => updateMatchingAnswer(currentQuestionIndex, idx, parseInt(select.value));
+                    selectContainer.appendChild(select);
+                    div.appendChild(selectContainer);
+                    container.appendChild(div);
+                });
+            }
+
+            document.getElementById('prev-btn').disabled = currentQuestionIndex === 0;
+            document.getElementById('next-btn').style.display = currentQuestionIndex < questions.length - 1 ? 'block' : 'none';
+            document.getElementById('finish-btn').style.display = currentQuestionIndex === questions.length - 1 ? 'block' : 'none';
+        }
+
+        function updateAnswer(qIdx, optIdx, labelEl) {
+            if (!userAnswers[qIdx]) userAnswers[qIdx] = [];
+            if (labelEl.querySelector('input').checked) {
+                if (!userAnswers[qIdx].includes(optIdx)) userAnswers[qIdx].push(optIdx);
+                labelEl.classList.add('checked');
+            } else {
+                userAnswers[qIdx] = userAnswers[qIdx].filter(x => x !== optIdx);
+                labelEl.classList.remove('checked');
+            }
+        }
+
+        function updateMatchingAnswer(qIdx, pairIdx, optIdx) {
+            if (!userAnswers[qIdx]) userAnswers[qIdx] = {};
+            if (optIdx === -1) {
+                delete userAnswers[qIdx][pairIdx];
+            } else {
+                userAnswers[qIdx][pairIdx] = optIdx;
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                showQuestion();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                showQuestion();
+            }
+        }
+
+        function showResults() {
+            let correct = 0;
+            const reviewContainer = document.getElementById('review-container');
+            reviewContainer.innerHTML = '<div class="review-title">📝 Разбор ответов</div>';
+
+            questions.forEach((q, idx) => {
+                let isCorrect = false;
+
+                if (q.type === 'multiple') {
+                    const userAns = (userAnswers[idx] || []).sort((a, b) => a - b);
+                    const correctAns = [...q.correct].sort((a, b) => a - b);
+                    isCorrect = JSON.stringify(userAns) === JSON.stringify(correctAns);
+                    if (isCorrect) correct++;
+
+                    const qDiv = document.createElement('div');
+                    qDiv.className = 'review-question';
+                    const header = document.createElement('div');
+                    header.className = 'review-qheader ' + (isCorrect ? 'correct' : 'incorrect');
+                    header.textContent = (isCorrect ? '✓ ' : '✗ ') + 'Вопрос ' + q.num + ': ' + q.text;
+                    qDiv.appendChild(header);
+
+                    const body = document.createElement('div');
+                    body.className = 'review-qbody';
+
+                    // Correct answer summary box
+                    const ansBox = document.createElement('div');
+                    ansBox.className = 'correct-answer-box';
+                    const correctLabels = q.correct.map(i => (i+1) + ') ' + q.options[i]).join('; ');
+                    ansBox.innerHTML = '<strong>✅ Правильные ответы:</strong>' + correctLabels;
+                    body.appendChild(ansBox);
+
+                    // Legend
+                    const leg = document.createElement('div');
+                    leg.className = 'rev-legend';
+                    leg.innerHTML = '<span>✓ выбрал правильно</span><span>✗ выбрал неверно</span><span>! пропустил правильный</span>';
+                    body.appendChild(leg);
+
+                    q.options.forEach((opt, oi) => {
+                        const userChose = (userAnswers[idx] || []).includes(oi);
+                        const isRight = q.correct.includes(oi);
+                        let cls = 'nn', icon = '◦';
+                        if (userChose && isRight)  { cls = 'uc'; icon = '✓'; }
+                        else if (userChose && !isRight) { cls = 'uw'; icon = '✗'; }
+                        else if (!userChose && isRight) { cls = 'ms'; icon = '!'; }
+                        const row = document.createElement('div');
+                        row.className = 'rev-opt ' + cls;
+                        row.innerHTML = '<span>' + icon + '</span><span>' + (oi+1) + ') ' + opt + '</span>';
+                        body.appendChild(row);
+                    });
+                    qDiv.appendChild(body);
+                    reviewContainer.appendChild(qDiv);
+
+                } else {
+                    let allCorrect = true;
+                    for (let i = 0; i < q.pairs.length; i++) {
+                        if ((userAnswers[idx]?.[i] ?? -1) !== q.pairs[i].correct) { allCorrect = false; break; }
+                    }
+                    isCorrect = allCorrect;
+                    if (isCorrect) correct++;
+
+                    const qDiv = document.createElement('div');
+                    qDiv.className = 'review-question';
+                    const header = document.createElement('div');
+                    header.className = 'review-qheader ' + (isCorrect ? 'correct' : 'incorrect');
+                    header.textContent = (isCorrect ? '✓ ' : '✗ ') + 'Вопрос ' + q.num + ': ' + q.text;
+                    qDiv.appendChild(header);
+
+                    const body = document.createElement('div');
+                    body.className = 'review-qbody';
+
+                    // Correct answer summary box for matching
+                    const ansBox2 = document.createElement('div');
+                    ansBox2.className = 'correct-answer-box';
+                    const matchAnswers = q.pairs.map(p => p.letter + ') → ' + (p.correct+1) + ') ' + q.options[p.correct]).join('; ');
+                    ansBox2.innerHTML = '<strong>✅ Правильные ответы:</strong>' + matchAnswers;
+                    body.appendChild(ansBox2);
+
+                    // Show options legend
+                    const legend = document.createElement('div');
+                    legend.style.cssText = 'font-size:12px;color:#666;margin-bottom:8px;padding:6px 8px;background:#f0f0f0;border-radius:6px;';
+                    legend.innerHTML = '<strong>Варианты:</strong> ' + q.options.map((o,i)=>(i+1)+') '+o).join(' | ');
+                    body.appendChild(legend);
+
+                    q.pairs.forEach((pair, pi) => {
+                        const userChoice = userAnswers[idx]?.[pi] ?? -1;
+                        const pairOk = userChoice === pair.correct;
+                        const row = document.createElement('div');
+                        row.className = 'rev-pair ' + (pairOk ? 'pc' : 'pw');
+                        const icon = pairOk ? '✓' : '✗';
+                        const userText = userChoice === -1 ? 'не выбрано' : (userChoice+1)+') '+q.options[userChoice];
+                        const correctText = (pair.correct+1)+') '+q.options[pair.correct];
+                        row.innerHTML =
+                            '<span class="rev-pair-ltr">' + icon + ' ' + pair.letter + ')</span>' +
+                            '<div class="rev-pair-info">' +
+                            '<div style="font-size:13px">' + pair.desc + '</div>' +
+                            '<div class="rev-pair-ans">' +
+                            (pairOk
+                                ? '<span class="ca">✓ Правильно: ' + correctText + '</span>'
+                                : '<span class="ua">Ваш ответ: ' + userText + '</span> → <span class="ca">Правильно: ' + correctText + '</span>'
+                            ) +
+                            '</div></div>';
+                        body.appendChild(row);
+                    });
+                    qDiv.appendChild(body);
+                    reviewContainer.appendChild(qDiv);
+                }
+            });
+
+            const percent = Math.round(correct / questions.length * 100);
+            document.getElementById('score-circle').textContent = percent + '%';
+            let msg = '';
+            if (percent === 100) msg = '🏆 Отлично! Все верно!';
+            else if (percent >= 70) msg = '✅ Хороший результат!';
+            else if (percent >= 40) msg = '📚 Нужно повторить материал';
+            else msg = '❌ Требуется серьёзная подготовка';
+            document.getElementById('result-text').textContent = msg;
+            document.getElementById('correct-count').textContent = `${correct} из ${questions.length} вопросов`;
+
+            document.getElementById('question-screen').classList.remove('active');
+            document.getElementById('results-screen').classList.add('active');
+        }
+
+        function backToMenu() {
+            document.getElementById('results-screen').classList.remove('active');
+            document.getElementById('question-screen').classList.remove('active');
+            document.getElementById('menu-screen').classList.remove('hidden');
+        }
+
+        // Инициализация - сразу запускаем тест со всеми вопросами
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => startTest('all'));
+        } else {
+            startTest('all');
+        }
+    </script>
+</body>
+</html>
