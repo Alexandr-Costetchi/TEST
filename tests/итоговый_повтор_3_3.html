@@ -311,18 +311,26 @@ function sendResults(results) {
   const pct=Math.round(cc/QUESTIONS.length*100);
   const now=new Date(), ds=now.toLocaleDateString('ru-RU')+' '+now.toLocaleTimeString('ru-RU');
   const testTitle = document.title;
-  fetch('https://formsubmit.co/ajax/gascfif@yandex.com', {
+  const details = results.map(r => ({
+    q: r.q.id,
+    chosen: [...r.chosen].sort().join(', ') || '—',
+    correct: [...r.correct].sort().join(', '),
+    status: r.status
+  }));
+  fetch('https://script.google.com/macros/s/AKfycbxUNNmmBxwBNHr-hweNoGR8bGDW0CqHNvdSbdG20Sms3UVOiV_8yICDqysOZms-aMH1/exec', {
     method: 'POST',
-    headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+    mode: 'no-cors',
+    headers: {'Content-Type': 'text/plain'},
     body: JSON.stringify({
-      _subject: '📊 ' + studentName + ' — ' + testTitle,
       name: studentName,
-      email: 'test@noreply.com',
-      'Ученик': studentName,
-      'Тест': testTitle,
-      'Результат': cc + ' из ' + QUESTIONS.length + ' (' + pct + '%)',
-      'Верно': cc, 'Частично': pc, 'Неверно': wc,
-      'Дата и время': ds
+      testName: testTitle,
+      date: ds,
+      score_pct: pct,
+      correct: cc,
+      partial: pc,
+      wrong: wc,
+      total: QUESTIONS.length,
+      details: JSON.stringify(details)
     })
   })
     .then(()=>{st.className='send-status sent'; st.textContent='✓ Результаты отправлены учителю';})
