@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -743,6 +744,7 @@
 
         function showResults() {
             let correct = 0;
+const detailsArr = [];
             const reviewContainer = document.getElementById('review-container');
             reviewContainer.innerHTML = '<div class="review-title">📝 Разбор ответов</div>';
 
@@ -754,6 +756,13 @@
                     const correctAns = [...q.correct].sort((a, b) => a - b);
                     isCorrect = JSON.stringify(userAns) === JSON.stringify(correctAns);
                     if (isCorrect) correct++;
+        // Детали для письма
+        detailsArr.push({
+          q: q.num,
+          chosen: (userAnswers[idx] || []).map(i => i + 1).sort((a, b) => a - b).join(', ') || '—',
+          correct: q.correct.map(i => i + 1).sort((a, b) => a - b).join(', '),
+          status: isCorrect ? 'correct' : 'wrong'
+        });
 
                     const qDiv = document.createElement('div');
                     qDiv.className = 'review-question';
@@ -800,6 +809,13 @@
                     }
                     isCorrect = allCorrect;
                     if (isCorrect) correct++;
+        // Детали для письма
+        detailsArr.push({
+          q: q.num,
+          chosen: q.pairs.map((p, pi) => { const uc = userAnswers[idx]?.[pi] ?? -1; return p.letter + '->' + (uc === -1 ? '?' : (uc + 1)); }).join(', '),
+          correct: q.pairs.map(p => p.letter + '->' + (p.correct + 1)).join(', '),
+          status: isCorrect ? 'correct' : 'wrong'
+        });
 
                     const qDiv = document.createElement('div');
                     qDiv.className = 'review-question';
@@ -877,7 +893,7 @@
                         partial: 0,
                         wrong: questions.length - correct,
                         total: questions.length,
-                        details: JSON.stringify([])
+                        details: JSON.stringify(detailsArr)
                     })
                 }).catch(()=>{});
             })();
