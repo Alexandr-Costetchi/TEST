@@ -864,18 +864,20 @@
                 const name = window._studentName || 'Аноним';
                 const testTitle = 'Налоговые льготы и вычеты';
                 const timestamp = new Date().toLocaleString('ru-RU');
-                fetch('https://formsubmit.co/ajax/gascfif@yandex.com', {
+                fetch('https://script.google.com/macros/s/AKfycbxUNNmmBxwBNHr-hweNoGR8bGDW0CqHNvdSbdG20Sms3UVOiV_8yICDqysOZms-aMH1/exec', {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+                    mode: 'no-cors',
+                    headers: {'Content-Type': 'text/plain'},
                     body: JSON.stringify({
-                        _subject: '📊 ' + name + ' — тест: ' + testTitle,
                         name: name,
-                        email: 'test@noreply.com',
-                        'Ученик': name,
-                        'Тест': testTitle,
-                        'Результат': correct + ' из ' + questions.length + ' (' + percent + '%)',
-                        'Оценка': msg,
-                        'Дата и время': timestamp
+                        testName: testTitle,
+                        date: timestamp,
+                        score_pct: percent,
+                        correct: correct,
+                        partial: 0,
+                        wrong: questions.length - correct,
+                        total: questions.length,
+                        details: JSON.stringify([])
                     })
                 }).catch(()=>{});
             })();
