@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#667eea">
+<title>Урок №1. Тест 1: Человек. Мировоззрение</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 10px; }
+.container { width: 100%; max-width: 700px; background: white; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); padding: 20px; }
+.header { text-align: center; margin-bottom: 20px; }
+.header h1 { color: #333; font-size: 22px; margin-bottom: 6px; }
+.header p { color: #666; font-size: 13px; }
+.name-input { width: 100%; padding: 14px; border: 2px solid #ddd; border-radius: 10px; font-size: 16px; outline: none; margin: 10px 0 16px; transition: border-color 0.2s; font-family: inherit; }
+.name-input:focus { border-color: #667eea; }
+.test-btn { width: 100%; padding: 16px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; }
+.question-screen { display: none; }
+.question-screen.active { display: block; }
+.progress-bar { width: 100%; height: 6px; background: #e0e0e0; border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); transition: width 0.3s; }
+.progress-text { font-size: 12px; color: #888; text-align: center; margin-bottom: 14px; }
+.question-text { font-size: 15px; font-weight: 600; color: #333; margin-bottom: 8px; line-height: 1.5; }
+.question-subtitle { font-size: 12px; color: #888; margin-bottom: 14px; font-style: italic; }
+.options { display: flex; flex-direction: column; gap: 9px; margin-bottom: 18px; }
+.option-label { display: flex; align-items: flex-start; padding: 11px 12px; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+.option-label.checked { border-color: #667eea; background: #f0ebff; }
+.option-checkbox { width: 18px; height: 18px; min-width: 18px; margin-right: 10px; margin-top: 2px; cursor: pointer; accent-color: #667eea; }
+.option-text { font-size: 13px; color: #333; line-height: 1.4; }
+.nav-buttons { display: flex; gap: 10px; }
+.nav-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; min-height: 44px; }
+.prev-btn { background: #f0f0f0; color: #333; }
+.prev-btn:disabled { opacity: 0.5; }
+.next-btn, .finish-btn { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+.results-screen { display: none; text-align: center; }
+.results-screen.active { display: block; }
+.score-circle { width: 100px; height: 100px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 16px auto; font-size: 32px; font-weight: bold; color: white; }
+.result-title { font-size: 20px; font-weight: 600; color: #333; margin: 16px 0 8px; }
+.result-text { font-size: 14px; color: #666; margin: 8px 0; }
+.correct-count { font-size: 14px; color: #888; margin: 8px 0; }
+.review-section { margin-top: 20px; text-align: left; }
+.review-title { font-size: 15px; font-weight: 700; color: #333; margin-bottom: 12px; text-align: center; padding-bottom: 8px; border-bottom: 2px solid #e0e0e0; }
+.review-question { margin-bottom: 14px; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden; }
+.review-qheader { padding: 9px 13px; font-size: 12px; font-weight: 600; color: #fff; line-height: 1.4; }
+.review-qheader.correct { background: linear-gradient(135deg, #43a047, #2e7d32); }
+.review-qheader.incorrect { background: linear-gradient(135deg, #e53935, #b71c1c); }
+.review-qbody { padding: 10px 13px; background: #fafafa; }
+.correct-answer-box { background: #e8f5e9; border: 1.5px solid #43a047; border-radius: 7px; padding: 7px 11px; margin-bottom: 8px; font-size: 12px; color: #1b5e20; }
+.correct-answer-box strong { display: block; margin-bottom: 2px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+.rev-legend { display: flex; gap: 10px; flex-wrap: wrap; font-size: 11px; margin-bottom: 8px; color: #666; }
+.rev-opt { display: flex; gap: 7px; padding: 4px 7px; border-radius: 5px; margin-bottom: 3px; font-size: 12px; line-height: 1.4; }
+.rev-opt.uc { background: #e8f5e9; color: #2e7d32; font-weight: 600; }
+.rev-opt.uw { background: #ffebee; color: #c62828; font-weight: 600; }
+.rev-opt.ms { background: #fff3e0; color: #e65100; font-weight: 600; border-left: 3px solid #ff9800; }
+.rev-opt.nn { color: #888; }
+.back-btn { width: 100%; padding: 12px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 16px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div id="name-screen">
+    <div class="header">
+      <h1>📚 Урок №1. Тест 1</h1>
+      <p>Человек в обществе. Мировоззрение. Деятельность</p>
+    </div>
+    <input type="text" id="student-name" class="name-input" placeholder="Имя и фамилия" autocomplete="name" onkeyup="if(event.key==='Enter')startTest()">
+    <button class="test-btn" onclick="startTest()">▶ Начать тест (20 вопросов)</button>
+  </div>
+  <div class="question-screen" id="question-screen">
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    <div class="progress-text" id="progress-text"></div>
+    <div class="question-text" id="question-text"></div>
+    <div class="question-subtitle" id="question-subtitle"></div>
+    <div class="options" id="options-container"></div>
+    <div class="nav-buttons">
+      <button class="nav-btn prev-btn" id="prev-btn" onclick="prevQ()">← Назад</button>
+      <button class="nav-btn next-btn" id="next-btn" onclick="nextQ()">Дальше →</button>
+      <button class="nav-btn finish-btn" id="finish-btn" onclick="showResults()">Завершить</button>
+    </div>
+  </div>
+  <div class="results-screen" id="results-screen">
+    <div class="result-title">Результаты теста</div>
+    <div class="score-circle" id="score-circle">0%</div>
+    <p class="result-text" id="result-text"></p>
+    <div class="correct-count">Правильно: <strong id="correct-count">0/20</strong></div>
+    <div id="review-container" class="review-section"></div>
+    <button class="back-btn" onclick="location.reload()">↩ Пройти заново</button>
+  </div>
+</div>
+<script>
+const questions = [
+  {num:1, text:"Найдите в приведённом списке свойства человека, имеющие социальную природу. Запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["способность к совместной преобразовательной деятельности","стремление к самореализации","умение приспосабливаться к природным условиям","устойчивые взгляды на мир и своё место в нём","потребность в воде, пище, отдыхе"], correct:[0,1,3]},
+  {num:2, text:"Найдите в приведённом ниже списке черты человека, обусловленные биологически, и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["возрастные и половые различия","темперамент","особенности нервной системы","самооценка","опыт","особенности мировоззрения"], correct:[0,1,2]},
+  {num:3, text:"Найдите в приведённом ниже списке особенности человека, имеющие преимущественно социальную природу, и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["преобразовывать окружающую среду","видеть цель своих действий","адаптироваться к природным условиям","мыслить","производить потомство","чередовать периоды активности и отдыха"], correct:[0,1,3]},
+  {num:4, text:"Выберите верные суждения о соотношении биологического и социального в человеке и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные суждения", options:["Последовательность основных стадий жизни человека, при которой детство сменяется зрелостью, а затем наступает старость, биологически обусловлена.","Становление человека как личности связано с приобретением социальных черт и качеств.","Человек наследует моральные ценности, так же, как задатки к определённым видам деятельности.","Влияние генетических факторов на развитие способностей человека служит выражением его социальной сущности.","Природная предрасположенность человека к тем или иным видам деятельности проявляется в социальных обстоятельствах."], correct:[0,1,4]},
+  {num:5, text:"Выберите верные суждения о качествах человека как личности и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные суждения", options:["Качества человека как личности проявляются прежде всего в особенностях мышления и памяти.","Человеку как личности прежде всего свойственно приобретение социальных качеств.","Человека как личность в первую очередь характеризует протекание процессов психики.","Качества человека как личности проявляются прежде всего в его участии в жизни общества.","Человека как личность в первую очередь характеризуют унаследованные качества."], correct:[1,3]},
+  {num:6, text:"Выберите верные суждения о человеке и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные суждения", options:["Духовные потребности человека связаны с его биологической сущностью.","Индивид – единичный представитель человечества.","К социальным потребностям относят потребности в пище, воде, воздухе и др.","Свобода человека включает в себя возможность выбора между добром и злом.","Личность – совокупность социально значимых качеств индивида, формирующихся в процессе общественной жизни."], correct:[1,3,4]},
+  {num:7, text:"Алине 22 года. Найдите в приведённом списке черты (качества), имеющие социальный характер. Запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Алина добрая и отзывчивая.","Алина – внешне привлекательная девушка.","Алина – дисциплинированный работник.","Алина благожелательно относится к коллегам.","Алина аккуратная, дома у неё порядок.","У Алины светлые волосы и голубые глаза."], correct:[0,2,3,4]},
+  {num:8, text:"Кириллу 16 лет. Найдите в приведённом списке социальные характеристики Кирилла. Запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["У Кирилла светлые волосы и голубые глаза.","Рост Кирилла – 180 см.","Кирилл помогает родителям ухаживать за больной бабушкой.","Кирилл – сангвиник по темпераменту.","Кирилл – добрый и отзывчивый человек.","Кирилл хорошо учится в школе."], correct:[2,4,5]},
+  {num:9, text:"Ученик 10-го класса готовит исследование о биосоциальной сущности человека. Он записал исключительные проявления социальной природы человека. Запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["членораздельная речь","готовность к общественно-полезному труду","наличие инстинктов","способность к продолжению рода","наличие физиологических потребностей","осознание ответственности за свои действия"], correct:[0,1,5]},
+  {num:10, text:"Вы помогаете учителю оформить слайд «Черты сходства человека с другими живыми существами». Что из перечисленного Вы включили бы в этот слайд? Запишите цифры.", subtitle:"Выберите все верные варианты", options:["инстинктивные реакции на воздействие среды","осознанная постановка цели","использование природных материалов","наличие словесной речи","забота о потомстве","стремление понять закономерности развития природы и общества"], correct:[0,2,4]},
+  {num:11, text:"Выберите верные суждения о мировоззрении и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные суждения", options:["Мировоззрение всегда тесно связано с переживаемыми обществом стадиями исторического развития.","Мировоззрение даёт человеку ориентиры и цели для его практической деятельности.","Понятие «мировоззрение» тождественно понятию «духовный мир человека».","Процесс формирования мировоззрения всегда носит осознанный характер.","Мировоззрение включает в себя систему взглядов, понятий и представлений об окружающем мире."], correct:[0,1,4]},
+  {num:12, text:"В Бурятии распространено мировоззрение, основой которого являются священные книги буддистов. Какие иные признаки свидетельствуют о преобладании религиозного мировоззрения? Запишите цифры.", subtitle:"Выберите все верные варианты", options:["признание истинности религиозных догматов независимо от их научного обоснования","признание сверхъестественного начала","опора на жизненный опыт","ориентация на решение проблем, связанных с духовными потребностями человека","обоснование утверждений, апеллируя к разуму человека","теоретическое обобщение итогов достижений человеческого познания"], correct:[0,1,3]},
+  {num:13, text:"Выберите верные суждения о мировоззрении и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные суждения", options:["У отдельного человека становление мировоззрения всегда происходит стихийно.","На конкретно-образном уровне мировоззрения формируется миропонимание.","В мировоззрении переплетены знания, ценности и программы действия.","В основе сознательно формируемого мировоззрения лежат наука и философия.","Мировоззрение имеет эмоционально-психологическую сторону."], correct:[2,3,4]},
+  {num:14, text:"На уроке ученик получил задание сделать сообщение о ценностях духовной жизни. Какие идеалы ценностей, к которым стремится личность, должны быть включены в доклад? Запишите цифры.", subtitle:"Выберите все верные варианты", options:["истина","добро","выгода","этническая исключительность","патриотизм","прагматизм"], correct:[0,1,4]},
+  {num:15, text:"Ниже приведён перечень характеристик. Все они, за исключением двух, относятся к типам мировоззрения. Найдите две характеристики, «выпадающие» из общего ряда.", subtitle:"Выберите два лишних варианта", options:["мифологическое","религиозное","политическое","философское","историческое","научное"], correct:[2,4]},
+  {num:16, text:"Ниже приведён перечень характеристик. Все они, за исключением двух, относятся к характеристикам научного мировоззрения. Найдите две характеристики, «выпадающие» из общего ряда.", subtitle:"Выберите два лишних варианта", options:["системность и целостность","критическое восприятие явлений действительности","экспериментальный подход","опора на логику и доказательность","принятие важнейших истин на веру","опора на повседневный опыт"], correct:[4,5]},
+  {num:17, text:"Ниже приведён перечень характеристик. Все они, за исключением двух, относятся к типам мировоззрения. Найдите две характеристики, «выпадающие» из общего ряда.", subtitle:"Выберите два лишних варианта", options:["мифологическое","религиозное","политическое","философское","духовное","научное"], correct:[2,4]},
+  {num:18, text:"Ниже приведён перечень характеристик. Все они, за исключением двух, относятся к характеристикам религиозного мировоззрения. Найдите две характеристики, «выпадающие» из общего ряда.", subtitle:"Выберите два лишних варианта", options:["целостный взгляд на мир","догматизм","вера в сверхъестественное","поклонение высшим силам","образность и вымышленность","отсутствие самокритичности"], correct:[4,5]},
+  {num:19, text:"Ниже приведён перечень характеристик. Все они, за исключением двух, относятся к характеристикам научного мировоззрения. Найдите две характеристики, «выпадающие» из общего ряда.", subtitle:"Выберите два лишних варианта", options:["древнейший вид","фантастическое видение мира","самокритичность","системность","доказательность","логическая обоснованность"], correct:[0,1]},
+  {num:20, text:"Выберите верные суждения о деятельности человека и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные суждения", options:["В отличие от поведения животных, деятельность человека ориентирована на удовлетворение потребностей, действующих в данный момент времени.","Деятельность человека всецело определяется условными рефлексами.","Структура деятельности включает в себя такие компоненты, как цель, средства достижения и конечный результат.","Деятельность человека вызывается социальными потребностями.","Духовная деятельность проявляется в создании идей, образов и культурных ценностей."], correct:[2,3,4]}
+];
+
+let currentIdx = 0;
+let userAnswers = {};
+
+function startTest() {
+  const inp = document.getElementById('student-name');
+  const name = inp.value.trim();
+  if (!name) { inp.style.borderColor='#e53935'; inp.placeholder='Введите имя'; return; }
+  window._studentName = name;
+  document.getElementById('name-screen').style.display = 'none';
+  document.getElementById('question-screen').classList.add('active');
+  showQ();
+}
+
+function showQ() {
+  const q = questions[currentIdx];
+  const pct = Math.round((currentIdx+1)/questions.length*100);
+  document.getElementById('progress-fill').style.width = pct+'%';
+  document.getElementById('progress-text').textContent = 'Вопрос '+(currentIdx+1)+' из '+questions.length;
+  document.getElementById('question-text').textContent = '№'+q.num+'. '+q.text;
+  document.getElementById('question-subtitle').textContent = q.subtitle;
+  const c = document.getElementById('options-container');
+  c.innerHTML = '';
+  q.options.forEach((opt, idx) => {
+    const checked = (userAnswers[currentIdx]||[]).includes(idx);
+    const label = document.createElement('label');
+    label.className = 'option-label'+(checked?' checked':'');
+    label.innerHTML = '<input type="checkbox" class="option-checkbox"'+(checked?' checked':'')+'><span class="option-text">'+(idx+1)+') '+opt+'</span>';
+    label.querySelector('input').onchange = () => {
+      if (!userAnswers[currentIdx]) userAnswers[currentIdx]=[];
+      if (label.querySelector('input').checked) { if(!userAnswers[currentIdx].includes(idx)) userAnswers[currentIdx].push(idx); label.classList.add('checked'); }
+      else { userAnswers[currentIdx]=userAnswers[currentIdx].filter(x=>x!==idx); label.classList.remove('checked'); }
+    };
+    c.appendChild(label);
+  });
+  document.getElementById('prev-btn').disabled = currentIdx===0;
+  document.getElementById('next-btn').style.display = currentIdx<questions.length-1?'block':'none';
+  document.getElementById('finish-btn').style.display = currentIdx===questions.length-1?'block':'none';
+}
+
+function nextQ() { if(currentIdx<questions.length-1){currentIdx++;showQ();} }
+function prevQ() { if(currentIdx>0){currentIdx--;showQ();} }
+
+function showResults() {
+  let correct=0;
+  const detailsArr=[];
+  const rc=document.getElementById('review-container');
+  rc.innerHTML='<div class="review-title">📝 Разбор ответов</div>';
+  questions.forEach((q,idx) => {
+    const userAns=(userAnswers[idx]||[]).slice().sort((a,b)=>a-b);
+    const corrAns=[...q.correct].sort((a,b)=>a-b);
+    const isCorrect=JSON.stringify(userAns)===JSON.stringify(corrAns);
+    if(isCorrect) correct++;
+    detailsArr.push({q:q.num, chosen:userAns.map(i=>i+1).join(', ')||'—', correct:corrAns.map(i=>i+1).join(', '), status:isCorrect?'correct':'wrong'});
+    const qDiv=document.createElement('div'); qDiv.className='review-question';
+    const hdr=document.createElement('div'); hdr.className='review-qheader '+(isCorrect?'correct':'incorrect');
+    hdr.textContent=(isCorrect?'✓ ':'✗ ')+'Вопрос '+q.num+': '+q.text.substring(0,80)+'...';
+    qDiv.appendChild(hdr);
+    const body=document.createElement('div'); body.className='review-qbody';
+    const ab=document.createElement('div'); ab.className='correct-answer-box';
+    ab.innerHTML='<strong>✅ Правильные ответы:</strong>'+q.correct.map(i=>(i+1)+') '+q.options[i]).join('; ');
+    body.appendChild(ab);
+    const leg=document.createElement('div'); leg.className='rev-legend';
+    leg.innerHTML='<span>✓ выбрал правильно</span><span>✗ выбрал неверно</span><span>! пропустил правильный</span>';
+    body.appendChild(leg);
+    q.options.forEach((opt,oi)=>{
+      const uChose=(userAnswers[idx]||[]).includes(oi), isRight=q.correct.includes(oi);
+      let cls='nn',icon='◦';
+      if(uChose&&isRight){cls='uc';icon='✓';}
+      else if(uChose&&!isRight){cls='uw';icon='✗';}
+      else if(!uChose&&isRight){cls='ms';icon='!';}
+      const row=document.createElement('div'); row.className='rev-opt '+cls;
+      row.innerHTML='<span>'+icon+'</span><span>'+(oi+1)+') '+opt+'</span>';
+      body.appendChild(row);
+    });
+    qDiv.appendChild(body); rc.appendChild(qDiv);
+  });
+  const pct=Math.round(correct/questions.length*100);
+  document.getElementById('score-circle').textContent=pct+'%';
+  let msg='';
+  if(pct===100) msg='🏆 Отлично! Все верно!';
+  else if(pct>=70) msg='✅ Хороший результат!';
+  else if(pct>=40) msg='📚 Нужно повторить материал';
+  else msg='❌ Требуется серьёзная подготовка';
+  document.getElementById('result-text').textContent=msg;
+  document.getElementById('correct-count').textContent=correct+' из '+questions.length+' вопросов';
+  (function(){
+    const name=window._studentName||'Аноним';
+    const ts=new Date().toLocaleString('ru-RU');
+    fetch('https://script.google.com/macros/s/AKfycbxUNNmmBxwBNHr-hweNoGR8bGDW0CqHNvdSbdG20Sms3UVOiV_8yICDqysOZms-aMH1/exec',{
+      method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({name:name,testName:'Урок 1. Тест 1: Человек. Мировоззрение',date:ts,score_pct:pct,correct:correct,partial:0,wrong:questions.length-correct,total:questions.length,details:JSON.stringify(detailsArr)})
+    }).catch(()=>{});
+  })();
+  document.getElementById('question-screen').classList.remove('active');
+  document.getElementById('results-screen').classList.add('active');
+}
+</script>
+</body>
+</html>
