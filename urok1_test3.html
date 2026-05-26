@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#f7971e">
+<title>Урок №1. Тест 3: Общество. Культура. Глобализация</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 10px; }
+.container { width: 100%; max-width: 700px; background: white; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); padding: 20px; }
+.header { text-align: center; margin-bottom: 20px; }
+.header h1 { color: #333; font-size: 22px; margin-bottom: 6px; }
+.header p { color: #666; font-size: 13px; }
+.name-input { width: 100%; padding: 14px; border: 2px solid #ddd; border-radius: 10px; font-size: 16px; outline: none; margin: 10px 0 16px; transition: border-color 0.2s; font-family: inherit; }
+.name-input:focus { border-color: #f7971e; }
+.test-btn { width: 100%; padding: 16px; background: linear-gradient(135deg, #f7971e, #ffd200); color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; }
+.question-screen { display: none; }
+.question-screen.active { display: block; }
+.progress-bar { width: 100%; height: 6px; background: #e0e0e0; border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, #f7971e, #ffd200); transition: width 0.3s; }
+.progress-text { font-size: 12px; color: #888; text-align: center; margin-bottom: 14px; }
+.question-text { font-size: 15px; font-weight: 600; color: #333; margin-bottom: 8px; line-height: 1.5; }
+.question-subtitle { font-size: 12px; color: #888; margin-bottom: 14px; font-style: italic; }
+.options { display: flex; flex-direction: column; gap: 9px; margin-bottom: 18px; }
+.option-label { display: flex; align-items: flex-start; padding: 11px 12px; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+.option-label.checked { border-color: #f7971e; background: #fff8e1; }
+.option-checkbox { width: 18px; height: 18px; min-width: 18px; margin-right: 10px; margin-top: 2px; cursor: pointer; accent-color: #f7971e; }
+.option-text { font-size: 13px; color: #333; line-height: 1.4; }
+.nav-buttons { display: flex; gap: 10px; }
+.nav-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; min-height: 44px; }
+.prev-btn { background: #f0f0f0; color: #333; }
+.prev-btn:disabled { opacity: 0.5; }
+.next-btn, .finish-btn { background: linear-gradient(135deg, #f7971e, #ffd200); color: white; }
+.results-screen { display: none; text-align: center; }
+.results-screen.active { display: block; }
+.score-circle { width: 100px; height: 100px; background: linear-gradient(135deg, #f7971e, #ffd200); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 16px auto; font-size: 32px; font-weight: bold; color: white; }
+.result-title { font-size: 20px; font-weight: 600; color: #333; margin: 16px 0 8px; }
+.result-text { font-size: 14px; color: #666; margin: 8px 0; }
+.correct-count { font-size: 14px; color: #888; margin: 8px 0; }
+.review-section { margin-top: 20px; text-align: left; }
+.review-title { font-size: 15px; font-weight: 700; color: #333; margin-bottom: 12px; text-align: center; padding-bottom: 8px; border-bottom: 2px solid #e0e0e0; }
+.review-question { margin-bottom: 14px; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden; }
+.review-qheader { padding: 9px 13px; font-size: 12px; font-weight: 600; color: #fff; line-height: 1.4; }
+.review-qheader.correct { background: linear-gradient(135deg, #43a047, #2e7d32); }
+.review-qheader.incorrect { background: linear-gradient(135deg, #e53935, #b71c1c); }
+.review-qbody { padding: 10px 13px; background: #fafafa; }
+.correct-answer-box { background: #e8f5e9; border: 1.5px solid #43a047; border-radius: 7px; padding: 7px 11px; margin-bottom: 8px; font-size: 12px; color: #1b5e20; }
+.correct-answer-box strong { display: block; margin-bottom: 2px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+.rev-legend { display: flex; gap: 10px; flex-wrap: wrap; font-size: 11px; margin-bottom: 8px; color: #666; }
+.rev-opt { display: flex; gap: 7px; padding: 4px 7px; border-radius: 5px; margin-bottom: 3px; font-size: 12px; line-height: 1.4; }
+.rev-opt.uc { background: #e8f5e9; color: #2e7d32; font-weight: 600; }
+.rev-opt.uw { background: #ffebee; color: #c62828; font-weight: 600; }
+.rev-opt.ms { background: #fff3e0; color: #e65100; font-weight: 600; border-left: 3px solid #ff9800; }
+.rev-opt.nn { color: #888; }
+.back-btn { width: 100%; padding: 12px; background: linear-gradient(135deg, #f7971e, #ffd200); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 16px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div id="name-screen">
+    <div class="header">
+      <h1>📚 Урок №1. Тест 3</h1>
+      <p>Общество. Культура. Глобализация</p>
+    </div>
+    <input type="text" id="student-name" class="name-input" placeholder="Имя и фамилия" autocomplete="name" onkeyup="if(event.key==='Enter')startTest()">
+    <button class="test-btn" onclick="startTest()">▶ Начать тест (20 вопросов)</button>
+  </div>
+  <div class="question-screen" id="question-screen">
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    <div class="progress-text" id="progress-text"></div>
+    <div class="question-text" id="question-text"></div>
+    <div class="question-subtitle" id="question-subtitle"></div>
+    <div class="options" id="options-container"></div>
+    <div class="nav-buttons">
+      <button class="nav-btn prev-btn" id="prev-btn" onclick="prevQ()">← Назад</button>
+      <button class="nav-btn next-btn" id="next-btn" onclick="nextQ()">Дальше →</button>
+      <button class="nav-btn finish-btn" id="finish-btn" onclick="showResults()">Завершить</button>
+    </div>
+  </div>
+  <div class="results-screen" id="results-screen">
+    <div class="result-title">Результаты теста</div>
+    <div class="score-circle" id="score-circle">0%</div>
+    <p class="result-text" id="result-text"></p>
+    <div class="correct-count">Правильно: <strong id="correct-count">0/20</strong></div>
+    <div id="review-container" class="review-section"></div>
+    <button class="back-btn" onclick="location.reload()">↩ Пройти заново</button>
+  </div>
+</div>
+<script>
+const questions = [
+  {num:1, text:"Выберите верные суждения о социальных институтах и их видах и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные суждения", options:["Социальные институты начинают формироваться при переходе от традиционного к индустриальному типу общества.","Семья как социальный институт удовлетворяет потребности общества в безопасности и общественном порядке.","Социальный институт – это устойчивая форма организации совместной деятельности людей, связанная с установлением определённых норм.","Производство как социальный институт упорядочивает создание экономических благ для удовлетворения потребностей людей.","Социальный институт придаёт стабильность и упорядоченность взаимодействию людей."], correct:[2,3,4]},
+  {num:2, text:"В стране Z постоянно совершенствуются технологии производства. Какие признаки свидетельствуют о том, что страна Z развивается как общество индустриального типа? Запишите цифры.", subtitle:"Выберите все верные варианты", options:["появление сословной дифференциации населения","возрастание роли традиций и религии во всех сферах жизни общества","процесс урбанизации","переход к конвейерному производству","существование социальных норм, регулирующих жизнь общества","появление массовой культуры"], correct:[2,3,5]},
+  {num:3, text:"Один из слайдов презентации называется «Социальный прогресс». Что из перечисленного следует включить в этот слайд? Запишите цифры.", subtitle:"Выберите все верные варианты", options:["направление общественного развития","движение от более совершенного к менее совершенному","наличие подсистем и социальных институтов","совокупность социальных групп","противоречивый характер изменений","неоднозначность оценки результатов"], correct:[0,4,5]},
+  {num:4, text:"Выберите верные суждения о мышлении и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные суждения", options:["Мышление характеризуется способностью человека рассуждать, сравнивать, обобщать, делать выводы.","Анализ как операция мышления предполагает прежде всего выделение одной отличительной стороны свойства предмета или явления.","Мышление человека тесно связано с речью.","Мышление имеет исключительно коллективный характер.","Мышление позволяет получать знания, которые не могут быть непосредственно восприняты на чувственном этапе познания."], correct:[0,2,4]},
+  {num:5, text:"В стране Z повсеместно внедряются компьютеризированные системы управления. Какие иные признаки свидетельствуют о том, что страна Z развивается как постиндустриальное общество? Запишите цифры.", subtitle:"Выберите все верные варианты", options:["Созданы возможности для непрерывного образования человека на протяжении всей жизни, в том числе с использованием методик дистанционного обучения.","В целях регуляции социальных отношений издаются правовые акты.","Преобладают экстенсивные методы ведения хозяйства.","Природные факторы оказывают влияние на развитие общества.","На смену элите, связанной прежде всего с материальным производством, приходит элита, обладающая научным знанием и информацией.","Наибольшее развитие получают наукоёмкие, ресурсосберегающие отрасли производства."], correct:[0,4,5]},
+  {num:6, text:"Выберите верные суждения о глобализации и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные суждения", options:["Росту темпов глобальной интеграции способствовали достижения в развитии технологий, средств связи, науки и т.п.","Глобализация в социальной сфере связана с массовыми миграциями населения.","Глобализация приводит только к тому, что сокращаются возможности человека для самореализации.","К экономическим последствиям глобализации относят утрату специфики национальных культур.","Глобализация экономики связана с формированием планетарного экономического пространства, в котором отрасли, обмен информацией и технологиями определяются потребностями мирового хозяйства."], correct:[0,1,4]},
+  {num:7, text:"Парламент страны Z принял ряд новых законов. Какая информация свидетельствует о том, что они направлены на решение глобальных проблем человечества? Запишите цифры.", subtitle:"Выберите все верные варианты", options:["предоставлены налоговые льготы компаниям, работающим в сфере добычи сырьевых ресурсов","законы направлены на обуздание гонки вооружений, запрещение создания и применения систем оружия массового уничтожения","в государстве учреждена должность уполномоченного по правам человека","законодательно ужесточены наказания за агрессивный национализм, проявления религиозной и культурной нетерпимости","укрепляется международное сотрудничество по борьбе с терроризмом","введена административная ответственность за создание угрозы жизни или здоровью людей при содержании собак"], correct:[1,3,4]},
+  {num:8, text:"Выберите верные суждения о глобализации и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные суждения", options:["Глобализация – процесс интеграции государств и народов в разных областях деятельности.","К движущим силам глобализации относится деятельность транснациональных корпораций.","К причинам глобализации относится увеличение разрыва между развитыми и развивающимися странами.","Глобализация проявляется исключительно в экономической и политической сферах общественной жизни.","Необходимость решения глобальных проблем совместными усилиями способствует глобализации."], correct:[0,1,4]},
+  {num:9, text:"Ассоциация студентов опубликовала результаты исследований в Научном Альманахе. Профессиональное сообщество учёных признало данные выводы ненаучными. Какие из приведённых ниже оснований могли стать основой такой оценки учёных?", subtitle:"Выберите все верные варианты", options:["теория опровергает принятые в науке представления","члены ассоциации не имеют дипломов в области исследуемой науки","предположения не получили практического подтверждения, но были обоснованы теоретически","теорию разработали любители","версия содержала положения, опирающиеся на веру и не имеющие доказательств","выводы разработчиков нелогичны"], correct:[4,5]},
+  {num:10, text:"Вы делаете презентацию по теме «Глобальные проблемы современности». Один из слайдов называется «Глобальные экологические проблемы». Что из перечисленного следует включить в этот слайд?", subtitle:"Выберите все верные варианты", options:["потепление климата","глобальное перенаселение","истощение запасов рыбы в мировом океане","распространение вируса СПИДа","старение населения в развитых странах","озоновые дыры"], correct:[0,2,5]},
+  {num:11, text:"В стране M основные вопросы экономики решают, всецело опираясь на опыт предков. Какие иные признаки свидетельствуют о том, что страна M развивается как традиционное общество? Запишите цифры.", subtitle:"Выберите все верные варианты", options:["господство общинной формы собственности","широкое распространение научных знаний","широкое развитие средств массовой коммуникации","общественное сознание базируется на религиозных ценностях","высокий уровень урбанизации","преобладает патриархальный тип семьи"], correct:[0,3,5]},
+  {num:12, text:"Найдите в приведённом ниже списке признаки, характеризующие массовую культуру. Запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["высокая содержательная сложность","демократизм","ориентация на узкий круг ценителей","широкая рекламная кампания","соответствие изысканным вкусам","безграничное самовыражение автора"], correct:[1,3]},
+  {num:13, text:"Найдите в приведённом списке черты, свойственные народной культуре. Запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["анонимный характер авторства","преимущественно коммерческий характер","передаётся из поколения в поколение в устной форме","появилась раньше других форм культуры","рассчитана на широкий круг ценителей"], correct:[0,2,3]},
+  {num:14, text:"К произведениям элитарной (высокой) культуры искусствоведы относят классическую музыку: органные произведения Баха, скрипичную музыку Вивальди. Что позволяет искусствоведам сделать такой вывод?", subtitle:"Выберите все верные варианты", options:["самовыражение и свобода творчества авторов","сложность восприятия произведений неподготовленным слушателем","соответствие изысканным вкусам","высокая степень обобщения коллективного опыта","стереотипизация отражения человеком реального мира в музыке","ориентация музыки на широкую аудиторию"], correct:[0,1,2]},
+  {num:15, text:"Найдите в приведённом списке проявления массовой культуры и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["выставка художников-авангардистов","областной смотр фольклорных коллективов","открытие международного конкурса пианистов","премьера фильма ужасов","фестиваль рекламных роликов","переиздание детектива-бестселлера"], correct:[3,4,5]},
+  {num:16, text:"Телеканал транслировал телесериал о буднях городской больницы. Что позволяет отнести этот сериал к произведениям массовой культуры? Запишите цифры.", subtitle:"Выберите все верные варианты", options:["Авторы используют народную музыку и эпические сюжеты.","СМИ представили телесериал как удачный коммерческий проект.","Одной из главных целей создателей телесериала было собственное самовыражение.","Телесериал рассчитан на усреднённый потребительский вкус.","Телесериал интересен кругу знатоков.","Понимание телесериала не требует специальной подготовки."], correct:[1,3,5]},
+  {num:17, text:"Художник K. создал образы мирового хаоса и пустоты с помощью различных предметов, мебели, бумаги, газет. Какие признаки свидетельствуют о том, что его творчество относится к элитарной культуре? Запишите цифры.", subtitle:"Выберите все верные варианты", options:["удовлетворяет сиюминутные запросы людей","трудна для понимания неподготовленного человека","имеет широкую аудиторию","не обладает художественной ценностью","имеет ограниченный круг почитателей","произведения передаются из поколения в поколение"], correct:[1,4]},
+  {num:18, text:"Выберите верные суждения о формах культуры и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные суждения", options:["Коммерчески успешной может быть только массовая культура.","Элитарная культура прежде всего проявляется в самореализации художника и не ориентируется на широкую аудиторию.","Возникновение массовой культуры происходит в постиндустриальном обществе.","Элементы народной культуры не используются в массовой культуре по причине отсутствия к ним интереса у широкой аудитории.","Одной из функций массовой культуры является рекреационная функция.","В современных произведениях искусства часто синтезируются элементы массовой, народной и элитарных культур."], correct:[1,4,5]},
+  {num:19, text:"Выберите верные суждения о формах (областях) культуры и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные суждения", options:["Основой морали являются представления человека о добре и зле и готовность поступать в соответствии с этими представлениями.","Религия даёт верующему человеку облегчение в страданиях, показывает выход из трудных ситуаций.","Искусству свойственны рациональность и системность.","Наука, в отличие от других форм духовной культуры, способна оказывать эмоциональное воздействие на человека.","Система образования реализует определённый общественный и государственный заказ."], correct:[0,1,4]},
+  {num:20, text:"Выберите верные суждения о формах (областях) культуры и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные суждения", options:["Религия оказывает эмоциональное воздействие на верующих.","Мораль требует от человека определённого поведения.","Наука, как и другие формы духовной культуры, отражает действительность в художественных образах.","Наука направлена на выработку системы объективных знаний о мире, закономерностях развития природы, общества и мышления.","Науке, в отличие от других форм духовной культуры, свойственны рациональность и системность."], correct:[0,1,3,4]}
+];
+
+let currentIdx=0, userAnswers={};
+function startTest(){const inp=document.getElementById('student-name');const name=inp.value.trim();if(!name){inp.style.borderColor='#e53935';inp.placeholder='Введите имя';return;}window._studentName=name;document.getElementById('name-screen').style.display='none';document.getElementById('question-screen').classList.add('active');showQ();}
+function showQ(){const q=questions[currentIdx];const pct=Math.round((currentIdx+1)/questions.length*100);document.getElementById('progress-fill').style.width=pct+'%';document.getElementById('progress-text').textContent='Вопрос '+(currentIdx+1)+' из '+questions.length;document.getElementById('question-text').textContent='№'+q.num+'. '+q.text;document.getElementById('question-subtitle').textContent=q.subtitle;const c=document.getElementById('options-container');c.innerHTML='';q.options.forEach((opt,idx)=>{const checked=(userAnswers[currentIdx]||[]).includes(idx);const label=document.createElement('label');label.className='option-label'+(checked?' checked':'');label.innerHTML='<input type="checkbox" class="option-checkbox"'+(checked?' checked':'')+'><span class="option-text">'+(idx+1)+') '+opt+'</span>';label.querySelector('input').onchange=()=>{if(!userAnswers[currentIdx])userAnswers[currentIdx]=[];if(label.querySelector('input').checked){if(!userAnswers[currentIdx].includes(idx))userAnswers[currentIdx].push(idx);label.classList.add('checked');}else{userAnswers[currentIdx]=userAnswers[currentIdx].filter(x=>x!==idx);label.classList.remove('checked');}};c.appendChild(label);});document.getElementById('prev-btn').disabled=currentIdx===0;document.getElementById('next-btn').style.display=currentIdx<questions.length-1?'block':'none';document.getElementById('finish-btn').style.display=currentIdx===questions.length-1?'block':'none';}
+function nextQ(){if(currentIdx<questions.length-1){currentIdx++;showQ();}}
+function prevQ(){if(currentIdx>0){currentIdx--;showQ();}}
+function showResults(){let correct=0;const detailsArr=[];const rc=document.getElementById('review-container');rc.innerHTML='<div class="review-title">📝 Разбор ответов</div>';questions.forEach((q,idx)=>{const userAns=(userAnswers[idx]||[]).slice().sort((a,b)=>a-b);const corrAns=[...q.correct].sort((a,b)=>a-b);const isCorrect=JSON.stringify(userAns)===JSON.stringify(corrAns);if(isCorrect)correct++;detailsArr.push({q:q.num,chosen:userAns.map(i=>i+1).join(', ')||'—',correct:corrAns.map(i=>i+1).join(', '),status:isCorrect?'correct':'wrong'});const qDiv=document.createElement('div');qDiv.className='review-question';const hdr=document.createElement('div');hdr.className='review-qheader '+(isCorrect?'correct':'incorrect');hdr.textContent=(isCorrect?'✓ ':'✗ ')+'Вопрос '+q.num+': '+q.text.substring(0,80)+'...';qDiv.appendChild(hdr);const body=document.createElement('div');body.className='review-qbody';const ab=document.createElement('div');ab.className='correct-answer-box';ab.innerHTML='<strong>✅ Правильные ответы:</strong>'+q.correct.map(i=>(i+1)+') '+q.options[i]).join('; ');body.appendChild(ab);const leg=document.createElement('div');leg.className='rev-legend';leg.innerHTML='<span>✓ выбрал правильно</span><span>✗ выбрал неверно</span><span>! пропустил правильный</span>';body.appendChild(leg);q.options.forEach((opt,oi)=>{const uChose=(userAnswers[idx]||[]).includes(oi),isRight=q.correct.includes(oi);let cls='nn',icon='◦';if(uChose&&isRight){cls='uc';icon='✓';}else if(uChose&&!isRight){cls='uw';icon='✗';}else if(!uChose&&isRight){cls='ms';icon='!';}const row=document.createElement('div');row.className='rev-opt '+cls;row.innerHTML='<span>'+icon+'</span><span>'+(oi+1)+') '+opt+'</span>';body.appendChild(row);});qDiv.appendChild(body);rc.appendChild(qDiv);});const pct=Math.round(correct/questions.length*100);document.getElementById('score-circle').textContent=pct+'%';let msg='';if(pct===100)msg='🏆 Отлично! Все верно!';else if(pct>=70)msg='✅ Хороший результат!';else if(pct>=40)msg='📚 Нужно повторить материал';else msg='❌ Требуется серьёзная подготовка';document.getElementById('result-text').textContent=msg;document.getElementById('correct-count').textContent=correct+' из '+questions.length+' вопросов';(function(){const name=window._studentName||'Аноним';const ts=new Date().toLocaleString('ru-RU');fetch('https://script.google.com/macros/s/AKfycbxUNNmmBxwBNHr-hweNoGR8bGDW0CqHNvdSbdG20Sms3UVOiV_8yICDqysOZms-aMH1/exec',{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify({name:name,testName:'Урок 1. Тест 3: Общество. Культура. Глобализация',date:ts,score_pct:pct,correct:correct,partial:0,wrong:questions.length-correct,total:questions.length,details:JSON.stringify(detailsArr)})}).catch(()=>{});})();document.getElementById('question-screen').classList.remove('active');document.getElementById('results-screen').classList.add('active');}
+</script>
+</body>
+</html>
