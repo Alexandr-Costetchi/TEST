@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#667eea">
+<title>Экономика. Тест 3: Акции. Экономический рост. Монетарная политика. Инфляция</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 10px; }
+.container { width: 100%; max-width: 700px; background: white; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); padding: 20px; }
+.header { text-align: center; margin-bottom: 20px; }
+.header h1 { color: #333; font-size: 22px; margin-bottom: 6px; }
+.header p { color: #666; font-size: 13px; }
+.name-input { width: 100%; padding: 14px; border: 2px solid #ddd; border-radius: 10px; font-size: 16px; outline: none; margin: 10px 0 16px; transition: border-color 0.2s; font-family: inherit; }
+.name-input:focus { border-color: #667eea; }
+.test-btn { width: 100%; padding: 16px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; }
+.question-screen { display: none; }
+.question-screen.active { display: block; }
+.progress-bar { width: 100%; height: 6px; background: #e0e0e0; border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); transition: width 0.3s; }
+.progress-text { font-size: 12px; color: #888; text-align: center; margin-bottom: 14px; }
+.question-text { font-size: 15px; font-weight: 600; color: #333; margin-bottom: 8px; line-height: 1.5; }
+.question-subtitle { font-size: 12px; color: #888; margin-bottom: 14px; font-style: italic; }
+.options { display: flex; flex-direction: column; gap: 9px; margin-bottom: 18px; }
+.option-label { display: flex; align-items: flex-start; padding: 11px 12px; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+.option-label.checked { border-color: #667eea; background: #f0ebff; }
+.option-checkbox { width: 18px; height: 18px; min-width: 18px; margin-right: 10px; margin-top: 2px; cursor: pointer; accent-color: #667eea; }
+.option-text { font-size: 13px; color: #333; line-height: 1.4; }
+.nav-buttons { display: flex; gap: 10px; }
+.nav-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; min-height: 44px; }
+.prev-btn { background: #f0f0f0; color: #333; }
+.prev-btn:disabled { opacity: 0.5; }
+.next-btn, .finish-btn { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+.results-screen { display: none; text-align: center; }
+.results-screen.active { display: block; }
+.score-circle { width: 100px; height: 100px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 16px auto; font-size: 32px; font-weight: bold; color: white; }
+.result-title { font-size: 20px; font-weight: 600; color: #333; margin: 16px 0 8px; }
+.result-text { font-size: 14px; color: #666; margin: 8px 0; }
+.correct-count { font-size: 14px; color: #888; margin: 8px 0; }
+.review-section { margin-top: 20px; text-align: left; }
+.review-title { font-size: 15px; font-weight: 700; color: #333; margin-bottom: 12px; text-align: center; padding-bottom: 8px; border-bottom: 2px solid #e0e0e0; }
+.review-question { margin-bottom: 14px; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden; }
+.review-qheader { padding: 9px 13px; font-size: 12px; font-weight: 600; color: #fff; line-height: 1.4; }
+.review-qheader.correct { background: linear-gradient(135deg, #43a047, #2e7d32); }
+.review-qheader.incorrect { background: linear-gradient(135deg, #e53935, #b71c1c); }
+.review-qbody { padding: 10px 13px; background: #fafafa; }
+.correct-answer-box { background: #e8f5e9; border: 1.5px solid #43a047; border-radius: 7px; padding: 7px 11px; margin-bottom: 8px; font-size: 12px; color: #1b5e20; }
+.correct-answer-box strong { display: block; margin-bottom: 2px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+.rev-legend { display: flex; gap: 10px; flex-wrap: wrap; font-size: 11px; margin-bottom: 8px; color: #666; }
+.rev-opt { display: flex; gap: 7px; padding: 4px 7px; border-radius: 5px; margin-bottom: 3px; font-size: 12px; line-height: 1.4; }
+.rev-opt.uc { background: #e8f5e9; color: #2e7d32; font-weight: 600; }
+.rev-opt.uw { background: #ffebee; color: #c62828; font-weight: 600; }
+.rev-opt.ms { background: #fff3e0; color: #e65100; font-weight: 600; border-left: 3px solid #ff9800; }
+.rev-opt.nn { color: #888; }
+.back-btn { width: 100%; padding: 12px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 16px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div id="name-screen">
+    <div class="header">
+      <h1>📚 Экономическая жизнь общества. Тест 3</h1>
+      <p>Акции. Экономический рост. Роль государства. Монетарная политика. Инфляция</p>
+    </div>
+    <input type="text" id="student-name" class="name-input" placeholder="Имя и фамилия" autocomplete="name" onkeyup="if(event.key==='Enter')startTest()">
+    <button class="test-btn" onclick="startTest()">▶ Начать тест (20 вопросов)</button>
+  </div>
+  <div class="question-screen" id="question-screen">
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    <div class="progress-text" id="progress-text"></div>
+    <div class="question-text" id="question-text"></div>
+    <div class="question-subtitle" id="question-subtitle"></div>
+    <div class="options" id="options-container"></div>
+    <div class="nav-buttons">
+      <button class="nav-btn prev-btn" id="prev-btn" onclick="prevQ()">← Назад</button>
+      <button class="nav-btn next-btn" id="next-btn" onclick="nextQ()">Дальше →</button>
+      <button class="nav-btn finish-btn" id="finish-btn" onclick="showResults()">Завершить</button>
+    </div>
+  </div>
+  <div class="results-screen" id="results-screen">
+    <div class="result-title">Результаты теста</div>
+    <div class="score-circle" id="score-circle">0%</div>
+    <p class="result-text" id="result-text"></p>
+    <div class="correct-count">Правильно: <strong id="correct-count">0/20</strong></div>
+    <div id="review-container" class="review-section"></div>
+    <button class="back-btn" onclick="location.reload()">↩ Пройти заново</button>
+  </div>
+</div>
+<script>
+const questions = [
+  {num:41, text:"Гражданин А. купил привилегированную акцию одной из промышленных компаний. Какие права он приобретает, становясь владельцем этой акции? Запишите цифры, под которыми указаны эти права.", subtitle:"Выберите все верные варианты", options:["на получение фиксированного дивиденда независимо от голосования акционеров", "на получение суммы долга, удостоверенного ценной бумагой, в указанный срок", "на получение части выручки после того, как будут выданы дивиденды по обыкновенным акциям", "на получение части прибыли, зависящей от её величины", "на управление акционерным обществом через участие в собрании акционеров", "на получение определённой части имущества в случае ликвидации компании до того, как оно будет разделено между владельцами обыкновенных акций"], correct:[0, 5]},
+  {num:42, text:"Что из перечисленного относится к свойствам акции как ценной бумаги? Запишите цифры, под которыми эти свойства указаны.", subtitle:"Выберите все верные варианты", options:["доступна для гражданского оборота", "призвана поддерживать стабильность национальной валюты", "подтверждает участие в бизнесе", "наделяет владельца правом на получение дивидендов", "выпускается на ограниченный срок", "носит долговой характер"], correct:[0, 2, 3]},
+  {num:43, text:"Выберите верные суждения об экономическом росте и его измерителях. Запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Валовой национальный продукт — это добавленная стоимость всего объёма товаров, услуг во всех сферах экономики страны независимо от национальной принадлежности предприятий, расположенных на её территории.", "К факторам интенсивного роста относят увеличение производственного капитала, задействованных трудовых, природных ресурсов.", "Интенсивный экономический рост позволяет в определённой мере преодолеть последствия ограниченности природных ресурсов.", "Расчёт ВВП и ВНП на душу населения отражает уровень жизни населения и его изменение.", "ВВП и ВНП подсчитываются как в текущих ценах, так и в ценах какого-либо базового года, что позволяет учесть уровень инфляции."], correct:[2, 3, 4]},
+  {num:44, text:"Выберите верные суждения об измерителях экономического роста и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["К измерителям экономического роста относят ВВП, ВНП, национальный доход.", "ВВП называют количество продукции, приходящееся на каждую денежную единицу, вложенную в основные фонды.", "Правительство может планировать рост ВВП и проводить экономическую политику, обеспечивающую этот рост.", "Стабильный рост ВВП свидетельствует о развитии экономики, улучшении благосостояния граждан страны.", "ВВП рассчитывается только на душу населения."], correct:[0, 2, 3]},
+  {num:45, text:"Выберите верные суждения о мировой экономике и международных экономических отношениях. Запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Мировая экономика — это система, в которую входят все национальные экономики мира.", "Протекционизм — политика государства, ориентированная на свободное развитие международной торговли.", "В основе развития мировой экономики лежат объективные закономерности интернационализации рыночного хозяйства, выходящего за национальные рамки.", "Под субъектами мировой экономики понимаются хозяйственные единицы, деятельность которых выходит за национальные границы.", "К тарифным методам регулирования международной торговли относят установление квот, экспортные кредиты и т. п."], correct:[0, 2, 3]},
+  {num:46, text:"Представьте, что Вы получили задание оформить презентацию к уроку обществознания по теме «Налоговая система в Российской Федерации». Один из слайдов называется «Доходы, не подлежащие налогообложению (освобождаемые от налогообложения)». Что из перечисленного Вы включили бы в этот слайд? Запишите цифры, под которыми указаны доходы, не подлежащие налогообложению.", subtitle:"Выберите все верные варианты", options:["страховые пенсии", "доходы, полученные налогоплательщиком в виде грантов на стимулирование науки", "прибыль от предпринимательской деятельности", "алименты на содержание несовершеннолетнего ребёнка, получаемые налогоплательщиком", "заработная плата", "вознаграждение донору за сданную кровь"], correct:[0, 1, 3, 5]},
+  {num:47, text:"Выберите верные суждения о роли и экономической политике государства в условиях рыночной экономики. Запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Только государство определяет уровень цен и структуру производства.", "Государство влияет на макроэкономические показатели развития экономики.", "Целью монетарной политики государства является регулирование денежной массы.", "К основным инструментам монетарной политики относят налоги, трансферты и государственные закупки товаров и услуг.", "Производство общественных благ возможно, как правило, при участии государства."], correct:[1, 2, 4]},
+  {num:48, text:"Выберите верные суждения об экономическом цикле и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Экономический цикл — это периодические колебания деловой активности в стране.", "К внешним факторам экономических циклов относят изменение объёмов инвестиций и потребительских расходов.", "Когда экономика достигает уровня максимальной деловой активности, предприятия работают на пределе своих возможностей.", "На стадии подъёма экономика начинает выходить из кризиса, деловая активность растёт.", "Продолжительность фаз экономического цикла зависит только от амортизации средств производства."], correct:[0, 2, 3]},
+  {num:49, text:"Выберите верные суждения о роли государства в экономике и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["При проведении антикризисной политики государство может изменить государственные расходы и ставку налогообложения.", "Одна из целей государства в рыночной экономике — обеспечение экономической безопасности и экономической эффективности.", "Государство в современном обществе проводит экономическую политику, направленную на сокращение большого разрыва в доходах разных слоёв населения за счёт частичного перераспределения этих доходов.", "Государство в рыночной экономике осуществляет централизованное обязательное планирование объёмов производства.", "В экономике любого типа государство устанавливает цены на все товары и услуги."], correct:[0, 1, 2]},
+  {num:50, text:"Выберите верные суждения о мировой экономике и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Открытие внутренних рынков для иностранных производителей может усилить зависимость экономики от импортных товаров и угрожать безопасности государства.", "Субъектами мировой экономики являются национальные хозяйства, транснациональные корпорации, международные интеграционные объединения.", "Открытие внутренних рынков для иностранных производителей способствует усилению конкуренции между участниками рынка.", "Продажу за границу товаров и услуг называют импортом.", "Открытие внутренних рынков для иностранных производителей способствует снижению доходов всех участников торговых отношений."], correct:[0, 1, 2]},
+  {num:51, text:"Выберите верные суждения о стимулирующей монетарной политике и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Стимулирующая монетарная политика проводится как правило в условиях экономического спада.", "Стимулирующая монетарная политика предполагает повышение ключевой ставки.", "Целью стимулирующей монетарной политики является увеличение объёма денег в обращении.", "Во время проведения стимулирующей монетарной политики снижается доступность кредитов для бизнеса.", "Во время проведения стимулирующей монетарной политики как правило увеличиваются инвестиции и потребление."], correct:[0, 2, 4]},
+  {num:52, text:"Выберите верные суждения о сдерживающей монетарной политике и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Сдерживающая монетарная политика применяется при ускорении инфляции.", "В рамках сдерживающей монетарной политики ключевая ставка снижается.", "В ходе сдерживающей монетарной политики денежное предложение сокращается.", "При проведении сдерживающей монетарной политики стоимость кредитов возрастает.", "В результате сдерживающей монетарной политики в экономике растёт совокупный спрос."], correct:[0, 2, 3]},
+  {num:53, text:"Выберите верные суждения о стимулирующей и сдерживающей монетарной политике и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Стимулирующая монетарная политика увеличивает ликвидность банков.", "Сдерживающая монетарная политика приводит к снижению темпов инфляции.", "При стимулирующей монетарной политике Центральный банк продаёт облигации.", "Стимулирующая монетарная политика приводит к удешевлению кредитов.", "Сдерживающая монетарная политика направлена на поддержание занятости любой ценой."], correct:[0, 1, 3]},
+  {num:54, text:"Выберите верные суждения о целях стимулирующей монетарной политики и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Целью стимулирующей монетарной политики является уменьшение объёма денежной массы.", "Стимулирующая монетарная политика направлена на расширение кредитования населения.", "В рамках стимулирующей монетарной политики ключевая ставка повышается.", "Стимулирующая монетарная политика направлена на снижение безработицы.", "При проведении стимулирующей монетарной политики существует высокий риск ускорения инфляции."], correct:[1, 3, 4]},
+  {num:55, text:"Выберите верные суждения о сдерживающей монетарной политике и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["В ходе сдерживающей монетарной политики устанавливаются высокие нормы обязательных резервов.", "В результате сдерживающей монетарной политики банковская ликвидность снижается.", "При проведении сдерживающей монетарной политики уменьшается доступность кредитов.", "Целью сдерживающей монетарной политики является увеличение совокупного спроса.", "При сдерживающей монетарной политике Центральный банк покупает государственные облигации."], correct:[0, 1, 2]},
+  {num:56, text:"Выберите верные суждения о стимулирующих мерах монетарной политики и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Снижение норм обязательных резервов относится к стимулирующим мерам монетарной политики.", "Повышение ключевой ставки используется как стимулирующая мера.", "Покупка Центральным банком государственных облигаций относится к стимулирующим мерам.", "Увеличение рефинансирования банков применяется как стимулирующая мера.", "Рост ставки по кредитам является типичным признаком стимулирующих мер."], correct:[0, 2, 3]},
+  {num:57, text:"Выберите верные суждения о сдерживающих мерах монетарной политики и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Повышение норм обязательных резервов используется как сдерживающая мера.", "В результате сдерживающих мер растёт доступность банковских займов.", "Продажа государственных ценных бумаг Центральным банком относится к сдерживающим мерам.", "В ходе сдерживающих мер происходит удешевление кредитования.", "Сдерживающие меры предусматривают ограничение денежной массы."], correct:[0, 2, 4]},
+  {num:58, text:"Выберите верные суждения о стимулирующей монетарной политике и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Стимулирующая монетарная политика проводится в период рецессии.", "При стимулирующей монетарной политике снижаются возможности банков выдавать кредиты.", "Стимулирующая монетарная политика увеличивает инвестиционный спрос.", "Стимулирующая монетарная политика приводит к снижению инфляции.", "В ходе стимулирующей монетарной политики увеличивается денежное предложение."], correct:[0, 2, 4]},
+  {num:59, text:"Выберите верные суждения о видах инфляции и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Устойчивую долговременную тенденцию к росту цен в экономике страны, вызванную удорожанием факторов производства, называют инфляцией издержек.", "Среднегодовое повышение цен не более чем на 3–5% в год характеризует гиперинфляцию.", "Ползучая инфляция — вид инфляции, для которого характерен устойчивый, в течение нескольких месяцев, рост цен свыше 50%, приводящий к дезорганизации экономики.", "Сокращение производства и рост безработицы относятся к последствиям гиперинфляции.", "Дефицитом на товарном рынке обусловлено возникновение инфляции спроса."], correct:[0, 3, 4]},
+  {num:60, text:"Выберите верные суждения об инфляции и антиинфляционной политике и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Рост денежной массы в результате денежной эмиссии является одним из источников инфляции издержек.", "Контроль за ростом денежной массы — составная часть антиинфляционной политики государства.", "В условиях инфляции спроса уровень спроса на товары и услуги превышает возможности предложения по его удовлетворению.", "Инфляция — это обесценивание денег, которое ведёт к повышению цен на товары и услуги.", "По источникам возникновения выделяют ползучую, галопирующую и гиперинфляцию."], correct:[1, 2, 3]}
+];
+
+let currentIdx = 0;
+let userAnswers = {};
+
+function startTest() {
+  const inp = document.getElementById('student-name');
+  const name = inp.value.trim();
+  if (!name) { inp.style.borderColor='#e53935'; inp.placeholder='Введите имя'; return; }
+  window._studentName = name;
+  document.getElementById('name-screen').style.display = 'none';
+  document.getElementById('question-screen').classList.add('active');
+  showQ();
+}
+
+function showQ() {
+  const q = questions[currentIdx];
+  const pct = Math.round((currentIdx+1)/questions.length*100);
+  document.getElementById('progress-fill').style.width = pct+'%';
+  document.getElementById('progress-text').textContent = 'Вопрос '+(currentIdx+1)+' из '+questions.length;
+  document.getElementById('question-text').textContent = '№'+q.num+'. '+q.text;
+  document.getElementById('question-subtitle').textContent = q.subtitle;
+  const c = document.getElementById('options-container');
+  c.innerHTML = '';
+  q.options.forEach((opt, idx) => {
+    const checked = (userAnswers[currentIdx]||[]).includes(idx);
+    const label = document.createElement('label');
+    label.className = 'option-label'+(checked?' checked':'');
+    label.innerHTML = '<input type="checkbox" class="option-checkbox"'+(checked?' checked':'')+'><span class="option-text">'+(idx+1)+') '+opt+'</span>';
+    label.querySelector('input').onchange = () => {
+      if (!userAnswers[currentIdx]) userAnswers[currentIdx]=[];
+      if (label.querySelector('input').checked) { if(!userAnswers[currentIdx].includes(idx)) userAnswers[currentIdx].push(idx); label.classList.add('checked'); }
+      else { userAnswers[currentIdx]=userAnswers[currentIdx].filter(x=>x!==idx); label.classList.remove('checked'); }
+    };
+    c.appendChild(label);
+  });
+  document.getElementById('prev-btn').disabled = currentIdx===0;
+  document.getElementById('next-btn').style.display = currentIdx<questions.length-1?'block':'none';
+  document.getElementById('finish-btn').style.display = currentIdx===questions.length-1?'block':'none';
+}
+
+function nextQ() { if(currentIdx<questions.length-1){currentIdx++;showQ();} }
+function prevQ() { if(currentIdx>0){currentIdx--;showQ();} }
+
+function showResults() {
+  let correct=0;
+  const detailsArr=[];
+  const rc=document.getElementById('review-container');
+  rc.innerHTML='<div class="review-title">📝 Разбор ответов</div>';
+  questions.forEach((q,idx) => {
+    const userAns=(userAnswers[idx]||[]).slice().sort((a,b)=>a-b);
+    const corrAns=[...q.correct].sort((a,b)=>a-b);
+    const isCorrect=JSON.stringify(userAns)===JSON.stringify(corrAns);
+    if(isCorrect) correct++;
+    detailsArr.push({q:q.num, chosen:userAns.map(i=>i+1).join(', ')||'—', correct:corrAns.map(i=>i+1).join(', '), status:isCorrect?'correct':'wrong'});
+    const qDiv=document.createElement('div'); qDiv.className='review-question';
+    const hdr=document.createElement('div'); hdr.className='review-qheader '+(isCorrect?'correct':'incorrect');
+    hdr.textContent=(isCorrect?'✓ ':'✗ ')+'Вопрос '+q.num+': '+q.text.substring(0,80)+'...';
+    qDiv.appendChild(hdr);
+    const body=document.createElement('div'); body.className='review-qbody';
+    const ab=document.createElement('div'); ab.className='correct-answer-box';
+    ab.innerHTML='<strong>✅ Правильные ответы:</strong>'+q.correct.map(i=>(i+1)+') '+q.options[i]).join('; ');
+    body.appendChild(ab);
+    const leg=document.createElement('div'); leg.className='rev-legend';
+    leg.innerHTML='<span>✓ выбрал правильно</span><span>✗ выбрал неверно</span><span>! пропустил правильный</span>';
+    body.appendChild(leg);
+    q.options.forEach((opt,oi)=>{
+      const uChose=(userAnswers[idx]||[]).includes(oi), isRight=q.correct.includes(oi);
+      let cls='nn',icon='◦';
+      if(uChose&&isRight){cls='uc';icon='✓';}
+      else if(uChose&&!isRight){cls='uw';icon='✗';}
+      else if(!uChose&&isRight){cls='ms';icon='!';}
+      const row=document.createElement('div'); row.className='rev-opt '+cls;
+      row.innerHTML='<span>'+icon+'</span><span>'+(oi+1)+') '+opt+'</span>';
+      body.appendChild(row);
+    });
+    qDiv.appendChild(body); rc.appendChild(qDiv);
+  });
+  const pct=Math.round(correct/questions.length*100);
+  document.getElementById('score-circle').textContent=pct+'%';
+  let msg='';
+  if(pct===100) msg='🏆 Отлично! Все верно!';
+  else if(pct>=70) msg='✅ Хороший результат!';
+  else if(pct>=40) msg='📚 Нужно повторить материал';
+  else msg='❌ Требуется серьёзная подготовка';
+  document.getElementById('result-text').textContent=msg;
+  document.getElementById('correct-count').textContent=correct+' из '+questions.length+' вопросов';
+  (function(){
+    const name=window._studentName||'Аноним';
+    const ts=new Date().toLocaleString('ru-RU');
+    fetch('https://script.google.com/macros/s/AKfycbxUNNmmBxwBNHr-hweNoGR8bGDW0CqHNvdSbdG20Sms3UVOiV_8yICDqysOZms-aMH1/exec',{
+      method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({name:name,testName:'Урок 1. Тест 1: Человек. Мировоззрение',date:ts,score_pct:pct,correct:correct,partial:0,wrong:questions.length-correct,total:questions.length,details:JSON.stringify(detailsArr)})
+    }).catch(()=>{});
+  })();
+  document.getElementById('question-screen').classList.remove('active');
+  document.getElementById('results-screen').classList.add('active');
+}
+</script>
+</body>
+</html>
