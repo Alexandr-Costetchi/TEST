@@ -197,6 +197,14 @@ function showResults() {
   else if(pct>=50)msg='Удовлетворительно. Стоит повторить материал.';
   else msg='Нужно повторить тему.';
   document.getElementById('result-text').textContent=window._studentName+', '+msg;
+  (function(){
+    var name=window._studentName||'Аноним';
+    var ts=new Date().toLocaleString('ru-RU');
+    fetch('https://script.google.com/macros/s/AKfycbxUNNmmBxwBNHr-hweNoGR8bGDW0CqHNvdSbdG20Sms3UVOiV_8yICDqysOZms-aMH1/exec',{
+      method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({name:name,testName:'Правовое регулирование. Тест 2',date:ts,score_pct:pct,correct:correct,partial:0,wrong:questions.length-correct,total:questions.length,details:JSON.stringify([])})
+    }).catch(function(){});
+  })();
   document.getElementById('question-screen').classList.remove('active');
   document.getElementById('results-screen').classList.add('active');
 }
