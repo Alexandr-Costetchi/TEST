@@ -156,6 +156,7 @@ function prevQ() { if(currentIdx>0){currentIdx--;showQ();} }
 
 function showResults() {
   let correct=0;
+  const detailsArr=[];
   const rc=document.getElementById('review-container');
   rc.innerHTML='<div class="review-title">📝 Разбор ответов</div>';
   questions.forEach((q,idx) => {
@@ -163,6 +164,7 @@ function showResults() {
     const corrAns=q.correct.slice().sort((a,b)=>a-b);
     const isCorrect=JSON.stringify(userAns)===JSON.stringify(corrAns);
     if(isCorrect) correct++;
+    detailsArr.push({q:q.num, chosen:userAns.map(i=>i+1).join(', ')||'—', correct:corrAns.map(i=>i+1).join(', '), status:isCorrect?'correct':'wrong'});
     const div=document.createElement('div');
     div.className='review-question';
     const corrNums=corrAns.map(i=>i+1).join(', ');
