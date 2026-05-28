@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#667eea">
+<title>Политика. Тест 2</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 10px; }
+.container { width: 100%; max-width: 700px; background: white; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); padding: 20px; }
+.header { text-align: center; margin-bottom: 20px; }
+.header h1 { color: #333; font-size: 22px; margin-bottom: 6px; }
+.header p { color: #666; font-size: 13px; }
+.name-input { width: 100%; padding: 14px; border: 2px solid #ddd; border-radius: 10px; font-size: 16px; outline: none; margin: 10px 0 16px; transition: border-color 0.2s; font-family: inherit; }
+.name-input:focus { border-color: #667eea; }
+.test-btn { width: 100%; padding: 16px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; }
+.question-screen { display: none; }
+.question-screen.active { display: block; }
+.progress-bar { width: 100%; height: 6px; background: #e0e0e0; border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); transition: width 0.3s; }
+.progress-text { font-size: 12px; color: #888; text-align: center; margin-bottom: 14px; }
+.question-text { font-size: 15px; font-weight: 600; color: #333; margin-bottom: 8px; line-height: 1.5; }
+.question-subtitle { font-size: 12px; color: #888; margin-bottom: 14px; font-style: italic; }
+.options { display: flex; flex-direction: column; gap: 9px; margin-bottom: 18px; }
+.option-label { display: flex; align-items: flex-start; padding: 11px 12px; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+.option-label.checked { border-color: #667eea; background: #f0ebff; }
+.option-checkbox { width: 18px; height: 18px; min-width: 18px; margin-right: 10px; margin-top: 2px; cursor: pointer; accent-color: #667eea; }
+.option-text { font-size: 13px; color: #333; line-height: 1.4; }
+.nav-buttons { display: flex; gap: 10px; }
+.nav-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; min-height: 44px; }
+.prev-btn { background: #f0f0f0; color: #333; }
+.prev-btn:disabled { opacity: 0.5; }
+.next-btn, .finish-btn { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+.results-screen { display: none; text-align: center; }
+.results-screen.active { display: block; }
+.score-circle { width: 100px; height: 100px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 16px auto; font-size: 32px; font-weight: bold; color: white; }
+.result-title { font-size: 20px; font-weight: 600; color: #333; margin: 16px 0 8px; }
+.result-text { font-size: 14px; color: #666; margin: 8px 0; }
+.correct-count { font-size: 14px; color: #888; margin: 8px 0; }
+.review-section { margin-top: 20px; text-align: left; }
+.review-title { font-size: 15px; font-weight: 700; color: #333; margin-bottom: 12px; text-align: center; padding-bottom: 8px; border-bottom: 2px solid #e0e0e0; }
+.review-question { margin-bottom: 14px; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden; }
+.review-qheader { padding: 9px 13px; font-size: 12px; font-weight: 600; color: #fff; line-height: 1.4; }
+.review-qheader.correct { background: linear-gradient(135deg, #43a047, #2e7d32); }
+.review-qheader.incorrect { background: linear-gradient(135deg, #e53935, #b71c1c); }
+.review-qbody { padding: 10px 13px; background: #fafafa; }
+.correct-answer-box { background: #e8f5e9; border: 1.5px solid #43a047; border-radius: 7px; padding: 7px 11px; margin-bottom: 8px; font-size: 12px; color: #1b5e20; }
+.correct-answer-box strong { display: block; margin-bottom: 2px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+.rev-legend { display: flex; gap: 10px; flex-wrap: wrap; font-size: 11px; margin-bottom: 8px; color: #666; }
+.rev-opt { display: flex; gap: 7px; padding: 4px 7px; border-radius: 5px; margin-bottom: 3px; font-size: 12px; line-height: 1.4; }
+.rev-opt.uc { background: #e8f5e9; color: #2e7d32; font-weight: 600; }
+.rev-opt.uw { background: #ffebee; color: #c62828; font-weight: 600; }
+.rev-opt.ms { background: #fff3e0; color: #e65100; font-weight: 600; border-left: 3px solid #ff9800; }
+.rev-opt.nn { color: #888; }
+.back-btn { width: 100%; padding: 12px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 16px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div id="name-screen">
+    <div class="header">
+      <h1>🏛️ Политика. Тест 2</h1>
+      <p>Конституционные права. Политическая система</p>
+    </div>
+    <input type="text" id="student-name" class="name-input" placeholder="Имя и фамилия" autocomplete="name" onkeyup="if(event.key==='Enter')startTest()">
+    <button class="test-btn" onclick="startTest()">▶ Начать тест (20 вопросов)</button>
+  </div>
+  <div class="question-screen" id="question-screen">
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    <div class="progress-text" id="progress-text"></div>
+    <div class="question-text" id="question-text"></div>
+    <div class="question-subtitle" id="question-subtitle"></div>
+    <div class="options" id="options-container"></div>
+    <div class="nav-buttons">
+      <button class="nav-btn prev-btn" id="prev-btn" onclick="prevQ()">← Назад</button>
+      <button class="nav-btn next-btn" id="next-btn" onclick="nextQ()">Дальше →</button>
+      <button class="nav-btn finish-btn" id="finish-btn" onclick="showResults()">Завершить</button>
+    </div>
+  </div>
+  <div class="results-screen" id="results-screen">
+    <div class="result-title">Результаты теста</div>
+    <div class="score-circle" id="score-circle">0%</div>
+    <p class="result-text" id="result-text"></p>
+    <div class="correct-count">Правильно: <strong id="correct-count">0/20</strong></div>
+    <div id="review-container" class="review-section"></div>
+    <button class="back-btn" onclick="location.reload()">↩ Пройти заново</button>
+  </div>
+</div>
+<script>
+const questions = [
+  {num:1, text:"Выберите в приведённом списке положения, характеризующие личные (гражданские) права (свободы) гражданина Российской Федерации. Запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Граждане Российской Федерации имеют право участвовать в управлении делами государства как непосредственно, так и через своих представителей.","Никто не может быть принуждён к выражению своих мнений и убеждений или отказу от них.","Достоинство личности охраняется государством. Ничто не может быть основанием для его умаления.","Каждый имеет право на тайну переписки, телефонных переговоров, почтовых, телеграфных и иных сообщений.","Граждане Российской Федерации имеют равный доступ к государственной службе."], correct:[1,2,3]},
+  {num:2, text:"Выберите в приведённом списке положения, характеризующие политические права (свободы) гражданина Российской Федерации. Запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Никто не может быть лишён права на рассмотрение его дела в том суде и тем судьёй, к подсудности которых оно отнесено законом.","Граждане Российской Федерации имеют право собираться мирно без оружия, проводить собрания, митинги и демонстрации, шествия и пикетирование.","Граждане Российской Федерации имеют право участвовать в управлении делами государства как непосредственно, так и через своих представителей.","Государственные пенсии и социальные пособия устанавливаются законом.","Граждане Российской Федерации имеют равный доступ к государственной службе."], correct:[1,2,4]},
+  {num:3, text:"Согласно Конституции, Российская Федерация — светское государство. Выберите в приведённом списке положения, характеризующие светское государство, и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Никакая религия не может устанавливаться в качестве государственной или обязательной.","В Российской Федерации устанавливается гарантированный минимальный размер оплаты труда.","Религиозные объединения отделены от государства и равны перед законом.","В Российской Федерации обеспечивается государственная поддержка семьи, материнства, отцовства и детства.","Каждому гарантируется свобода совести."], correct:[0,2,4]},
+  {num:4, text:"Выберите в приведённом ниже списке положения, характеризующие основы конституционного строя Российской Федерации, и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Российская Федерация — социальное государство, политика которого направлена на создание условий, обеспечивающих достойную жизнь и свободное развитие человека.","Заключение трудового договора допускается с лицами, достигшими возраста 16 лет, за исключением случаев, предусмотренных законодательством о правовом положении иностранных граждан в Российской Федерации.","Земля и другие природные ресурсы используются и охраняются в Российской Федерации как основа жизни и деятельности народов, проживающих на соответствующей территории.","Гражданин России не может быть лишён своего гражданства или права изменить его.","Уголовная ответственность наступает за приготовление только к тяжкому и особо тяжкому преступлениям."], correct:[0,2,3]},
+  {num:5, text:"Найдите в приведённом ниже списке положения, характеризующие основы конституционного строя Российской Федерации, и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Во взаимоотношениях с федеральными органами государственной власти все субъекты Российской Федерации равноправны между собой.","Носителем суверенитета и единственным источником власти в Российской Федерации является её многонациональный народ.","Гражданин отвечает по своим обязательствам всем принадлежащим ему имуществом, за исключением имущества, на которое в соответствии с законом не может быть обращено взыскание.","Уголовной ответственности подлежит лицо, достигшее ко времени совершения преступления 16-летнего возраста.","Необоснованный отказ в заключении трудового договора запрещается."], correct:[0,1]},
+  {num:6, text:"Выберите в приведённом списке положения, характеризующие социально- экономические права (свободы) гражданина Российской Федерации. Запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Граждане Российской Федерации имеют равный доступ к государственной службе.","Владение, пользование и распоряжение землёй и другими природными ресурсами осуществляются их собственниками свободно, если это не наносит ущерба окружающей среде и не нарушает прав и законных интересов иных лиц.","Каждый имеет право на отдых.","Каждый имеет право на тайну переписки, телефонных переговоров, почтовых, телеграфных и иных сообщений.","Каждый имеет право на охрану здоровья и медицинскую помощь."], correct:[1,2,4]},
+  {num:7, text:"Согласно Конституции Российской Федерации, наша страна является правовым государством. Выберите в приведённом ниже списке черты, характеризующие правовое государство, и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["верховенство права","взаимная ответственность государства и граждан","обеспечение государственной поддержки семьи","укрепление обороноспособности страны","равноправие и равенство всех граждан перед законом"], correct:[0,1,4]},
+  {num:8, text:"Ниже приведён перечень терминов. Все они, за исключением двух, относятся к институциональной подсистеме политической системы.", subtitle:"Выберите все верные варианты", options:["политические нормы","политические партии","СМИ","государство","законы","Правительство"], correct:[0,4]},
+  {num:9, text:"Ниже приведён перечень терминов. Все они, за исключением двух, относятся к нормативной подсистеме политической системы.", subtitle:"Выберите все верные варианты", options:["политические нормы","государство","политические традиции","устав политической партии","законы","политическая культура"], correct:[1,5]},
+  {num:10, text:"Выберите верные суждения о политической системе общества и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["К основным признакам государства относят наличие обязательной идеологии.","Дипломатический этикет и политические традиции представляют нормативный компонент политической системы.","СМИ осуществляют политическую социализацию граждан.","Государство обладает исключительным правом легального принуждения граждан к выполнению его воли.","Формы взаимодействий социальных групп по вопросу распределения влияния на политические процессы представляют культурно-идеологический компонент политической системы."], correct:[1,2,3]},
+  {num:11, text:"Выберите верные суждения о структуре политической системы общества и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Охранительная функция политической системы проявляется в установлении и развитии взаимовыгодных отношений с другими государствами.","Различные политические идеологии относятся к нормативной подсистеме политики.","Государство – элемент институциональной подсистемы политической системы общества.","Организация политического диалога – одна из функций коммуникативной подсистемы.","Консолидирующая функция политической системы заключается в согласовании коллективных интересов и требований различных социальных групп."], correct:[2,3,4]},
+  {num:12, text:"Выберите верные суждения о политической системе и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Коммуникативная подсистема политической системы включает методы политической деятельности, способы осуществления власти.","Одной из функций политической системы является мобилизация ресурсов на достижение определенных целей.","Интеграционная функция политической системы обеспечивает взаимосвязь и единство действий различных компонентов её структуры.","Политическая система – это совокупность государственных и негосударственных общественных институтов, правовых и политических норм, взаимоотношений политических субъектов, посредством которых осуществляется власть и управление в обществе.","Политические нормы и традиции относятся к институциональной подсистеме политической системы общества."], correct:[1,2,3]},
+  {num:13, text:"Выберите верные суждения о политической системе и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Любая власть в государстве носит политический характер.","Государственной властью обладают партии и общественные движения.","К экономическим ресурсам власти относится способность повышения социального статуса, социального обеспечения, медицинского обслуживания.","Отлаженный государственный механизм, подготовленный аппарат управления относятся к политическим ресурсам власти.","Управление – это использование полномочий власти по формированию целенаправленного поведения объектов."], correct:[3,4]},
+  {num:14, text:"Выберите верные суждения о политической системе общества и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["По характеру политических режимов различают мажоритарные и пропорциональные политические системы общества.","Одним из элементов культурной подсистемы политической системы общества является политическая психология.","Разнообразные взаимодействия субъектов политической жизни составляют основу коммуникативной подсистемы политической системы общества.","Организационная подсистема политической системы включает в себя политические институты и организации, выражающие и представляющие различные по значимости властные интересы.","К функциям политической системы общества относится выявление связанных с властью интересов больших социальных групп."], correct:[1,2,3,4]},
+  {num:15, text:"Выберите верные суждения о политической системе и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Институциональный компонент политической системы включает политические традиции и дипломатический этикет.","Политическая психология отражает состояние культурно-идеологической подсистемы.","Функциональный компонент политической системы охватывает формы и направления политической деятельности.","Коммуникативная подсистема определяет взаимодействие между политическими системами различных стран.","Политическая организация общества включает в себя политическую деятельность и политический опыт.","Нормативная подсистема определяет методы осуществления политической власти."], correct:[1,2,3]},
+  {num:16, text:"Выберите верные суждения о политической системе и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Разработка и принятие законов отражают нормативную роль политической системы в обществе.","Государство, политические партии, общественно-политические движения входят в институциональную подсистему политической системы.","Главная функция политической системы в демократическом обществе состоит в руководстве экономическими процессами.","Политическая система – это сложный механизм формирования и функционирования политической власти в обществе.","Связи и взаимодействия между политической системой и неполитическими социальными институтами осуществляются преимущественно и непосредственно в рамках культурно-идеологической подсистемы."], correct:[0,1,3]},
+  {num:17, text:"Выберите верные суждения о политической системе и её структуре и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Политическая система – это целостный механизм осуществления власти, определения целей общественного развития и управления обществом.","Центральным институтом политической системы является политическая партия.","Нормативная подсистема политической системы включает политические традиции, нормы морали и права, партийные программы и уставы, регулирующие отношения в политической сфере.","В правовом государстве деятельность институтов политической системы определяется законом.","Коммуникативная подсистема политической системы – это политические идеалы, ценности и другие компоненты политической культуры."], correct:[0,2,3]},
+  {num:18, text:"Выберите верные суждения о политической системе общества и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Политическая система демократического государства призвана отражать многообразные интересы социальных групп, которые непосредственно или через свои организации и движения оказывают влияние на государственную власть.","Политическая система любого общества стабильна и не подвержена изменениям на протяжении длительного времени.","Политическая система выполняет функцию определения целей и направлений развития общества и государства.","Ценности, политические идеологии относятся к культурной подсистеме политической системы.","Политическая система выполняет функцию выдвижения политических лидеров, подготовки кадров для государственного аппарата и политических организаций."], correct:[0,2,3,4]},
+  {num:19, text:"Выберите верные суждения о политической системе общества и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Политические ценности и идеологии составляют основу культурной подсистемы политической системы общества.","По характеру отношений с внешней средой политические системы общества делятся на прогрессивные и регрессивные.","Элементами институциональной подсистемы политической системы общества являются государство и политические партии.","К функциям политической системы общества относят определение целей и направлений развития общества и государства.","Одной из функций политической системы общества считается организация распределения прибыли между владельцами факторов производства."], correct:[0,2,3]},
+  {num:20, text:"Выберите верные суждения о политической системе общества и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Политическая система выполняет функцию формирования и трансляции политической культуры.","Политическая система общества полностью изолирована от других систем общества.","В состав политической системы общества входят субъекты, непосредственно осуществляющие политическую власть, и субъекты, опосредованно принимающие участие в реализации политических решений.","Политическая система общества представляет собой организованную на единой нормативно-ценностной основе совокупность взаимодействий политических субъектов, связанных с осуществлением власти и управлением обществом.","Институциональная подсистема политической системы включает в себя прежде всего взаимодействие социальных групп и индивидов по поводу осуществления государственной власти."], correct:[0,2,3]}
+];
+
+let currentIdx = 0;
+let userAnswers = {};
+
+function startTest() {
+  const inp = document.getElementById('student-name');
+  const name = inp.value.trim();
+  if (!name) { inp.style.borderColor='#e53935'; inp.placeholder='Введите имя'; return; }
+  window._studentName = name;
+  document.getElementById('name-screen').style.display = 'none';
+  document.getElementById('question-screen').classList.add('active');
+  showQ();
+}
+
+function showQ() {
+  const q = questions[currentIdx];
+  const pct = Math.round((currentIdx+1)/questions.length*100);
+  document.getElementById('progress-fill').style.width = pct+'%';
+  document.getElementById('progress-text').textContent = 'Вопрос '+(currentIdx+1)+' из '+questions.length;
+  document.getElementById('question-text').textContent = '\u2116'+q.num+'. '+q.text;
+  document.getElementById('question-subtitle').textContent = q.subtitle;
+  const c = document.getElementById('options-container');
+  c.innerHTML = '';
+  q.options.forEach((opt, idx) => {
+    const checked = (userAnswers[currentIdx]||[]).includes(idx);
+    const label = document.createElement('label');
+    label.className = 'option-label'+(checked?' checked':'');
+    label.innerHTML = '<input type="checkbox" class="option-checkbox"'+(checked?' checked':'')+'>\u003cspan class="option-text">'+(idx+1)+') '+opt+'\u003c/span>';
+    label.querySelector('input').onchange = function() {
+      if (!userAnswers[currentIdx]) userAnswers[currentIdx]=[];
+      if (label.querySelector('input').checked) { if(!userAnswers[currentIdx].includes(idx)) userAnswers[currentIdx].push(idx); label.classList.add('checked'); }
+      else { userAnswers[currentIdx]=userAnswers[currentIdx].filter(function(x){return x!==idx;}); label.classList.remove('checked'); }
+    };
+    c.appendChild(label);
+  });
+  document.getElementById('prev-btn').disabled = currentIdx===0;
+  document.getElementById('next-btn').style.display = currentIdx<questions.length-1?'block':'none';
+  document.getElementById('finish-btn').style.display = currentIdx===questions.length-1?'block':'none';
+}
+
+function nextQ() { if(currentIdx<questions.length-1){currentIdx++;showQ();} }
+function prevQ() { if(currentIdx>0){currentIdx--;showQ();} }
+
+function showResults() {
+  var correct=0;
+  var detailsArr=[];
+  var rc=document.getElementById('review-container');
+  rc.innerHTML='<div class="review-title">\uD83D\uDCDD Разбор ответов</div>';
+  questions.forEach(function(q,idx) {
+    var userAns=(userAnswers[idx]||[]).slice().sort(function(a,b){return a-b;});
+    var corrAns=q.correct.slice().sort(function(a,b){return a-b;});
+    var isCorrect=JSON.stringify(userAns)===JSON.stringify(corrAns);
+    if(isCorrect) correct++;
+    detailsArr.push({q:q.num, chosen:userAns.map(function(i){return i+1;}).join(', ')||'\u2014', correct:corrAns.map(function(i){return i+1;}).join(', '), status:isCorrect?'correct':'wrong'});
+    var div=document.createElement('div');
+    div.className='review-question';
+    var corrNums=corrAns.map(function(i){return i+1;}).join(', ');
+    div.innerHTML='<div class="review-qheader '+(isCorrect?'correct':'incorrect')+'">'+(isCorrect?'\u2705':'\u274C')+' \u2116'+q.num+'. '+q.text+'</div>'+
+      '<div class="review-qbody"><div class="correct-answer-box"><strong>Правильный ответ:</strong>'+corrNums+'</div>';
+    var legend=document.createElement('div');
+    legend.className='rev-legend';
+    legend.innerHTML='<span>\uD83D\uDFE2 верно выбран</span><span>\uD83D\uDD34 лишний</span><span>\uD83D\uDFE1 пропущен</span>';
+    div.querySelector('.review-qbody').appendChild(legend);
+    q.options.forEach(function(opt,oi){
+      var inUser=userAns.includes(oi), inCorr=corrAns.includes(oi);
+      var cls='nn', icon='';
+      if(inUser&&inCorr){cls='uc';icon='\uD83D\uDFE2';}
+      else if(inUser&&!inCorr){cls='uw';icon='\uD83D\uDD34';}
+      else if(!inUser&&inCorr){cls='ms';icon='\uD83D\uDFE1';}
+      var od=document.createElement('div');
+      od.className='rev-opt '+cls;
+      od.textContent=icon+' '+(oi+1)+') '+opt;
+      div.querySelector('.review-qbody').appendChild(od);
+    });
+    rc.appendChild(div);
+  });
+  var pct=Math.round(correct/questions.length*100);
+  document.getElementById('score-circle').textContent=pct+'%';
+  document.getElementById('correct-count').textContent=correct+'/'+questions.length;
+  var msg='';
+  if(pct>=90)msg='Отлично! Превосходный результат!';
+  else if(pct>=70)msg='Хорошо! Продолжайте в том же духе!';
+  else if(pct>=50)msg='Удовлетворительно. Стоит повторить материал.';
+  else msg='Нужно повторить тему.';
+  document.getElementById('result-text').textContent=msg;
+  (function(){
+    var name=window._studentName||'Аноним';
+    var ts=new Date().toLocaleString('ru-RU');
+    fetch('https://script.google.com/macros/s/AKfycbxUNNmmBxwBNHr-hweNoGR8bGDW0CqHNvdSbdG20Sms3UVOiV_8yICDqysOZms-aMH1/exec',{
+      method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({name:name,testName:'Политика. Тест 2',date:ts,score_pct:pct,correct:correct,partial:0,wrong:questions.length-correct,total:questions.length,details:JSON.stringify(detailsArr)})
+    }).catch(function(){});
+  })();
+  document.getElementById('question-screen').classList.remove('active');
+  document.getElementById('results-screen').classList.add('active');
+}
+</script>
+</body>
+</html>
