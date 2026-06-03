@@ -317,7 +317,45 @@ function onOpen() {
     .addSeparator()
     .addItem('➕ Добавить тесты 3.1-3.5 (75 вопросов)', 'addTests31To35Data')
     .addItem('🔗 Получить ссылки на тесты 31-35', 'getTestsLinks31To35')
+    .addSeparator()
+    .addItem('➕ Зарегистрировать Право Тест №4 и №5 (ID 84/85)', 'addPravoTest4And5ToArchive')
     .addToUi();
+}
+
+// === ЗАРЕГИСТРИРОВАТЬ ПРАВО ТЕСТ №4 И №5 В ЛИСТЕ "АРХИВ" ===
+function addPravoTest4And5ToArchive() {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const archiveSheet = ss.getSheetByName(SHEET_ARCHIVE);
+  if (!archiveSheet) {
+    SpreadsheetApp.getUi().alert('❌ Лист "Архив" не найден. Сначала инициализируйте листы.');
+    return;
+  }
+
+  // Проверить, не добавлены ли уже
+  const existing = archiveSheet.getRange(2, 1, Math.max(1, archiveSheet.getLastRow()-1), 1).getValues();
+  const existingIds = existing.map(r => Number(r[0]));
+
+  const testsToAdd = [];
+
+  if (!existingIds.includes(84)) {
+    testsToAdd.push([84, '5 Право', 'Право Тест № 4 (Задание 13)', 'Итоговый', 'https://alexandr-costetchi.github.io/TEST/tests/pravo_test4.html']);
+  }
+  if (!existingIds.includes(85)) {
+    testsToAdd.push([85, '5 Право', 'Право Тест № 5 (Задание 13)', 'Итоговый', 'https://alexandr-costetchi.github.io/TEST/tests/pravo_test5.html']);
+  }
+
+  if (testsToAdd.length === 0) {
+    SpreadsheetApp.getUi().alert('ℹ️ Тесты 84 и 85 уже зарегистрированы в таблице.');
+    return;
+  }
+
+  const lastRow = archiveSheet.getLastRow() + 1;
+  archiveSheet.getRange(lastRow, 1, testsToAdd.length, 5).setValues(testsToAdd);
+
+  SpreadsheetApp.getUi().alert(`✅ Зарегистрировано ${testsToAdd.length} теста(ов) в листе "Архив":
+• Право Тест № 4 (testId=84)
+• Право Тест № 5 (testId=85)`);
+  Logger.log('✅ Право Тест №4 и №5 добавлены в Архив');
 }
 
 function initializeSheets() {

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1b4f72">
+<title>Право Тест № 5 — ЕГЭ</title>
+<style>
+:root{--primary:#1b4f72;--primary-light:#2874a6;--accent:#d4a017;--success:#1e8449;--danger:#c0392b;--bg:#f4f6f9;--card:#fff;--border:#d5d8dc;--muted:#717d7e;--radius:10px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);min-height:100vh;color:#2c3e50;}
+header{background:var(--primary);color:#fff;padding:16px 20px;position:sticky;top:0;z-index:100;display:flex;align-items:center;gap:14px;}
+.header-icon{width:40px;height:40px;background:rgba(255,255,255,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;flex-shrink:0;}
+header h1{font-size:1.05rem;line-height:1.3;}header p{font-size:.75rem;opacity:.8;margin-top:2px;}
+#progress-wrap{height:4px;background:#d5d8dc;}#progress-bar{height:100%;width:0%;background:var(--accent);transition:width .3s;}
+.screen{display:none;}.screen.active{display:block;}
+.container{max-width:760px;margin:0 auto;padding:24px 16px 64px;}
+.welcome-card{background:var(--card);border-radius:var(--radius);padding:32px 28px;box-shadow:0 2px 12px rgba(0,0,0,.07);text-align:center;}
+.welcome-card h2{font-size:1.45rem;color:var(--primary);margin-bottom:8px;}
+.welcome-card .subtitle{color:var(--muted);font-size:.9rem;margin-bottom:22px;line-height:1.5;}
+.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px;}
+.info-box{background:var(--bg);border-radius:8px;padding:12px 8px;font-size:.82rem;color:var(--muted);}
+.info-box strong{display:block;font-size:1.3rem;color:var(--primary);margin-bottom:2px;}
+.name-group{text-align:left;margin-bottom:22px;}.name-group label{display:block;font-weight:600;margin-bottom:7px;font-size:.92rem;}
+.name-group input{width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:8px;font-size:1rem;outline:none;transition:border-color .2s;}
+.name-group input:focus{border-color:var(--primary-light);}
+.btn{display:inline-block;padding:13px 32px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;transition:background .2s,transform .1s;}
+.btn:hover{background:var(--primary-light);}.btn:active{transform:scale(.98);}
+.btn-accent{background:var(--accent);}.btn-accent:hover{background:#b8860b;}
+.progress-label{font-size:.82rem;color:var(--muted);margin-bottom:14px;}
+.q-card{background:var(--card);border-radius:var(--radius);border-left:4px solid var(--border);padding:18px 20px;margin-bottom:14px;box-shadow:0 1px 5px rgba(0,0,0,.05);}
+.q-card.answered{border-left-color:var(--primary-light);}
+.q-card.q-correct{border-left-color:var(--success);}
+.q-card.q-partial{border-left-color:var(--accent);}
+.q-card.q-wrong{border-left-color:var(--danger);}
+.q-header{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;}
+.q-num{min-width:30px;height:30px;background:var(--bg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:var(--primary);flex-shrink:0;}
+.q-text{font-size:.9rem;line-height:1.55;font-weight:500;}
+.match-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0 14px;background:var(--bg);border-radius:8px;padding:12px;border:1px solid var(--border);}
+.match-col .col-header{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--primary);margin-bottom:7px;padding-bottom:4px;border-bottom:1px solid var(--border);}
+.col-item{font-size:.82rem;padding:3px 0;border-bottom:1px solid #eee;line-height:1.4;}
+.col-item:last-child{border-bottom:none;}
+.answer-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding-top:12px;border-top:1px dashed var(--border);}
+.ans-cell{display:flex;flex-direction:column;align-items:center;gap:3px;}
+.ans-letter{font-weight:700;color:var(--primary);font-size:.88rem;}
+.ans-sel{width:100%;padding:6px 2px;border:1.5px solid var(--border);border-radius:6px;font-size:.9rem;text-align:center;outline:none;cursor:pointer;background:#fff;}
+.ans-sel:focus{border-color:var(--primary);}
+.ans-sel.filled{border-color:var(--primary-light);background:#eaf2fb;}
+.score-circle{width:110px;height:110px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 18px;font-size:28px;font-weight:800;color:#fff;}
+.score-circle.great{background:var(--success);}.score-circle.good{background:var(--primary);}.score-circle.ok{background:var(--accent);}.score-circle.poor{background:var(--danger);}
+.score-label{font-size:11px;font-weight:400;opacity:.9;margin-top:2px;}
+.results-card{background:var(--card);border-radius:var(--radius);padding:26px;box-shadow:0 2px 12px rgba(0,0,0,.08);text-align:center;margin-bottom:22px;}
+.results-stats{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px;}
+.stat-pill{padding:7px 14px;border-radius:20px;font-size:.86rem;font-weight:600;}
+.stat-pill.c{background:#d5f5e3;color:#1e8449;}.stat-pill.p{background:#fef9e7;color:#d4a017;}.stat-pill.w{background:#fde8e8;color:#c0392b;}
+.send-status{margin-top:10px;font-size:.86rem;min-height:20px;}
+.section-title{font-size:.73rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:14px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.result-table{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:10px;}
+.result-table th{background:var(--primary);color:#fff;padding:6px 8px;text-align:left;font-size:.76rem;}
+.result-table td{padding:5px 8px;border-bottom:1px solid #eee;}
+.result-table tr.pair-correct td{background:#f0fff4;}
+.result-table tr.pair-wrong td{background:#fff5f5;}
+.q-score{text-align:right;font-size:.8rem;color:var(--muted);margin-top:6px;}
+.col-b-ref{font-size:.8rem;color:#555;margin:8px 0;padding:8px 10px;background:var(--bg);border-radius:6px;}
+.col-b-ref strong{display:block;margin-bottom:4px;color:var(--primary);}
+.btn-row{text-align:center;margin-top:22px;}
+@media(max-width:520px){.match-cols{grid-template-columns:1fr;}.ans-sel{font-size:.82rem;}.result-table th,.result-table td{padding:4px 5px;font-size:.75rem;}}
+</style>
+</head>
+<body>
+
+<script>
+const GAS_ENDPOINT = 'YOUR_GAS_WEB_APP_URL_HERE';
+const TEST_ID      = 85;
+const TEST_TITLE   = 'Право Тест № 5';
+const BLOCK_NAME   = 'Право';
+
+const QUESTIONS = [
+{
+  num:26,
+  text:'Кирилл Петрович владеет легковым автомобилем и земельным участком и периодически уплачивает соответствующие налоги. Установите соответствие между примерами и элементами структуры налога: к каждой позиции, данной в первом столбце, подберите соответствующую позицию из второго столбца.',
+  colAHeader:'ПРИМЕРЫ',
+  colBHeader:'ЭЛЕМЕНТЫ СТРУКТУРЫ НАЛОГА',
+  colA:['А) 1,5 см рабочего объёма двигателя','Б) легковой автомобиль','В) доход от предпринимательской деятельности','Г) земельный участок','Д) Кирилл Петрович'],
+  colB:['1 — субъект налога','2 — объект налога','3 — источник уплаты налога','4 — единица налогообложения'],
+  correct:[4,2,3,2,1]
+},
+{
+  num:27,
+  text:'Установите соответствие между целями и функциями образования: к каждой позиции, данной в первом столбце, подберите соответствующую позицию из второго столбца.',
+  colAHeader:'ЦЕЛЬ ОБРАЗОВАНИЯ',
+  colBHeader:'ФУНКЦИЯ ОБРАЗОВАНИЯ',
+  colA:['А) передача достижений и ценностей искусства','Б) снижение рисков негативного девиантного поведения людей','В) формирование профессиональной структуры общества','Г) развитие творческих способностей индивидов','Д) формирование навыков общения и поведения в обществе'],
+  colB:['1 — экономическая','2 — социальная','3 — культурная'],
+  correct:[3,2,1,3,2]
+},
+{
+  num:28,
+  text:'Установите соответствие между действиями и участниками образовательных отношений: к каждой позиции, данной в первом столбце, подберите соответствующую позицию из второго столбца.',
+  colAHeader:'ДЕЙСТВИЯ',
+  colBHeader:'УЧАСТНИКИ',
+  colA:['А) выбирать факультативные и элективные учебные предметы после получения основного общего образования','Б) обеспечить получение ребёнком общего образования','В) уважать честь и достоинство обучающихся','Г) обучаться по индивидуальному учебному плану','Д) систематически повышать свой профессиональный уровень'],
+  colB:['1 — обучающийся','2 — родитель (законный представитель)','3 — педагогический работник'],
+  correct:[1,2,3,1,3]
+},
+{
+  num:29,
+  text:'Установите соответствие между примерами и элементами правового статуса обучающегося: к каждой позиции, данной в первом столбце, подберите соответствующую позицию из второго столбца.',
+  colAHeader:'ПРИМЕРЫ',
+  colBHeader:'ЭЛЕМЕНТЫ СТАТУСА',
+  colA:['А) посещать предусмотренные учебным планом занятия','Б) участвовать в управлении образовательной организацией','В) бережно относиться к имуществу школы','Г) отдыхать в каникулярное время','Д) бесплатно пользоваться библиотечно-информационными ресурсами вуза'],
+  colB:['1 — права обучающегося','2 — обязанности обучающегося'],
+  correct:[2,1,2,1,1]
+},
+{
+  num:30,
+  text:'Установите соответствие между действиями родителей как участников образовательного процесса и элементами их правового статуса: к каждой позиции, данной в первом столбце, подберите соответствующую позицию из второго столбца.',
+  colAHeader:'ДЕЙСТВИЯ',
+  colBHeader:'ЭЛЕМЕНТЫ СТАТУСА',
+  colA:['А) знакомиться с содержанием образования и оценками успеваемости ребёнка','Б) соблюдать правила внутреннего распорядка образовательной организации','В) выбирать форму получения ребёнком образования','Г) уважать честь и достоинство работников образовательной организации','Д) защищать права и законные интересы обучающегося'],
+  colB:['1 — права родителей (законных представителей) несовершеннолетнего','2 — обязанности родителей (законных представителей) несовершеннолетнего'],
+  correct:[1,2,1,2,1]
+},
+{
+  num:31,
+  text:'Установите соответствие между примерами и группами прав педагогических работников как участников образовательного процесса: к каждой позиции, данной в первом столбце, подберите соответствующую позицию из второго столбца.',
+  colAHeader:'ПРИМЕРЫ',
+  colBHeader:'ГРУППЫ ПРАВ',
+  colA:['А) ежегодный удлинённый оплачиваемый отпуск','Б) выбирать педагогически обоснованные методы обучения','В) проходить дополнительное профессиональное образование не реже одного раза в три года','Г) разрабатывать авторскую методику преподавания','Д) на сокращённую продолжительность рабочего времени'],
+  colB:['1 — академические права и свободы','2 — трудовые права и социальные гарантии'],
+  correct:[2,1,2,1,2]
+},
+{
+  num:32,
+  text:'Установите соответствие между субъектами и участниками уголовного судопроизводства в соответствии с Уголовно-процессуальным кодексом Российской Федерации: к каждой позиции, данной в первом столбце, подберите соответствующую позицию из второго столбца.',
+  colAHeader:'СУБЪЕКТЫ',
+  colBHeader:'УЧАСТНИКИ УГОЛОВНОГО СУДОПРОИЗВОДСТВА',
+  colA:['А) дознаватель','Б) следователь','В) свидетель со стороны защиты','Г) адвокат','Д) потерпевший'],
+  colB:['1 — сторона защиты','2 — сторона обвинения','3 — иные участники'],
+  correct:[2,2,3,1,2]
+},
+{
+  num:33,
+  text:'Установите соответствие между субъектами и участниками уголовного судопроизводства в соответствии с Уголовно-процессуальным кодексом Российской Федерации: к каждой позиции, данной в первом столбце, подберите соответствующую позицию из второго столбца.',
+  colAHeader:'СУБЪЕКТЫ',
+  colBHeader:'УЧАСТНИКИ УГОЛОВНОГО СУДОПРОИЗВОДСТВА',
+  colA:['А) прокурор','Б) дознаватель','В) свидетель со стороны обвинения','Г) обвиняемый','Д) понятой'],
+  colB:['1 — сторона обвинения','2 — сторона защиты','3 — иные участники'],
+  correct:[1,1,3,2,3]
+},
+{
+  num:34,
+  text:'Установите соответствие между примерами и мерами процессуального принуждения в соответствии с Уголовно-процессуальным кодексом Российской Федерации: к каждому элементу, данному в первом столбце, подберите элемент из второго столбца.',
+  colAHeader:'ПРИМЕРЫ',
+  colBHeader:'МЕРЫ ПРОЦЕССУАЛЬНОГО ПРИНУЖДЕНИЯ',
+  colA:['А) залог','Б) подписка о невыезде','В) наложение ареста на имущество','Г) домашний арест','Д) привод'],
+  colB:['1 — меры пресечения','2 — иные меры процессуального принуждения'],
+  correct:[1,1,2,1,2]
+},
+{
+  num:35,
+  text:'Установите соответствие между правомочиями и участниками уголовного судопроизводства в Российской Федерации: к каждой позиции, данной в первом столбце, подберите соответствующую позицию из второго столбца.',
+  colAHeader:'ПРАВОМОЧИЯ',
+  colBHeader:'УЧАСТНИКИ УГОЛОВНОГО СУДОПРОИЗВОДСТВА',
+  colA:['А) давать показания на родном языке или языке, которым он владеет','Б) применять лицу принудительные меры воспитательного воздействия в соответствии с требованиями закона','В) признать лицо виновным в совершении преступления','Г) осуществлять от имени государства уголовное преследование','Д) осуществлять надзор за процессуальной деятельностью органов дознания и органов предварительного следствия'],
+  colB:['1 — суд','2 — прокурор','3 — потерпевший'],
+  correct:[3,1,1,2,2]
+},
+{
+  num:36,
+  text:'Установите соответствие между примерами и мерами юридической ответственности в РФ: к каждой позиции, данной в первом столбце, подберите соответствующую позицию из второго столбца.',
+  colAHeader:'ПРИМЕРЫ',
+  colBHeader:'МЕРЫ ЮРИДИЧЕСКОЙ ОТВЕТСТВЕННОСТИ В РФ',
+  colA:['А) возмещение убытков','Б) лишение свободы на определённый срок','В) предупреждение','Г) дисквалификация','Д) взыскание неустойки'],
+  colB:['1 — способы защиты гражданских прав по Гражданскому кодексу РФ','2 — наказания по Уголовному кодексу РФ','3 — административные наказания по Кодексу РФ об административных правонарушениях'],
+  correct:[1,2,3,3,1]
+},
+{
+  num:37,
+  text:'Установите соответствие между примерами и видами правонарушений: к каждой позиции, данной в первом столбце, подберите соответствующую позицию из второго столбца.',
+  colAHeader:'ПРИМЕР',
+  colBHeader:'ПРАВОНАРУШЕНИЕ',
+  colA:['А) нарушение требований пожарной безопасности','Б) нарушение правил поведения зрителей при проведении официальных спортивных соревнований','В) уход с рабочего места без разрешения начальства','Г) неисполнение правил внутреннего трудового распорядка','Д) нарушение пропускного режима охраняемого объекта'],
+  colB:['1 — административное','2 — дисциплинарное'],
+  correct:[1,1,2,2,1]
+},
+{
+  num:38,
+  text:'Установите соответствие между примерами правонарушений и видами юридической ответственности, к которым они относятся: к каждой позиции, данной в первом столбце, подберите соответствующую позицию из второго столбца.',
+  colAHeader:'ПРИМЕР ПРАВОНАРУШЕНИЯ',
+  colBHeader:'ВИД ЮРИДИЧЕСКОЙ ОТВЕТСТВЕННОСТИ',
+  colA:['А) мошенничество','Б) нарушение требований пожарной безопасности','В) угроза причинением тяжкого вреда здоровью','Г) оставление в опасности','Д) нарушение правил производства, хранения, продажи и приобретения специальных технических средств, предназначенных для негласного получения информации'],
+  colB:['1 — административная','2 — уголовная'],
+  correct:[2,1,2,2,1]
+},
+{
+  num:39,
+  text:'Установите соответствие между характеристиками и видами юридической ответственности: к каждой позиции, данной в первом столбце, подберите соответствующую позицию из второго столбца.',
+  colAHeader:'ХАРАКТЕРИСТИКА',
+  colBHeader:'ВИД ЮРИДИЧЕСКОЙ ОТВЕТСТВЕННОСТИ',
+  colA:['А) действует принцип презумпции невиновности','Б) ответственность за ряд правонарушений устанавливается по достижении 14-летнего возраста','В) ответственность несут физические и юридические лица','Г) установлена ответственность за совершение преступления','Д) в качестве наказания предусматривается ограничение свободы'],
+  colB:['1 — административная','2 — уголовная','3 — и административная, и уголовная'],
+  correct:[3,2,1,2,2]
+},
+{
+  num:40,
+  text:'Установите соответствие между функциями и правоохранительными органами: к каждой позиции, данной в первом столбце, подберите соответствующую позицию из второго столбца.',
+  colAHeader:'ФУНКЦИИ',
+  colBHeader:'ПРАВООХРАНИТЕЛЬНЫЕ ОРГАНЫ',
+  colA:['А) надзор за соблюдением законов всеми гражданами и организациями','Б) охрана общественного порядка','В) борьба с правонарушениями','Г) надзор за соблюдением прав заключённых под стражу','Д) пресечение и выявление преступлений'],
+  colB:['1 — прокуратура','2 — полиция'],
+  correct:[1,2,2,1,2]
+}
+];
+</script>
+
+<header>
+  <div class="header-icon">П</div>
+  <div><h1>Право — Тест № 5</h1><p>ЕГЭ Обществознание · verny-kurs.ru</p></div>
+</header>
+<div id="progress-wrap"><div id="progress-bar"></div></div>
+
+<div class="screen active" id="screen-welcome">
+  <div class="container">
+    <div class="welcome-card">
+      <h2>Право — Тест № 5</h2>
+      <p class="subtitle">Налоговое право · Образование<br>Уголовный процесс · Юридическая ответственность</p>
+      <div class="info-grid">
+        <div class="info-box"><strong id="q-count">15</strong>заданий</div>
+        <div class="info-box"><strong>ЕГЭ</strong>Задание 13</div>
+        <div class="info-box"><strong>~20</strong>минут</div>
+      </div>
+      <div class="name-group"><label for="student-name">Ваше имя:</label><input type="text" id="student-name" placeholder="Введите имя и фамилию" autocomplete="name"></div>
+      <button class="btn" onclick="startTest()">Начать тест</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="screen-test">
+  <div class="container">
+    <div class="progress-label">Выполнено: <span id="answered-num">0</span> / <span id="total-num">15</span></div>
+    <div id="questions-container"></div>
+    <div class="btn-row"><button class="btn btn-accent" onclick="confirmSubmit()">Завершить тест</button></div>
+  </div>
+</div>
+
+<div class="screen" id="screen-results">
+  <div class="container">
+    <div class="results-card">
+      <div id="score-circle" class="score-circle good"></div>
+      <div style="color:var(--muted);font-size:.88rem;">Ученик: <strong id="result-name"></strong></div>
+      <div class="results-stats">
+        <div class="stat-pill c" id="stat-correct"></div>
+        <div class="stat-pill p" id="stat-partial"></div>
+        <div class="stat-pill w" id="stat-wrong"></div>
+      </div>
+      <div class="send-status" id="send-status">⏳ Отправка результатов...</div>
+    </div>
+    <div class="section-title">Разбор по заданиям</div>
+    <div id="results-container"></div>
+    <div class="btn-row"><button class="btn btn-accent" onclick="retryTest()">Пройти ещё раз</button></div>
+  </div>
+</div>
+
+<script>
+const LETTERS=['А','Б','В','Г','Д'];
+let userAnswers={},studentName='';
+
+function initAnswers(){userAnswers={};QUESTIONS.forEach(q=>{userAnswers[q.num]=[null,null,null,null,null];});document.getElementById('q-count').textContent=QUESTIONS.length;}
+function startTest(){studentName=document.getElementById('student-name').value.trim();if(!studentName){alert('Пожалуйста, введите ваше имя');return;}initAnswers();buildQuestions();showScreen('screen-test');document.getElementById('total-num').textContent=QUESTIONS.length;}
+function buildQuestions(){const container=document.getElementById('questions-container');container.innerHTML='';QUESTIONS.forEach(q=>{const card=document.createElement('div');card.className='q-card';card.id='q-'+q.num;const colAItems=q.colA.map(item=>`<div class="col-item">${item}</div>`).join('');const colBItems=q.colB.map(item=>`<div class="col-item">${item}</div>`).join('');const answerCells=q.colA.map((_,i)=>{const opts=q.colB.map((_,j)=>`<option value="${j+1}">${j+1}</option>`).join('');return`<div class="ans-cell"><div class="ans-letter">${LETTERS[i]}</div><select class="ans-sel" id="sel-${q.num}-${i}" onchange="setAnswer(${q.num},${i},this)"><option value="">—</option>${opts}</select></div>`;}).join('');card.innerHTML=`<div class="q-header"><div class="q-num">${q.num}</div><div class="q-text">${q.text}</div></div><div class="match-cols"><div class="match-col"><div class="col-header">${q.colAHeader}</div>${colAItems}</div><div class="match-col"><div class="col-header">${q.colBHeader}</div>${colBItems}</div></div><div class="answer-grid">${answerCells}</div>`;container.appendChild(card);});}
+function setAnswer(qNum,idx,selectEl){const val=selectEl.value?parseInt(selectEl.value):null;userAnswers[qNum][idx]=val;selectEl.classList.toggle('filled',val!==null);const allFilled=userAnswers[qNum].every(v=>v!==null);document.getElementById('q-'+qNum).classList.toggle('answered',allFilled);updateProgress();}
+function updateProgress(){const done=QUESTIONS.filter(q=>userAnswers[q.num].every(v=>v!==null)).length;document.getElementById('answered-num').textContent=done;document.getElementById('progress-bar').style.width=(done/QUESTIONS.length*100)+'%';}
+function confirmSubmit(){const done=QUESTIONS.filter(q=>userAnswers[q.num].every(v=>v!==null)).length;if(done<QUESTIONS.length){if(!confirm(`Выполнено ${done} из ${QUESTIONS.length} заданий. Завершить?`))return;}submitTest();}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}
+function retryTest(){showScreen('screen-welcome');document.getElementById('student-name').value='';}
+function submitTest(){let totalPairs=0,correctPairs=0,verny=0,chastichno=0,neverno=0;QUESTIONS.forEach(q=>{let qOk=0;q.correct.forEach((c,i)=>{totalPairs++;if(userAnswers[q.num][i]===c){correctPairs++;qOk++;}});if(qOk===q.correct.length)verny++;else if(qOk>0)chastichno++;else neverno++;});const score=Math.round(correctPairs/totalPairs*100);showResults(score,correctPairs,totalPairs,verny,chastichno,neverno);if(GAS_ENDPOINT&&!GAS_ENDPOINT.includes('YOUR_GAS')){fetch(GAS_ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify({externalTest:true,testId:TEST_ID,studentName,score,correctCount:correctPairs,wrongCount:totalPairs-correctPairs,totalCount:totalPairs,testTitle:TEST_TITLE,blockName:BLOCK_NAME})}).then(()=>{document.getElementById('send-status').innerHTML='✅ Результаты сохранены и отправлены преподавателю';}).catch(()=>{document.getElementById('send-status').innerHTML='⚠️ Не удалось отправить';});}else{document.getElementById('send-status').innerHTML='⚠️ GAS_ENDPOINT не настроен';}}
+function showResults(score,correctPairs,totalPairs,verny,chastichno,neverno){document.getElementById('result-name').textContent=studentName;document.getElementById('stat-correct').textContent='✓ Полностью верно: '+verny;document.getElementById('stat-partial').textContent='~ Частично: '+chastichno;document.getElementById('stat-wrong').textContent='✗ Неверно: '+neverno;const circle=document.getElementById('score-circle');circle.innerHTML=`<span>${score}%</span><span class="score-label">пар верно</span>`;circle.className='score-circle '+(score>=80?'great':score>=60?'good':score>=40?'ok':'poor');const container=document.getElementById('results-container');container.innerHTML='';QUESTIONS.forEach(q=>{const ans=userAnswers[q.num];let qOk=0;ans.forEach((v,i)=>{if(v===q.correct[i])qOk++;});let sc=qOk===q.correct.length?'q-correct':qOk>0?'q-partial':'q-wrong';const colBRef=q.colB.map(b=>`<div>${b}</div>`).join('');const rows=LETTERS.slice(0,q.colA.length).map((letter,i)=>{const isOk=ans[i]===q.correct[i];const sVal=ans[i]||'—';return`<tr class="${isOk?'pair-correct':'pair-wrong'}"><td><b>${letter}</b></td><td>${q.colA[i].replace(/^[А-ДA-D]\)\s?/,'')}</td><td>${sVal}</td><td>${q.correct[i]} ${isOk?'✓':'✗'}</td></tr>`;}).join('');const card=document.createElement('div');card.className='q-card '+sc;card.innerHTML=`<div class="q-header"><div class="q-num">${q.num}</div><div class="q-text">${q.text}</div></div><div class="col-b-ref"><strong>${q.colBHeader}:</strong>${colBRef}</div><table class="result-table"><thead><tr><th>Буква</th><th>${q.colAHeader}</th><th>Ваш ответ</th><th>Верный</th></tr></thead><tbody>${rows}</tbody></table><div class="q-score">${qOk} / ${q.correct.length} пар верно</div>`;container.appendChild(card);});showScreen('screen-results');}
+document.addEventListener('DOMContentLoaded',initAnswers);
+</script>
+</body>
+</html>

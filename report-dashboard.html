@@ -388,38 +388,9 @@
   <div class="section-title">Результаты по блокам</div>
   <div class="blocks-grid" id="blocksGrid"></div>
 
-  <!-- STUDENTS TABLE -->
+  <!-- STUDENTS TABLE — генерируется динамически в renderStudentsTable() -->
   <div class="section-title">Результаты по ученикам</div>
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Ученик</th>
-          <th id="header1" style="display:none"></th>
-          <th id="header2" style="display:none"></th>
-          <th id="header3" style="display:none"></th>
-          <th id="header4" style="display:none"></th>
-          <th id="header5" style="display:none"></th>
-          <th id="header6" style="display:none"></th>
-          <th id="header7" style="display:none"></th>
-          <th id="header8" style="display:none"></th>
-          <th id="header9" style="display:none"></th>
-          <th id="header10" style="display:none"></th>
-          <th id="header11" style="display:none"></th>
-          <th id="header12" style="display:none"></th>
-          <th id="header13" style="display:none"></th>
-          <th id="header14" style="display:none"></th>
-          <th id="header15" style="display:none"></th>
-          <th id="header16" style="display:none"></th>
-          <th id="header17" style="display:none"></th>
-          <th id="header18" style="display:none"></th>
-          <th>Средний %</th>
-        </tr>
-      </thead>
-      <tbody id="studentsTable"></tbody>
-    </table>
-  </div>
+  <div class="table-wrap" id="studentsTableWrap"></div>
 
   <footer>
     <p>Верный Курс · Система отчётности по тестам</p>
@@ -442,6 +413,8 @@ const TEST_ID_MAP = {
   91: { block: 'ekonomika1', test: 1 },  // ekonomika_blok1.html
   92: { block: 'ekonomika2', test: 1 },  // ekonomika_blok2.html
   93: { block: 'ekonomika3', test: 1 },  // ekonomika_blok3.html
+  84: { block: 'pravo4',     test: 1 },  // pravo_test4.html — Право Тест №4
+  85: { block: 'pravo5',     test: 1 },  // pravo_test5.html — Право Тест №5
 };
 
 const BLOCKS = [
@@ -460,6 +433,8 @@ const BLOCKS = [
   { id: 'pravo1',      name: 'Право 1',      tests: [1, 2, 3] },
   { id: 'pravo2',      name: 'Право 2',      tests: [1, 2, 3] },
   { id: 'pravo3',      name: 'Право 3',      tests: [1, 2, 3] },
+  { id: 'pravo4',      name: 'Право Т4',     tests: [1] },   // ← НОВЫЙ Право Тест №4
+  { id: 'pravo5',      name: 'Право Т5',     tests: [1] },   // ← НОВЫЙ Право Тест №5
   { id: 'ekonomika1',  name: 'Экономика 1',  tests: [1, 2, 3] },
   { id: 'ekonomika2',  name: 'Экономика 2',  tests: [1, 2, 3] },
   { id: 'ekonomika3',  name: 'Экономика 3',  tests: [1, 2, 3] },
@@ -621,47 +596,53 @@ function renderBlocks() {
 }
 
 function renderStudentsTable() {
-  const tbody = document.getElementById('studentsTable');
-  tbody.innerHTML = '';
+  const wrap = document.getElementById('studentsTableWrap');
+  if (!wrap) return;
 
-  const sorted = [...STUDENTS].sort((a, b) => {
-    const avgA = calcAvg(a);
-    const avgB = calcAvg(b);
-    return avgB - avgA;
-  });
-
-  sorted.forEach((student, idx) => {
-    const row = document.createElement('tr');
-    let html = `<td style="color:var(--muted);font-weight:600;font-size:12px">${idx+1}</td>`;
-    html += `<td class="student-name">${student}</td>`;
-
-    let testCount = 0;
-    BLOCKS.forEach((block, blockIdx) => {
-      block.tests.forEach((testNum, testIdx) => {
-        const cellIdx = blockIdx * 2 + testIdx + 1;
-        const score = data[student][block.id] && data[student][block.id][testNum];
-        if (score !== undefined) testCount++;
-        html += `<td class="test-score-cell ${score === undefined ? 'empty' : ''}">${score !== undefined ? score + '%' : '—'}</td>`;
-      });
-    });
-
-    const avg = calcAvg(student);
-    html += `<td class="avg-score">${avg}%</td>`;
-
-    row.innerHTML = html;
-    tbody.appendChild(row);
-  });
-
-  // Update headers
-  let headerIdx = 1;
+  // Собрать все колонки (блок × тест)
+  const cols = [];
   BLOCKS.forEach(block => {
     block.tests.forEach(testNum => {
-      document.getElementById(`header${headerIdx}`).textContent = `${block.name} T${testNum}`;
-      document.getElementById(`header${headerIdx}`).style.display = 'table-cell';
-      document.getElementById(`header${headerIdx}`).style.fontSize = '10px';
-      headerIdx++;
+      cols.push({ blockId: block.id, blockName: block.name, testNum });
     });
   });
+
+  // Отсортировать студентов по среднему
+  const sorted = [...STUDENTS].sort((a, b) => calcAvg(b) - calcAvg(a));
+
+  // Построить thead
+  const thCols = cols.map(c =>
+    `<th style="padding:6px 4px;font-size:10px;font-weight:600;text-align:center;white-space:nowrap;min-width:52px;">${c.blockName}<br><span style="font-weight:400;opacity:.75;">Т${c.testNum}</span></th>`
+  ).join('');
+
+  // Построить tbody
+  const rows = sorted.map((student, idx) => {
+    const cells = cols.map(c => {
+      const score = data[student][c.blockId] && data[student][c.blockId][c.testNum];
+      const empty = score === undefined;
+      const bg = !empty ? (score >= 75 ? 'rgba(30,132,73,.08)' : score >= 50 ? 'rgba(212,160,23,.08)' : 'rgba(192,57,43,.06)') : '';
+      return `<td class="test-score-cell${empty?' empty':''}" style="text-align:center;padding:6px 4px;background:${bg};">${empty ? '—' : score + '%'}</td>`;
+    }).join('');
+    const avg = calcAvg(student);
+    return `<tr>
+      <td style="padding:6px 8px;color:var(--muted);font-size:11px;">${idx+1}</td>
+      <td class="student-name" style="padding:6px 8px;font-weight:600;white-space:nowrap;">${student}</td>
+      ${cells}
+      <td class="avg-score" style="padding:6px 8px;font-weight:700;color:var(--accent);text-align:center;">${avg}%</td>
+    </tr>`;
+  }).join('');
+
+  wrap.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:12px;">
+    <thead>
+      <tr style="background:var(--card);border-bottom:2px solid var(--border);">
+        <th style="padding:8px;text-align:left;font-size:11px;">#</th>
+        <th style="padding:8px;text-align:left;font-size:11px;">Ученик</th>
+        ${thCols}
+        <th style="padding:8px;text-align:center;font-size:11px;">Средний&nbsp;%</th>
+      </tr>
+    </thead>
+    <tbody>${rows}</tbody>
+  </table>`;
 }
 
 function calcAvg(student) {
