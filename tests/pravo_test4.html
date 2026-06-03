@@ -374,10 +374,11 @@ function submitTest() {
     method: "POST", mode: "no-cors",
     headers: {"Content-Type": "text/plain"},
     body: JSON.stringify({
-      name: studentName, testName: TEST_TITLE,
+      testId: TEST_ID,
+      name: studentName, testName: TEST_TITLE, blockName: BLOCK_NAME,
       date: new Date().toLocaleString("ru-RU"),
-      score_pct: score, correct: correctPairs, partial: 0,
-      wrong: totalPairs - correctPairs, total: totalPairs,
+      score_pct: score, correct: verny, partial: chastichno,
+      wrong: neverno, total: QUESTIONS.length,
       details: JSON.stringify(detailsArr)
     })
   }).then(() => {
