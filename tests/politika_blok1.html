@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#667eea">
+<title>Политика. Тест 1</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 10px; }
+.container { width: 100%; max-width: 700px; background: white; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); padding: 20px; }
+.header { text-align: center; margin-bottom: 20px; }
+.header h1 { color: #333; font-size: 22px; margin-bottom: 6px; }
+.header p { color: #666; font-size: 13px; }
+.name-input { width: 100%; padding: 14px; border: 2px solid #ddd; border-radius: 10px; font-size: 16px; outline: none; margin: 10px 0 16px; transition: border-color 0.2s; font-family: inherit; }
+.name-input:focus { border-color: #667eea; }
+.test-btn { width: 100%; padding: 16px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; }
+.question-screen { display: none; }
+.question-screen.active { display: block; }
+.progress-bar { width: 100%; height: 6px; background: #e0e0e0; border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); transition: width 0.3s; }
+.progress-text { font-size: 12px; color: #888; text-align: center; margin-bottom: 14px; }
+.question-text { font-size: 15px; font-weight: 600; color: #333; margin-bottom: 8px; line-height: 1.5; }
+.question-subtitle { font-size: 12px; color: #888; margin-bottom: 14px; font-style: italic; }
+.options { display: flex; flex-direction: column; gap: 9px; margin-bottom: 18px; }
+.option-label { display: flex; align-items: flex-start; padding: 11px 12px; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+.option-label.checked { border-color: #667eea; background: #f0ebff; }
+.option-checkbox { width: 18px; height: 18px; min-width: 18px; margin-right: 10px; margin-top: 2px; cursor: pointer; accent-color: #667eea; }
+.option-text { font-size: 13px; color: #333; line-height: 1.4; }
+.nav-buttons { display: flex; gap: 10px; }
+.nav-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; min-height: 44px; }
+.prev-btn { background: #f0f0f0; color: #333; }
+.prev-btn:disabled { opacity: 0.5; }
+.next-btn, .finish-btn { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+.results-screen { display: none; text-align: center; }
+.results-screen.active { display: block; }
+.score-circle { width: 100px; height: 100px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 16px auto; font-size: 32px; font-weight: bold; color: white; }
+.result-title { font-size: 20px; font-weight: 600; color: #333; margin: 16px 0 8px; }
+.result-text { font-size: 14px; color: #666; margin: 8px 0; }
+.correct-count { font-size: 14px; color: #888; margin: 8px 0; }
+.review-section { margin-top: 20px; text-align: left; }
+.review-title { font-size: 15px; font-weight: 700; color: #333; margin-bottom: 12px; text-align: center; padding-bottom: 8px; border-bottom: 2px solid #e0e0e0; }
+.review-question { margin-bottom: 14px; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden; }
+.review-qheader { padding: 9px 13px; font-size: 12px; font-weight: 600; color: #fff; line-height: 1.4; }
+.review-qheader.correct { background: linear-gradient(135deg, #43a047, #2e7d32); }
+.review-qheader.incorrect { background: linear-gradient(135deg, #e53935, #b71c1c); }
+.review-qbody { padding: 10px 13px; background: #fafafa; }
+.correct-answer-box { background: #e8f5e9; border: 1.5px solid #43a047; border-radius: 7px; padding: 7px 11px; margin-bottom: 8px; font-size: 12px; color: #1b5e20; }
+.correct-answer-box strong { display: block; margin-bottom: 2px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+.rev-legend { display: flex; gap: 10px; flex-wrap: wrap; font-size: 11px; margin-bottom: 8px; color: #666; }
+.rev-opt { display: flex; gap: 7px; padding: 4px 7px; border-radius: 5px; margin-bottom: 3px; font-size: 12px; line-height: 1.4; }
+.rev-opt.uc { background: #e8f5e9; color: #2e7d32; font-weight: 600; }
+.rev-opt.uw { background: #ffebee; color: #c62828; font-weight: 600; }
+.rev-opt.ms { background: #fff3e0; color: #e65100; font-weight: 600; border-left: 3px solid #ff9800; }
+.rev-opt.nn { color: #888; }
+.back-btn { width: 100%; padding: 12px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 16px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div id="name-screen">
+    <div class="header">
+      <h1>🏛️ Политика. Тест 1</h1>
+      <p>Политические институты. Власть. Политика. Конституционные права</p>
+    </div>
+    <input type="text" id="student-name" class="name-input" placeholder="Имя и фамилия" autocomplete="name" onkeyup="if(event.key==='Enter')startTest()">
+    <button class="test-btn" onclick="startTest()">▶ Начать тест (20 вопросов)</button>
+  </div>
+  <div class="question-screen" id="question-screen">
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    <div class="progress-text" id="progress-text"></div>
+    <div class="question-text" id="question-text"></div>
+    <div class="question-subtitle" id="question-subtitle"></div>
+    <div class="options" id="options-container"></div>
+    <div class="nav-buttons">
+      <button class="nav-btn prev-btn" id="prev-btn" onclick="prevQ()">← Назад</button>
+      <button class="nav-btn next-btn" id="next-btn" onclick="nextQ()">Дальше →</button>
+      <button class="nav-btn finish-btn" id="finish-btn" onclick="showResults()">Завершить</button>
+    </div>
+  </div>
+  <div class="results-screen" id="results-screen">
+    <div class="result-title">Результаты теста</div>
+    <div class="score-circle" id="score-circle">0%</div>
+    <p class="result-text" id="result-text"></p>
+    <div class="correct-count">Правильно: <strong id="correct-count">0/20</strong></div>
+    <div id="review-container" class="review-section"></div>
+    <button class="back-btn" onclick="location.reload()">↩ Пройти заново</button>
+  </div>
+</div>
+<script>
+const questions = [
+  {num:1, text:"Ниже приведён ряд признаков. Все они, за исключением двух, относятся к понятию «политический институт». Найдите два термина, «выпадающих» из общего ряда, и запишите в таблицу цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["политические партии","общественные движения","семья","гражданское общество","избирательная система","бизнес"], correct:[2,5]},
+  {num:2, text:"Ниже приведён перечень терминов. Все они, за исключением двух, относятся к политическим институтам. Найдите два термина, «выпадающих» из общего ряда, и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["власть","парламентаризм","собственность","партия","выборы","университет"], correct:[2,5]},
+  {num:3, text:"Выберите верные суждения о власти и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Политическая власть направлена на достижение общезначимых целей, которые не могут быть реализованы без вмешательства государства.","Политическая власть опирается на экономические, социальные и другие ресурсы.","Возникновение власти обусловлено потребностью в регуляции общественных отношений и согласовании несовпадающих интересов.","Объектами власти являются те лидеры и группы, которые её осуществляют.","Политическая власть в государстве любого типа стремится удовлетворить интересы правящей элиты в обход интересов различных больших групп населения."], correct:[0,1,2]},
+  {num:4, text:"Выберите верные суждения о власти и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Признак государственной власти — монопольное право использовать силу в пределах страны.","Государственная власть делится на законодательную, исполнительную и судебную.","По месту в структуре власти выделяют центральную, региональную и республиканскую власть.","По основному субъекту осуществления власть бывает монархическая и федеративная.","Политической властью называют способность и возможность отстаивать и претворять в жизнь определённые политические взгляды, установки и цели."], correct:[0,1,4]},
+  {num:5, text:"Найдите в приведённом ниже списке политические институты и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["общественно-политическое движение","политические партии","политическая культура","политические нормы","государство"], correct:[0,1,4]},
+  {num:6, text:"Выберите верные суждения о политической власти и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Политической властью называют способность одного человека или группы лиц контролировать поведение граждан, общества в целом, исходя из общенациональных или общегосударственных задач.","Легальность власти проявляется в её неофициальном одобрении обществом в силу её притягательных черт.","Возникновение политической власти обусловлено потребностью в регуляции общественных отношений, авторитетном разрешении социальных конфликтов.","Политическая власть — это и инструмент господства, и эффективное средство интеграции общества и поддержания общественного порядка.","Харизматический тип легитимности власти основан на вере в святость традиций и право властвовать тех, кто получил власть в соответствии c этой традицией."], correct:[0,2,3]},
+  {num:7, text:"Выберите верные суждения о политической власти и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Политическая власть — это способность объекта власти подчинять своей воле и регламентировать действия субъектов власти.","Политическая власть может опираться на принудительные и силовые средства.","Государство является центральным институтом политической власти.","По структуре различают законодательную, исполнительную и судебную политическую власть.","Политическая власть имеет универсальный характер и действует на основе права от имени общества в целом."], correct:[1,2,4]},
+  {num:8, text:"Выберите верные суждения о политике и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Политика – это один из видов деятельности, в которой проявляется социальная активность социальных групп и индивидов.","Политика связана с отношениями по поводу завоевания, сохранения и использования государственной власти.","Политика – это подсистема общества, которая отражает необходимость производства и распределения материальных благ.","Экономическая, социальная, демографическая политика относятся к направлениям внутренней политики.","К субъектам политики относят законы и подзаконные акты."], correct:[0,1,3]},
+  {num:9, text:"Выберите верные суждения о политической власти и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Субъектом политической власти может быть только государство.","Правовые ресурсы политической власти включают в себя материальные ценности, недвижимость, финансы, средства производства, драгоценные металлы.","По институциональному признаку политическая власть делится на государственную и партийную власть.","Легитимность политической власти предполагает сложившееся в обществе доверие и поддержку широких слоёв населения к власти.","Харизматическая легитимность складывается в результате веры людей в признаваемые ими выдающиеся качества политического лидера."], correct:[2,3,4]},
+  {num:10, text:"Выберите верные суждения о политических институтах и отношениях и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Политический институт представляет собой сложившийся в обществе нормативный порядок, регламентирующий определённый вид политических взаимодействий.","Характер политических взаимоотношений зависит от экономических и социальных факторов, от политической культуры общества, а также от политической воли субъектов политики.","Центральное место среди политических институтов занимают политические партии.","Политические отношения регулируются комплексом различных социальных норм.","Политические отношения складываются исключительно между различными органами государственной власти."], correct:[0,1,3]},
+  {num:11, text:"Выберите верные суждения о политических отношениях и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Политические отношения могут быть только в виде сотрудничества и конфликта.","Политические отношения показывают, в какие взаимосвязи и по каким вопросам политической жизни вовлечены члены общества.","В зависимости от предмета, то есть того, по поводу чего сложилось политическое отношение, можно выделить отношения власти, отношения лидерства и отношения управления.","Политические отношения регулируются комплексом социальных норм: политическими принципами, традициями, правовыми и этическими нормами.","Политические отношения в современном обществе характеризуются высокой сложностью и большим многообразием."], correct:[1,2,3,4]},
+  {num:12, text:"Выберите верные суждения о политике и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Политика характеризуется выполнением значительного числа функций, например, политическая мобилизация, обеспечение целостности и стабильности общества.","В демократическом обществе граждане могут влиять на принятие и реализацию государственных решений.","Объекты политики – общественные явления, на которые тем или иным образом целенаправленно воздействуют субъекты.","Целями субъектов политики является участие в экономике либо воздействие на нее.","Обеспечение взаимодействия различных социальных сил, урегулирование возникающих в обществе конфликтов – одна из функций политики."], correct:[0,1,2,4]},
+  {num:13, text:"Выберите верные суждения о политике и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["К видам политики по целевой сфере общества относится экономическая, социальная и культурная политика.","К направлениям внешней политики относится аграрная, экологическая и научно- техническая политика.","Особенность политики определена, во-первых, ее тесной связью с государственной властью, во-вторых – с обществом.","Основные методы политической науки включают в себя лишь эмпирические методы.","Субъектами политического действия являются граждане, государство и группы давления."], correct:[0,2,4]},
+  {num:14, text:"Что из перечисленного относится к конституционным обязанностям гражданина России? Запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["сохранение исторического и культурного наследия","социальное обеспечение по возрасту","защита Отечества","участие в управлении делами государства","выбор рода деятельности и профессии"], correct:[0,2]},
+  {num:15, text:"Выберите в приведённом списке положения, характеризующие политические права (свободы) гражданина Российской Федерации. Запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Граждане Российской Федерации имеют право собираться мирно, без оружия, проводить собрания, митинги и демонстрации, шествия и пикетирование.","Граждане Российской Федерации имеют право участвовать в управлении делами государства как непосредственно, так и через своих представителей.","Каждый вправе определять и указывать свою национальную принадлежность.","Граждане Российской Федерации имеют равный доступ к государственной службе.","Сбор, хранение, использование и распространение информации о частной жизни лица без его согласия не допускаются."], correct:[0,1,3]},
+  {num:16, text:"Согласно Конституции, Российская Федерация — социальное государство. Выберите в приведённом списке положения, характеризующие социальное государство, и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Политика государства направлена на создание условий, обеспечивающих достойную жизнь и свободное развитие человека.","В Российской Федерации устанавливается гарантированный минимальный размер оплаты труда.","Во взаимоотношениях с федеральными органами государственной власти все субъекты Российской Федерации равноправны между собой.","В Российской Федерации обеспечивается государственная поддержка семьи, материнства, отцовства и детства.","Земля и другие природные ресурсы могут находиться в частной, государственной, муниципальной и иных формах собственности."], correct:[0,1,3]},
+  {num:17, text:"Выберите в приведённом списке положения, характеризующие личные (гражданские) права (свободы) гражданина Российской Федерации. Запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Граждане Российской Федерации имеют право участвовать в управлении делами государства как непосредственно, так и через своих представителей.","Сбор, хранение, использование и распространение информации о частной жизни лица без его согласия не допускаются.","Каждый вправе определять и указывать свою национальную принадлежность.","Никто не должен подвергаться пыткам, насилию, другому жестокому или унижающему человеческое достоинство обращению или наказанию.","Граждане Российской Федерации имеют равный доступ к государственной службе."], correct:[1,2,3]},
+  {num:18, text:"Выберите в приведённом списке положения, характеризующие основы конституционного строя Российской Федерации, и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Во взаимоотношениях с федеральными органами государственной власти все субъекты Российской Федерации равноправны.","Носителем суверенитета и единственным источником власти в Российской Федерации является её многонациональный народ.","Гражданин отвечает по своим обязательствам всем принадлежащим ему имуществом, за исключением имущества, на которое в соответствии с законом не может быть обращено взыскание.","Необоснованный отказ в заключении трудового договора запрещается.","Земля и другие природные ресурсы могут находиться в частной, государственной, муниципальной и иных формах собственности."], correct:[0,1,4]},
+  {num:19, text:"Найдите в приведённом списке конституционные обязанности гражданина России и запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["обеспечение родителями получения детьми основного общего образования","проведение собраний, митингов, демонстраций","сохранение исторического и культурного наследия","обращение в органы государственной власти","доступ к государственной службе"], correct:[0,2]},
+  {num:20, text:"Выберите в приведённом списке положения, характеризующие политические права (свободы) гражданина Российской Федерации. Запишите цифры, под которыми они указаны.", subtitle:"Выберите все верные варианты", options:["Граждане Российской Федерации имеют право участвовать в управлении делами государства как непосредственно, так и через своих представителей.","Никто не может быть принуждён к выражению своих мнений и убеждений или отказу от них.","Граждане Российской Федерации имеют равный доступ к государственной службе.","Граждане Российской Федерации имеют право избирать и быть избранными в органы государственной власти и органы местного самоуправления, а также участвовать в референдуме.","Достоинство личности охраняется государством. Ничто не может быть основанием для его умаления."], correct:[0,2,3]}
+];
+
+let currentIdx = 0;
+let userAnswers = {};
+
+function startTest() {
+  const inp = document.getElementById('student-name');
+  const name = inp.value.trim();
+  if (!name) { inp.style.borderColor='#e53935'; inp.placeholder='Введите имя'; return; }
+  window._studentName = name;
+  document.getElementById('name-screen').style.display = 'none';
+  document.getElementById('question-screen').classList.add('active');
+  showQ();
+}
+
+function showQ() {
+  const q = questions[currentIdx];
+  const pct = Math.round((currentIdx+1)/questions.length*100);
+  document.getElementById('progress-fill').style.width = pct+'%';
+  document.getElementById('progress-text').textContent = 'Вопрос '+(currentIdx+1)+' из '+questions.length;
+  document.getElementById('question-text').textContent = '\u2116'+q.num+'. '+q.text;
+  document.getElementById('question-subtitle').textContent = q.subtitle;
+  const c = document.getElementById('options-container');
+  c.innerHTML = '';
+  q.options.forEach((opt, idx) => {
+    const checked = (userAnswers[currentIdx]||[]).includes(idx);
+    const label = document.createElement('label');
+    label.className = 'option-label'+(checked?' checked':'');
+    label.innerHTML = '<input type="checkbox" class="option-checkbox"'+(checked?' checked':'')+'>\u003cspan class="option-text">'+(idx+1)+') '+opt+'\u003c/span>';
+    label.querySelector('input').onchange = function() {
+      if (!userAnswers[currentIdx]) userAnswers[currentIdx]=[];
+      if (label.querySelector('input').checked) { if(!userAnswers[currentIdx].includes(idx)) userAnswers[currentIdx].push(idx); label.classList.add('checked'); }
+      else { userAnswers[currentIdx]=userAnswers[currentIdx].filter(function(x){return x!==idx;}); label.classList.remove('checked'); }
+    };
+    c.appendChild(label);
+  });
+  document.getElementById('prev-btn').disabled = currentIdx===0;
+  document.getElementById('next-btn').style.display = currentIdx<questions.length-1?'block':'none';
+  document.getElementById('finish-btn').style.display = currentIdx===questions.length-1?'block':'none';
+}
+
+function nextQ() { if(currentIdx<questions.length-1){currentIdx++;showQ();} }
+function prevQ() { if(currentIdx>0){currentIdx--;showQ();} }
+
+function showResults() {
+  var correct=0;
+  var detailsArr=[];
+  var rc=document.getElementById('review-container');
+  rc.innerHTML='<div class="review-title">\uD83D\uDCDD Разбор ответов</div>';
+  questions.forEach(function(q,idx) {
+    var userAns=(userAnswers[idx]||[]).slice().sort(function(a,b){return a-b;});
+    var corrAns=q.correct.slice().sort(function(a,b){return a-b;});
+    var isCorrect=JSON.stringify(userAns)===JSON.stringify(corrAns);
+    if(isCorrect) correct++;
+    detailsArr.push({q:q.num, chosen:userAns.map(function(i){return i+1;}).join(', ')||'\u2014', correct:corrAns.map(function(i){return i+1;}).join(', '), status:isCorrect?'correct':'wrong'});
+    var div=document.createElement('div');
+    div.className='review-question';
+    var corrNums=corrAns.map(function(i){return i+1;}).join(', ');
+    div.innerHTML='<div class="review-qheader '+(isCorrect?'correct':'incorrect')+'">'+(isCorrect?'\u2705':'\u274C')+' \u2116'+q.num+'. '+q.text+'</div>'+
+      '<div class="review-qbody"><div class="correct-answer-box"><strong>Правильный ответ:</strong>'+corrNums+'</div>';
+    var legend=document.createElement('div');
+    legend.className='rev-legend';
+    legend.innerHTML='<span>\uD83D\uDFE2 верно выбран</span><span>\uD83D\uDD34 лишний</span><span>\uD83D\uDFE1 пропущен</span>';
+    div.querySelector('.review-qbody').appendChild(legend);
+    q.options.forEach(function(opt,oi){
+      var inUser=userAns.includes(oi), inCorr=corrAns.includes(oi);
+      var cls='nn', icon='';
+      if(inUser&&inCorr){cls='uc';icon='\uD83D\uDFE2';}
+      else if(inUser&&!inCorr){cls='uw';icon='\uD83D\uDD34';}
+      else if(!inUser&&inCorr){cls='ms';icon='\uD83D\uDFE1';}
+      var od=document.createElement('div');
+      od.className='rev-opt '+cls;
+      od.textContent=icon+' '+(oi+1)+') '+opt;
+      div.querySelector('.review-qbody').appendChild(od);
+    });
+    rc.appendChild(div);
+  });
+  var pct=Math.round(correct/questions.length*100);
+  document.getElementById('score-circle').textContent=pct+'%';
+  document.getElementById('correct-count').textContent=correct+'/'+questions.length;
+  var msg='';
+  if(pct>=90)msg='Отлично! Превосходный результат!';
+  else if(pct>=70)msg='Хорошо! Продолжайте в том же духе!';
+  else if(pct>=50)msg='Удовлетворительно. Стоит повторить материал.';
+  else msg='Нужно повторить тему.';
+  document.getElementById('result-text').textContent=msg;
+  (function(){
+    var name=window._studentName||'Аноним';
+    var ts=new Date().toLocaleString('ru-RU');
+    fetch('https://script.google.com/macros/s/AKfycbxUNNmmBxwBNHr-hweNoGR8bGDW0CqHNvdSbdG20Sms3UVOiV_8yICDqysOZms-aMH1/exec',{
+      method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({name:name,testName:'Политика. Тест 1',date:ts,score_pct:pct,correct:correct,partial:0,wrong:questions.length-correct,total:questions.length,details:JSON.stringify(detailsArr)})
+    }).catch(function(){});
+  })();
+  document.getElementById('question-screen').classList.remove('active');
+  document.getElementById('results-screen').classList.add('active');
+}
+</script>
+</body>
+</html>

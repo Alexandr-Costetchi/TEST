@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Итоговый повтор 3. 2 | Обществознание ЕГЭ</title>
+  <style>
+    :root {
+      --primary: #2c5f8a; --primary-light: #3a78ad; --accent: #e8a020;
+      --success: #2e7d52; --danger: #c0392b;
+      --bg: #f4f7fb; --card: #ffffff; --border: #d0dbe8;
+      --text: #1e2a38; --muted: #6b7a8d; --radius: 10px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 16px; -webkit-text-size-adjust: 100%; }
+    header { background: var(--primary); color: #fff; padding: 18px 24px; display: flex; align-items: center; gap: 14px; box-shadow: 0 2px 8px rgba(0,0,0,.18); }
+    header .logo { width: 44px; height: 44px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; color: #fff; flex-shrink:0; }
+    header h1 { font-size: 1.2rem; line-height: 1.3; }
+    header p  { font-size: .82rem; opacity: .8; margin-top: 2px; }
+    #progress-wrap { height: 5px; background: #d0dbe8; position: sticky; top: 0; z-index: 10; }
+    #progress-bar  { height: 100%; width: 0%; background: var(--accent); transition: width .4s ease; }
+    .screen { display: none; } .screen.active { display: block; }
+    .container { max-width: 780px; margin: 0 auto; padding: 32px 20px 80px; }
+    .welcome-card { background: var(--card); border-radius: var(--radius); padding: 40px; box-shadow: 0 2px 16px rgba(0,0,0,.08); text-align: center; }
+    .welcome-card h2 { font-size: 1.6rem; margin-bottom: 10px; color: var(--primary); }
+    .welcome-card .subtitle { color: var(--muted); margin-bottom: 28px; font-size: .95rem; }
+    .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 14px; margin-bottom: 32px; }
+    .info-box { background: var(--bg); border-radius: 8px; padding: 14px 10px; font-size: .88rem; color: var(--muted); }
+    .info-box strong { display: block; font-size: 1.4rem; color: var(--primary); margin-bottom: 2px; }
+    .name-group { text-align: left; margin-bottom: 28px; }
+    .name-group label { display: block; font-weight: 600; margin-bottom: 8px; font-size: .95rem; }
+    .name-group input { width: 100%; padding: 13px 16px; border: 2px solid var(--border); border-radius: 8px; font-size: 1rem; transition: border-color .2s; outline: none; }
+    .name-group input:focus { border-color: var(--primary-light); }
+    .btn { display: inline-block; padding: 15px 36px; background: var(--primary); color: #fff; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background .2s, transform .1s; touch-action: manipulation; min-height: 52px; }
+    .btn:hover { background: var(--primary-light); } .btn:active { transform: scale(.98); }
+    .btn-accent { background: var(--accent); } .btn-accent:hover { background: #cf8e18; }
+    .section-title { font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 18px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    .q-card { background: var(--card); border-radius: var(--radius); border-left: 4px solid var(--border); padding: 22px 24px; margin-bottom: 18px; box-shadow: 0 1px 6px rgba(0,0,0,.05); transition: border-color .2s; }
+    .q-card.answered { border-left-color: var(--primary-light); }
+    .q-card.q-correct { border-left-color: var(--success); }
+    .q-card.q-partial { border-left-color: var(--accent); }
+    .q-card.q-wrong   { border-left-color: var(--danger); }
+    .q-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+    .q-num { min-width: 32px; height: 32px; background: var(--bg); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .9rem; color: var(--primary); flex-shrink: 0; }
+    .q-text { font-size: .97rem; line-height: 1.55; font-weight: 500; }
+    .options { list-style: none; }
+    .options li { margin-bottom: 8px; }
+    .option-label { display: flex; align-items: flex-start; gap: 10px; padding: 13px 14px; border: 1.5px solid var(--border); border-radius: 7px; cursor: pointer; font-size: .95rem; line-height: 1.45; transition: background .15s, border-color .15s; user-select: none; touch-action: manipulation; min-height: 48px; }
+    .option-label:hover { background: #eef4fb; border-color: var(--primary-light); }
+    .option-label input[type="checkbox"] { margin-top: 3px; flex-shrink: 0; accent-color: var(--primary); width: 18px; height: 18px; }
+    .option-label.res-correct-chosen { background: #e6f4ec; border-color: var(--success); color: var(--success); font-weight: 600; }
+    .option-label.res-correct-missed { background: #fdf3dc; border-color: var(--accent); color: #8a6200; }
+    .option-label.res-wrong-chosen   { background: #fdecea; border-color: var(--danger); color: var(--danger); }
+    .option-label.res-neutral        { opacity: .6; }
+    .option-label .res-icon          { margin-left: auto; flex-shrink: 0; font-size: 1rem; }
+    .q-badge { display: none; margin-top: 10px; padding: 5px 12px; border-radius: 20px; font-size: .82rem; font-weight: 600; width: fit-content; }
+    .q-badge.show { display: inline-block; }
+    .q-badge.correct { background: #e6f4ec; color: var(--success); }
+    .q-badge.partial { background: #fdf3dc; color: #8a6200; }
+    .q-badge.wrong   { background: #fdecea; color: var(--danger); }
+    .submit-bar { position: sticky; bottom: 0; background: rgba(244,247,251,.96); backdrop-filter: blur(6px); border-top: 1px solid var(--border); padding: 14px 20px; padding-bottom: calc(14px + env(safe-area-inset-bottom)); display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .submit-bar .answered-count { font-size: .9rem; color: var(--muted); }
+    .submit-bar .answered-count span { font-weight: 700; color: var(--primary); }
+    .results-header { text-align: center; padding: 32px 24px 24px; background: var(--card); border-radius: var(--radius); margin-bottom: 24px; box-shadow: 0 2px 16px rgba(0,0,0,.08); }
+    .score-circle { width: 110px; height: 110px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 2rem; font-weight: 800; border: 5px solid; }
+    .score-circle .score-label { font-size: .7rem; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; margin-top: 2px; }
+    .score-circle.great { border-color: var(--success); color: var(--success); background: #e6f4ec; }
+    .score-circle.good  { border-color: var(--primary); color: var(--primary); background: #eef4fb; }
+    .score-circle.ok    { border-color: var(--accent);  color: var(--accent);  background: #fdf3dc; }
+    .score-circle.poor  { border-color: var(--danger);  color: var(--danger);  background: #fdecea; }
+    .results-stats { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin: 16px 0 6px; }
+    .stat-pill { padding: 7px 18px; border-radius: 20px; font-size: .88rem; font-weight: 600; }
+    .stat-pill.c { background: #e6f4ec; color: var(--success); }
+    .stat-pill.p { background: #fdf3dc; color: #8a6200; }
+    .stat-pill.w { background: #fdecea; color: var(--danger); }
+    .student-name-display { font-size: 1.1rem; color: var(--primary); font-weight: 700; margin-bottom: 4px; }
+    .send-status { margin-top: 14px; padding: 10px 16px; border-radius: 7px; font-size: .88rem; display: none; }
+    .send-status.sending { background: #eef4fb; color: var(--primary); display: block; }
+    .send-status.sent    { background: #e6f4ec; color: var(--success); display: block; }
+    .send-status.error   { background: #fdecea; color: var(--danger);  display: block; }
+    /* confirm overlay */
+    #confirm-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:200; align-items:center; justify-content:center; padding:20px; }
+    #confirm-overlay.show { display:flex; }
+    .confirm-box { background:#fff; border-radius:16px; padding:28px 22px; max-width:340px; width:100%; text-align:center; }
+    .confirm-box p { font-size:.97rem; font-weight:600; margin-bottom:20px; line-height:1.5; color:#1e2a38; }
+    .confirm-btns { display:flex; gap:10px; }
+    .confirm-btns button { flex:1; padding:13px; border-radius:9px; font-size:.95rem; font-weight:700; cursor:pointer; touch-action:manipulation; border:none; }
+    @media (max-width: 600px) {
+      header { padding: 12px 14px; gap: 10px; }
+      header .logo { width: 36px; height: 36px; font-size: 18px; }
+      header h1 { font-size: .92rem; } header p { font-size: .72rem; }
+      .container { padding: 14px 10px 90px; }
+      .welcome-card { padding: 22px 14px; }
+      .welcome-card h2 { font-size: 1.3rem; }
+      .info-grid { grid-template-columns: repeat(2,1fr); gap: 10px; }
+      .q-card { padding: 14px 12px; }
+      .q-text { font-size: .92rem; }
+      .option-label { padding: 12px 10px; font-size: .9rem; }
+      .btn { width: 100%; }
+      .submit-bar { flex-direction: column; align-items: stretch; padding: 10px 14px; padding-bottom: calc(10px + env(safe-area-inset-bottom)); gap: 8px; }
+      .submit-bar .answered-count { text-align: center; }
+      .results-header { padding: 22px 14px 18px; }
+      .score-circle { width: 90px; height: 90px; font-size: 1.65rem; }
+    }
+    @media (max-width:360px) { body { font-size:15px; } .option-label { font-size:.86rem; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">О</div>
+  <div>
+    <h1>Итоговый повтор 3. 2 · Обществознание ЕГЭ</h1>
+    <p>Темы 3.4–3.5: Социальные роли, статус, семья и её функции</p>
+  </div>
+</header>
+<div id="progress-wrap"><div id="progress-bar"></div></div>
+
+<!-- confirm overlay -->
+<div id="confirm-overlay">
+  <div class="confirm-box">
+    <p id="confirm-msg"></p>
+    <div class="confirm-btns">
+      <button onclick="confirmNo()" style="background:#f4f7fb;color:#1e2a38;border:2px solid #d0dbe8;">Нет</button>
+      <button onclick="confirmOk()" style="background:#2c5f8a;color:#fff;">Завершить</button>
+    </div>
+  </div>
+</div>
+
+<!-- WELCOME -->
+<div id="screen-welcome" class="screen active">
+  <div class="container">
+    <div class="welcome-card">
+      <h2>Итоговый повтор 3. 2</h2>
+      <p class="subtitle">Задание 20 ЕГЭ · Ответьте и узнайте результат сразу после отправки</p>
+      <div class="info-grid">
+        <div class="info-box"><strong>15</strong>вопросов</div>
+        <div class="info-box"><strong>ЕГЭ</strong>формат</div>
+        <div class="info-box"><strong>∞</strong>попыток</div>
+        <div class="info-box"><strong>⚡</strong>мгновенный результат</div>
+      </div>
+      <div class="name-group">
+        <label for="student-name">Ваше имя и фамилия</label>
+        <input type="text" id="student-name" placeholder="Например: Иванова Мария" autocomplete="name">
+      </div>
+      <button class="btn btn-accent" onclick="startTest()">Начать тест →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TEST -->
+<div id="screen-test" class="screen">
+  <div class="container">
+    <div class="section-title">Итоговый повтор 3. 2 · вопросы 1–15</div>
+    <div id="questions-container"></div>
+  </div>
+  <div class="submit-bar">
+    <div class="answered-count">Отвечено: <span id="answered-num">0</span> / 15</div>
+    <button class="btn" onclick="submitTest()">Завершить и проверить →</button>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="screen-results" class="screen">
+  <div class="container">
+    <div class="results-header">
+      <div id="score-circle" class="score-circle">
+        <span id="score-pct">0%</span>
+        <span class="score-label">результат</span>
+      </div>
+      <div class="student-name-display" id="result-name"></div>
+      <div style="color:var(--muted);font-size:.9rem;margin-bottom:12px;">Итоговый повтор 3. 2 · Обществознание ЕГЭ</div>
+      <div class="results-stats">
+        <div class="stat-pill c" id="stat-correct"></div>
+        <div class="stat-pill p" id="stat-partial"></div>
+        <div class="stat-pill w" id="stat-wrong"></div>
+      </div>
+      <div id="send-status" class="send-status"></div>
+    </div>
+    <div class="section-title">Разбор ответов</div>
+    <div id="results-container"></div>
+    <div style="text-align:center;margin-top:28px;">
+      <button class="btn btn-accent" onclick="retryTest()">Пройти ещё раз</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const QUESTIONS = [{"text": "Выберите верные суждения о социальной роли и запишите цифры, под которыми они указаны.", "options": ["Социальная роль – это совокупность действий, которые должен выполнить носитель определённого социального статуса.", "Исполнение социальной роли зависит от личностных качеств человека.", "Все социальные роли человека определяются при его рождении.", "Освоение новой роли всегда является результатом вертикальной социальной мобильности.", "Исполнение многих социальных ролей официально регламентировано."], "correct": [1, 2, 5], "id": 1}, {"text": "Выберите верные суждения о социальной роли индивида и запишите цифры, под которыми они указаны.", "options": ["Социальная роль – модель поведения индивида, ориентированная на определённый статус.", "Социальные роли обусловлены социальным неравенством.", "Социальная роль объективно задана социальной позицией личности.", "Исполнение человеком социальной роли имеет индивидуальную окраску.", "Все социальные роли людей строго формализованы."], "correct": [1, 3, 4], "id": 2}, {"text": "Выберите верные суждения о социальном статусе и запишите цифры, под которыми они указаны.", "options": ["Социальный статус всегда определяется личными достижениями человека.", "Социальный статус может быть предписанным или достигаемым.", "Социальный статус связан с определённым набором прав и обязанностей.", "Человек может одновременно обладать лишь одним социальным статусом.", "Социальный статус может быть как индивидуальным, так и групповым."], "correct": [2, 3, 5], "id": 3}, {"text": "Выберите верные суждения о социальных ролях и запишите цифры, под которыми они указаны.", "options": ["Социальная роль – это общественная оценка значимости того положения, которое человек занимает в социальной структуре.", "Социальная роль всегда отражает место человека в общественной иерархии.", "Социальная роль предполагает следование ожидаемой модели поведения.", "Социальная роль является неотъемлемым атрибутом социального статуса.", "Один человек, как правило, имеет сразу несколько социальных ролей."], "correct": [3, 4, 5], "id": 4}, {"text": "Выберите верные суждения о социальных ролях и запишите цифры, под которыми они указаны.", "options": ["На выполнение социальной роли человеком влияют его индивидуальные качества.", "Ролевые ожидания делают социальное поведение людей в значительной степени предсказуемым.", "Социальный статус человека не влияет на выполнение им социальных ролей.", "Индивид всегда выполняет одновременно только одну социальную роль.", "Ролевые нормативные требования являются элементом системы социальных норм, принятых данным обществом."], "correct": [1, 2, 5], "id": 5}, {"text": "Выберите верные суждения о социальной дифференциации и стратификации и запишите цифры, под которыми они указаны.", "options": ["Социальная дифференциация выражается в разделении общества на социальные группы.", "Доиндустриальное общество было социально однородным.", "Одним из видов социальной дифференциации является выделение групп по общности профессиональной деятельности.", "Основным критерием социальной стратификации выступают личные качества человека.", "Кастовое деление общества служит примером социальной стратификации."], "correct": [1, 3, 5], "id": 6}, {"text": "Выберите верные суждения о видах социальной мобильности и запишите цифры, под которыми они указаны.", "options": ["Внутрипоколенная мобильность предполагает изменение социального статуса от одного поколения к другому.", "Наряду с индивидуальной мобильностью существует и групповая мобильность.", "Повышение человека в должности служит примером горизонтальной восходящей мобильности.", "С переходом к индустриальному обществу социальная мобильность возрастает.", "Неоднократное изменение человеком на протяжении жизни своего социального статуса служит проявлением межпоколенной мобильности."], "correct": [2, 4], "id": 7}, {"text": "Выберите верные суждения о каналах вертикальной социальной мобильности и запишите цифры, под которыми они указаны.", "options": ["Каналы вертикальной социальной мобильности стабильны и не зависят от развития общества.", "Основным каналом вертикальной социальной мобильности в современном обществе является образование.", "В качестве каналов вертикальной социальной мобильности могут выступать политические партии.", "Каналы вертикальной социальной мобильности всегда позволяют людям достигать более высокого социального статуса независимо от личных усилий.", "Функционирование каналов социальной мобильности снижает чувство социальной несправедливости и обеспечивает стабильность общества."], "correct": [2, 3, 5], "id": 8}, {"text": "Выберите верные суждения о семье как социальном институте и запишите цифры, под которыми они указаны.", "options": ["Репродуктивная функция семьи связана с биологическим воспроизводством членов общества.", "Семья – это малая социальная группа, основанная на браке, кровном родстве или усыновлении (удочерении).", "Эмоциональная функция семьи проявляется в физической, психологической и экономической защите членов семьи.", "По составу семьи выделяют нуклеарные, расширенные семьи.", "Для семьи демократического типа характерно чёткое разграничение домашних обязанностей по гендерному признаку."], "correct": [1, 2, 4], "id": 9}, {"text": "Выберите верные суждения о семье и её функциях и запишите цифры, под которыми они указаны.", "options": ["В зависимости от наличия ядра (супружеской четы) семья бывает патриархальной или эгалитарной.", "Хозяйственно-бытовая функция семьи заключается в удовлетворении материальных потребностей членов семьи.", "По отношению к обществу в ходе выполнения воспитательной функции семья обеспечивает социализацию подрастающего поколения, подготовку новых членов общества.", "Рекреационная функция семьи обеспечивает восстановление физических и интеллектуальных сил её членов.", "Эмоциональная функция семьи обеспечивает удовлетворение потребностей в совместном проведении досуга, взаимном духовном обогащении."], "correct": [2, 3, 4], "id": 10}, {"text": "Выберите верные суждения о функциях семьи и запишите цифры, под которыми они указаны.", "options": ["Социализирующая функция семьи проявляется в воспроизводстве населения и замещении поколений.", "Выполняя экономическую функцию, семья обеспечивает для себя материальные условия жизни.", "Регламентация поведения членов семьи осуществляется посредством функции социального контроля.", "Статусная функция семьи выражается в совместном проведении семейного досуга.", "Семья выполняет эмоциональную функцию, окружая каждого члена семьи любовью и заботой."], "correct": [2, 3, 5], "id": 11}, {"text": "Выберите верные суждения о тенденциях развития современной семьи в России и запишите цифры, под которыми они указаны.", "options": ["Сокращается число патриархальных (традиционных) семей.", "В современной России преобладают семьи расширенного типа.", "В современных семьях наблюдается рост количества разводов и повторных браков.", "В современной семье возрастает влияние женщины.", "Быстро сокращается доля «партнёрских» семей эгалитарного типа."], "correct": [1, 3, 4], "id": 12}, {"text": "В семье Петровых под одной крышей живут двое супругов, их дети, внуки и правнуки. Главой семьи является старший мужчина, чьи решения обязательны для остальных домочадцев. Женщины занимаются домашней работой, а мужчины обеспечивают материальные условия существования семьи. Выберите в приведённом ниже списке характеристики данной семьи и запишите цифры, под которыми они указаны.", "options": ["нуклеарная", "партнёрская", "традиционная", "многопоколенная", "демократическая", "моногамная"], "correct": [3, 4, 6], "id": 13}, {"text": "В Москве проживает семья, состоящая из супругов и двоих детей. Муж и жена работают в рекламном бизнесе, совместно решают все вопросы жизни семьи. Ежегодно, вместе с детьми они обсуждают вопросы организации летнего отдыха, принимают решения о приобретении всех крупных покупок. Укажите в приведенном перечне характерные признаки семьи, описанной в задании.", "options": ["демократическая", "патриархальная", "партнерская", "нуклеарная", "моногамная"], "correct": [1, 3, 4, 5], "id": 14}, {"text": "Выберите верные суждения о семье и ее функциях в современном обществе и запишите цифры, под которыми они указаны.", "options": ["Появлению семьи способствовало возникновение государства.", "В современном обществе семья остается главной производственной ячейкой.", "Одной из функций семьи является психологическая и эмоциональная поддержка членами семьи друг друга.", "Функции семьи как социального института меняются с изменением условий общественного развития.", "Семья — единственный социальный институт, осуществляющий социализацию подрастающего поколения."], "correct": [3, 4], "id": 15}];
+
+const APPS_SCRIPT_URL = '__APPS_SCRIPT_URL__';
+let studentName = '';
+let userAnswers = {};
+
+function buildQuestions() {
+  const container = document.getElementById('questions-container');
+  QUESTIONS.forEach(q => {
+    const card = document.createElement('div');
+    card.className = 'q-card'; card.id = 'qcard-' + q.id;
+    const optHTML = q.options.map((opt, i) => `
+      <li><label class="option-label" id="opt-${q.id}-${i+1}">
+        <input type="checkbox" value="${i+1}" onchange="toggleAnswer(${q.id},${i+1},this.checked)">
+        <span>${i+1}) ${opt}</span>
+      </label></li>`).join('');
+    card.innerHTML = `
+      <div class="q-header"><div class="q-num">${q.id}</div><div class="q-text">${q.text}</div></div>
+      <ul class="options">${optHTML}</ul>
+      <div class="q-badge" id="badge-${q.id}"></div>`;
+    container.appendChild(card);
+    userAnswers[q.id] = new Set();
+  });
+}
+
+function toggleAnswer(qId, num, checked) {
+  if (checked) userAnswers[qId].add(num); else userAnswers[qId].delete(num);
+  document.getElementById('qcard-' + qId).classList.toggle('answered', userAnswers[qId].size > 0);
+  updateCount();
+}
+
+function updateCount() {
+  const n = QUESTIONS.filter(q => userAnswers[q.id].size > 0).length;
+  document.getElementById('answered-num').textContent = n;
+  document.getElementById('progress-bar').style.width = (n / QUESTIONS.length * 100) + '%';
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function startTest() {
+  const inp = document.getElementById('student-name');
+  studentName = inp.value.trim();
+  if (!studentName) { inp.focus(); inp.style.borderColor='var(--danger)'; setTimeout(()=>inp.style.borderColor='',1200); return; }
+  showScreen('screen-test');
+  document.getElementById('progress-bar').style.width = '0%';
+}
+
+let _pendingSubmit = false;
+function submitTest() {
+  const un = QUESTIONS.filter(q => userAnswers[q.id].size === 0);
+  if (un.length > 0) {
+    document.getElementById('confirm-msg').textContent =
+      'Вы не ответили на ' + un.length + ' вопрос(ов) (№' + un.map(q=>q.id).join(', ') + '). Завершить всё равно?';
+    document.getElementById('confirm-overlay').classList.add('show');
+    _pendingSubmit = true; return;
+  }
+  doSubmit();
+}
+function confirmOk()  { document.getElementById('confirm-overlay').classList.remove('show'); if (_pendingSubmit) { _pendingSubmit=false; doSubmit(); } }
+function confirmNo()  { document.getElementById('confirm-overlay').classList.remove('show'); _pendingSubmit=false; }
+
+function doSubmit() {
+  const results = QUESTIONS.map(q => {
+    const correct = new Set(q.correct), chosen = userAnswers[q.id];
+    const ok = [...chosen].filter(x=>correct.has(x));
+    const miss = [...correct].filter(x=>!chosen.has(x));
+    const bad = [...chosen].filter(x=>!correct.has(x));
+    const status = (bad.length===0 && miss.length===0) ? 'correct' : (ok.length>0 && bad.length===0) ? 'partial' : 'wrong';
+    return {q, chosen, correct, status};
+  });
+  showResults(results);
+  sendResults(results);
+}
+
+function showResults(results) {
+  document.getElementById('result-name').textContent = studentName;
+  const cc = results.filter(r=>r.status==='correct').length;
+  const pc = results.filter(r=>r.status==='partial').length;
+  const wc = results.filter(r=>r.status==='wrong').length;
+  const pct = Math.round(cc/QUESTIONS.length*100);
+  const circle = document.getElementById('score-circle');
+  document.getElementById('score-pct').textContent = pct + '%';
+  circle.className = 'score-circle ' + (pct>=80?'great':pct>=60?'good':pct>=40?'ok':'poor');
+  document.getElementById('stat-correct').textContent = '✓ Верно: ' + cc;
+  document.getElementById('stat-partial').textContent = '~ Частично: ' + pc;
+  document.getElementById('stat-wrong').textContent   = '✗ Неверно: ' + wc;
+  const cont = document.getElementById('results-container'); cont.innerHTML = '';
+  results.forEach(r => {
+    const card = document.createElement('div');
+    card.className = 'q-card q-' + r.status;
+    const badge = {correct:'✓ Верно', partial:'~ Частично верно', wrong:'✗ Неверно'}[r.status];
+    const optHTML = r.q.options.map((opt,i) => {
+      const num = i+1, ic = r.chosen.has(num), iv = r.correct.has(num);
+      let cls = 'option-label ', icon = '';
+      if (ic&&iv) { cls+='res-correct-chosen'; icon='✓'; }
+      else if (!ic&&iv) { cls+='res-correct-missed'; icon='○'; }
+      else if (ic&&!iv) { cls+='res-wrong-chosen'; icon='✗'; }
+      else cls+='res-neutral';
+      return `<li><label class="${cls}"><input type="checkbox" disabled ${ic?'checked':''}><span>${num}) ${opt}</span>${icon?'<span class="res-icon">'+icon+'</span>':''}</label></li>`;
+    }).join('');
+    card.innerHTML = `
+      <div class="q-header"><div class="q-num">${r.q.id}</div><div class="q-text">${r.q.text}</div></div>
+      <ul class="options">${optHTML}</ul>
+      <div class="q-badge show ${r.status}">${badge} · правильный ответ: ${[...r.correct].join('')}</div>`;
+    cont.appendChild(card);
+  });
+  showScreen('screen-results');
+  document.getElementById('progress-bar').style.width = '100%';
+}
+
+function sendResults(results) {
+  const st = document.getElementById('send-status');
+  st.className = 'send-status sending'; st.textContent = '⏳ Отправка результатов...';
+  const cc=results.filter(r=>r.status==='correct').length;
+  const pc=results.filter(r=>r.status==='partial').length;
+  const wc=results.filter(r=>r.status==='wrong').length;
+  const pct=Math.round(cc/QUESTIONS.length*100);
+  const now=new Date(), ds=now.toLocaleDateString('ru-RU')+' '+now.toLocaleTimeString('ru-RU');
+  const testTitle = document.title;
+  const details = results.map(r => ({
+    q: r.q.id,
+    chosen: [...r.chosen].sort().join(', ') || '—',
+    correct: [...r.correct].sort().join(', '),
+    status: r.status
+  }));
+  fetch('https://script.google.com/macros/s/AKfycbxUNNmmBxwBNHr-hweNoGR8bGDW0CqHNvdSbdG20Sms3UVOiV_8yICDqysOZms-aMH1/exec', {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: {'Content-Type': 'text/plain'},
+    body: JSON.stringify({
+      name: studentName,
+      testName: testTitle,
+      date: ds,
+      score_pct: pct,
+      correct: cc,
+      partial: pc,
+      wrong: wc,
+      total: QUESTIONS.length,
+      details: JSON.stringify(details)
+    })
+  })
+    .then(()=>{st.className='send-status sent'; st.textContent='✓ Результаты отправлены учителю';})
+    .catch(()=>{st.className='send-status error'; st.textContent='⚠ Не удалось отправить (проверьте интернет)';});
+}
+
+function retryTest() {
+  userAnswers = {}; QUESTIONS.forEach(q=>{ userAnswers[q.id]=new Set(); });
+  document.querySelectorAll('#screen-test input[type="checkbox"]').forEach(cb=>cb.checked=false);
+  document.querySelectorAll('.q-card').forEach(c=>c.className='q-card');
+  updateCount(); showScreen('screen-welcome');
+}
+
+buildQuestions();
+
+</script>
+</body>
+</html>
