@@ -109,6 +109,50 @@ function doPost(e) {
   }
 }
 
+// === ТАБЛИЦА ВНЕШНИХ ТЕСТОВ: testId → данные для Архива ===
+const EXTERNAL_TESTS_REGISTRY = {
+  71:  { block: '4 Политика', title: 'Политика Блок 2',   type: 'Итоговый', url: 'https://alexandr-costetchi.github.io/TEST/tests/politika_blok2.html' },
+  72:  { block: '4 Политика', title: 'Политика Блок 3',   type: 'Итоговый', url: 'https://alexandr-costetchi.github.io/TEST/tests/politika_blok3.html' },
+  73:  { block: '4 Политика', title: 'Политика Т13',      type: 'Итоговый', url: 'https://alexandr-costetchi.github.io/TEST/tests/politika_sootvetstvie.html' },
+  81:  { block: '5 Право',    title: 'Право Блок 1',      type: 'Итоговый', url: 'https://alexandr-costetchi.github.io/TEST/tests/pravo_blok1.html' },
+  82:  { block: '5 Право',    title: 'Право Блок 2',      type: 'Итоговый', url: 'https://alexandr-costetchi.github.io/TEST/tests/pravo_blok2.html' },
+  83:  { block: '5 Право',    title: 'Право Блок 3',      type: 'Итоговый', url: 'https://alexandr-costetchi.github.io/TEST/tests/pravo_blok3.html' },
+  84:  { block: '5 Право',    title: 'Право Тест № 4',    type: 'Итоговый', url: 'https://alexandr-costetchi.github.io/TEST/tests/pravo_test4.html' },
+  85:  { block: '5 Право',    title: 'Право Тест № 5',    type: 'Итоговый', url: 'https://alexandr-costetchi.github.io/TEST/tests/pravo_test5.html' },
+  91:  { block: '6 Экономика',title: 'Экономика Блок 1',  type: 'Итоговый', url: 'https://alexandr-costetchi.github.io/TEST/tests/ekonomika_blok1.html' },
+  92:  { block: '6 Экономика',title: 'Экономика Блок 2',  type: 'Итоговый', url: 'https://alexandr-costetchi.github.io/TEST/tests/ekonomika_blok2.html' },
+  93:  { block: '6 Экономика',title: 'Экономика Блок 3',  type: 'Итоговый', url: 'https://alexandr-costetchi.github.io/TEST/tests/ekonomika_blok3.html' },
+};
+
+// Авто-регистрация теста в Архиве если его там нет
+function ensureTestInArchive(testId, testTitle, blockName) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const archiveSheet = ss.getSheetByName(SHEET_ARCHIVE);
+    if (!archiveSheet) return;
+
+    const lastRow = archiveSheet.getLastRow();
+    if (lastRow > 1) {
+      const ids = archiveSheet.getRange(2, 1, lastRow - 1, 1).getValues().map(r => Number(r[0]));
+      if (ids.includes(Number(testId))) return;  // уже есть
+    }
+
+    // Взять данные из реестра или из параметров
+    const reg = EXTERNAL_TESTS_REGISTRY[Number(testId)];
+    const block = reg ? reg.block : blockName || 'Внешний';
+    const title = reg ? reg.title : (testTitle || 'Тест ' + testId);
+    const type  = reg ? reg.type  : 'Итоговый';
+    const url   = reg ? reg.url   : '';
+
+    archiveSheet.getRange(archiveSheet.getLastRow() + 1, 1, 1, 5)
+      .setValues([[Number(testId), block, title, type, url]]);
+
+    Logger.log(`✅ Тест ${testId} (${title}) авто-зарегистрирован в Архиве`);
+  } catch (err) {
+    Logger.log(`⚠️ ensureTestInArchive: ${err.message}`);
+  }
+}
+
 // === Сохранить результат внешнего теста (GitHub Pages) ===
 function handleExternalTestResult(payload) {
   const { testId, studentName, score, correctCount, wrongCount, totalCount, testTitle, blockName } = payload;
@@ -116,6 +160,9 @@ function handleExternalTestResult(payload) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const resultsSheet = ss.getSheetByName(SHEET_RESULTS);
   if (!resultsSheet) throw new Error('Лист "Результаты теста" не найден');
+
+  // Авто-регистрировать тест в Архиве при первом прохождении
+  ensureTestInArchive(testId, testTitle, blockName);
 
   const timestamp = new Date();
   const rowNum = Math.max(0, resultsSheet.getLastRow() - 1) + 1;
