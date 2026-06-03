@@ -357,46 +357,33 @@ function retryTest() {
 }
 
 function submitTest() {
-  // Вычислить результат локально
   let correct = 0, partial = 0, wrong = 0;
+  const detailsArr = [];
   QUESTIONS.forEach(q => {
     const s = [...userAnswers[q.num]].sort((a,b)=>a-b);
-    const c = [...q.correct].sort((a,b)=>a-b);
-    if (JSON.stringify(s) === JSON.stringify(c)) correct++;
-    else if (s.some(a => c.includes(a))) partial++;
-    else wrong++;
+    const cv = [...q.correct].sort((a,b)=>a-b);
+    const ok = JSON.stringify(s) === JSON.stringify(cv);
+    const pt = !ok && s.some(a => cv.includes(a));
+    if (ok) correct++; else if (pt) partial++; else wrong++;
+    detailsArr.push({q:q.num, chosen:s.join(",")||"-", correct:cv.join(","), status:ok?"correct":pt?"partial":"wrong"});
   });
   const score = Math.round(correct / QUESTIONS.length * 100);
-
   showResults(score, correct, partial, wrong);
-
-  // Отправить в GAS (no-cors, fire-and-forget)
-  if (GAS_ENDPOINT && !GAS_ENDPOINT.includes('YOUR_GAS')) {
-    fetch(GAS_ENDPOINT, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({
-        externalTest: true,
-        testId: TEST_ID,
-        studentName: studentName,
-        score: score,
-        correctCount: correct,
-        wrongCount: wrong,
-        totalCount: QUESTIONS.length,
-        testTitle: TEST_TITLE,
-        blockName: BLOCK_NAME
-      })
+  fetch(GAS_ENDPOINT, {
+    method: "POST", mode: "no-cors",
+    headers: {"Content-Type": "text/plain"},
+    body: JSON.stringify({
+      name: studentName, testName: TEST_TITLE,
+      date: new Date().toLocaleString("ru-RU"),
+      score_pct: score, correct: correct, partial: partial,
+      wrong: wrong, total: QUESTIONS.length,
+      details: JSON.stringify(detailsArr)
     })
-    .then(() => {
-      document.getElementById('send-status').innerHTML = '✅ Результаты сохранены и отправлены преподавателю';
-    })
-    .catch(() => {
-      document.getElementById('send-status').innerHTML = '⚠️ Не удалось отправить (проверьте соединение)';
-    });
-  } else {
-    document.getElementById('send-status').innerHTML = '⚠️ GAS_ENDPOINT не настроен';
-  }
+  }).then(() => {
+    document.getElementById("send-status").innerHTML = "✅ Результаты сохранены и отправлены преподавателю";
+  }).catch(() => {
+    document.getElementById("send-status").innerHTML = "⚠️ Не удалось отправить";
+  });
 }
 
 function showResults(score, correct, partial, wrong) {

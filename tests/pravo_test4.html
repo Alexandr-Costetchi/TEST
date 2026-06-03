@@ -355,41 +355,36 @@ function retryTest() {
 }
 
 function submitTest() {
-  let totalPairs = 0, correctPairs = 0;
-  let verny = 0, chastichno = 0, neverno = 0;
-
+  let totalPairs=0, correctPairs=0, verny=0, chastichno=0, neverno=0;
+  const detailsArr = [];
   QUESTIONS.forEach(q => {
     let qOk = 0;
     q.correct.forEach((c, i) => {
       totalPairs++;
       if (userAnswers[q.num][i] === c) { correctPairs++; qOk++; }
     });
+    detailsArr.push({q:q.num, chosen:(userAnswers[q.num]||[]).join(","), correct:q.correct.join(","), pairs_ok:qOk, pairs_total:q.correct.length});
     if (qOk === q.correct.length) verny++;
     else if (qOk > 0) chastichno++;
     else neverno++;
   });
-
   const score = Math.round(correctPairs / totalPairs * 100);
   showResults(score, correctPairs, totalPairs, verny, chastichno, neverno);
-
-  if (GAS_ENDPOINT && !GAS_ENDPOINT.includes('YOUR_GAS')) {
-    fetch(GAS_ENDPOINT, {
-      method:'POST', mode:'no-cors',
-      headers:{'Content-Type':'text/plain'},
-      body: JSON.stringify({
-        externalTest:true, testId:TEST_ID, studentName,
-        score, correctCount:correctPairs,
-        wrongCount:totalPairs-correctPairs, totalCount:totalPairs,
-        testTitle:TEST_TITLE, blockName:BLOCK_NAME
-      })
-    }).then(() => {
-      document.getElementById('send-status').innerHTML = '✅ Результаты сохранены и отправлены преподавателю';
-    }).catch(() => {
-      document.getElementById('send-status').innerHTML = '⚠️ Не удалось отправить';
-    });
-  } else {
-    document.getElementById('send-status').innerHTML = '⚠️ GAS_ENDPOINT не настроен';
-  }
+  fetch(GAS_ENDPOINT, {
+    method: "POST", mode: "no-cors",
+    headers: {"Content-Type": "text/plain"},
+    body: JSON.stringify({
+      name: studentName, testName: TEST_TITLE,
+      date: new Date().toLocaleString("ru-RU"),
+      score_pct: score, correct: correctPairs, partial: 0,
+      wrong: totalPairs - correctPairs, total: totalPairs,
+      details: JSON.stringify(detailsArr)
+    })
+  }).then(() => {
+    document.getElementById("send-status").innerHTML = "✅ Результаты сохранены и отправлены преподавателю";
+  }).catch(() => {
+    document.getElementById("send-status").innerHTML = "⚠️ Не удалось отправить";
+  });
 }
 
 function showResults(score, correctPairs, totalPairs, verny, chastichno, neverno) {
