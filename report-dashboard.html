@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Отчёт по тестам — Верный Курс</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1419;
+    --surface: #1a1f2e;
+    --card: #232a3d;
+    --border: #3a4456;
+    --accent: #c93a3a;
+    --accent-light: #e85555;
+    --text: #e8eef8;
+    --muted: #8a96b0;
+    --success: #48d9a4;
+    --warning: #ffb347;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    padding: 48px 32px;
+    background-image: radial-gradient(ellipse at 10% 20%, rgba(201,58,58,0.06) 0%, transparent 50%);
+  }
+
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* HEADER */
+  header {
+    margin-bottom: 48px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 32px;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 400;
+  }
+
+  /* PARSER SECTION */
+  .parser-section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 40px;
+  }
+
+  .parser-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+
+  .parser-input-group {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  #emailText {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-size: 13px;
+    font-family: 'Inter', monospace;
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  #emailText::placeholder {
+    color: var(--muted);
+  }
+
+  button {
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  button:hover {
+    background: var(--accent-light);
+  }
+
+  button:active {
+    transform: scale(0.98);
+  }
+
+  .parser-hint {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* TOP STATS */
+  .top-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--accent);
+    border-radius: 3px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+
+  .stat-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 44px;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-sub {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* BLOCKS GRID */
+  .blocks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+
+  .block-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .block-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 20px rgba(201, 58, 58, 0.1);
+  }
+
+  .block-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+
+  .test-item {
+    background: var(--surface);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid transparent;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .test-item.has-data {
+    background: rgba(72, 217, 164, 0.06);
+    border-color: rgba(72, 217, 164, 0.2);
+  }
+
+  .test-name {
+    font-size: 12px;
+    color: var(--muted);
+    flex: 1;
+  }
+
+  .test-score {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--success);
+    margin-left: 12px;
+  }
+
+  /* STUDENTS TABLE */
+  .table-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 40px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  thead th {
+    background: var(--surface);
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: rgba(201,58,58,0.04); }
+
+  td {
+    padding: 12px 16px;
+    vertical-align: middle;
+  }
+
+  .student-name {
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .test-score-cell {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    color: var(--success);
+  }
+
+  .test-score-cell.empty {
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  .avg-score {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .footer-time {
+    color: var(--muted);
+    font-size: 11px;
+    margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>📊 Отчёт по тестам</h1>
+    <p class="subtitle">Верный Курс — ЕГЭ История / Обществознание</p>
+  </header>
+
+  <!-- АВТО-ЗАГРУЗКА ИЗ GAS -->
+  <div class="parser-section" style="margin-bottom:16px;">
+    <div class="parser-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+      <span>🔗 Авто-загрузка из Google Sheet</span>
+      <button onclick="autoFetchFromGAS()" style="padding:8px 20px;font-size:13px;">↻ Обновить</button>
+    </div>
+    <div id="fetchStatus" style="font-size:13px;color:var(--muted);margin-top:8px;">Ожидание...</div>
+  </div>
+
+  <!-- PARSER (ручной) -->
+  <div class="parser-section">
+    <div class="parser-title">✉️ Добавить результаты из письма вручную</div>
+    <div class="parser-input-group">
+      <textarea id="emailText" placeholder="Вставь текст из письма почты (формат: Имя - Урок 1. ЧИО Тест 1: название - 85%)"></textarea>
+      <button onclick="parseAndAdd()">Добавить</button>
+    </div>
+    <div class="parser-hint">
+      Формат: «Павел Бондарев - Урок 1. ЧИО Тест 1: Человек. Мировоззрение - 80%»<br>
+      Нужны: имя (должно быть в списке), блок и номер теста, результат в %
+    </div>
+  </div>
+
+  <!-- TOP STATS -->
+  <div class="top-stats">
+    <div class="stat-card">
+      <div class="stat-label">Учеников</div>
+      <div class="stat-value" id="totalStudents">0</div>
+      <div class="stat-sub">в системе</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Решено тестов</div>
+      <div class="stat-value" id="totalTests">0</div>
+      <div class="stat-sub">всего сдач</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Средний балл</div>
+      <div class="stat-value" id="avgScore">0%</div>
+      <div class="stat-sub">по всем результатам</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Всего блоков</div>
+      <div class="stat-value" id="totalBlocks">18</div>
+      <div class="stat-sub">тестовых блоков</div>
+    </div>
+  </div>
+
+  <!-- BLOCKS -->
+  <div class="section-title">Результаты по блокам</div>
+  <div class="blocks-grid" id="blocksGrid"></div>
+
+  <!-- STUDENTS TABLE -->
+  <div class="section-title">Результаты по ученикам</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Ученик</th>
+          <th id="header1" style="display:none"></th>
+          <th id="header2" style="display:none"></th>
+          <th id="header3" style="display:none"></th>
+          <th id="header4" style="display:none"></th>
+          <th id="header5" style="display:none"></th>
+          <th id="header6" style="display:none"></th>
+          <th id="header7" style="display:none"></th>
+          <th id="header8" style="display:none"></th>
+          <th id="header9" style="display:none"></th>
+          <th id="header10" style="display:none"></th>
+          <th id="header11" style="display:none"></th>
+          <th id="header12" style="display:none"></th>
+          <th id="header13" style="display:none"></th>
+          <th id="header14" style="display:none"></th>
+          <th id="header15" style="display:none"></th>
+          <th id="header16" style="display:none"></th>
+          <th id="header17" style="display:none"></th>
+          <th id="header18" style="display:none"></th>
+          <th>Средний %</th>
+        </tr>
+      </thead>
+      <tbody id="studentsTable"></tbody>
+    </table>
+  </div>
+
+  <footer>
+    <p>Верный Курс · Система отчётности по тестам</p>
+    <div class="footer-time" id="updateTime"></div>
+  </footer>
+</div>
+
+<script>
+// ⚙️ Вставьте URL вашего GAS Web App + ?action=results
+const GAS_RESULTS_URL = 'YOUR_GAS_WEB_APP_URL_HERE?action=results';
+
+// Маппинг testId (из Google Sheet) → { block, test }
+const TEST_ID_MAP = {
+  71: { block: 'politika2',  test: 1 },  // politika_blok2.html
+  72: { block: 'politika3',  test: 1 },  // politika_blok3.html
+  73: { block: 'politikaT13',test: 1 },  // politika_sootvetstvie.html
+  81: { block: 'pravo1',     test: 1 },  // pravo_blok1.html
+  82: { block: 'pravo2',     test: 1 },  // pravo_blok2.html
+  83: { block: 'pravo3',     test: 1 },  // pravo_blok3.html
+  91: { block: 'ekonomika1', test: 1 },  // ekonomika_blok1.html
+  92: { block: 'ekonomika2', test: 1 },  // ekonomika_blok2.html
+  93: { block: 'ekonomika3', test: 1 },  // ekonomika_blok3.html
+};
+
+const BLOCKS = [
+  { id: 'chio1', name: 'ЧИО 1', tests: [1] },
+  { id: 'chio2', name: 'ЧИО 2', tests: [1] },
+  { id: 'chio3', name: 'ЧИО 3', tests: [1] },
+  { id: 'socio1', name: 'Социо 1', tests: [1, 2] },
+  { id: 'socio2', name: 'Социо 2', tests: [1, 2] },
+  { id: 'socio3', name: 'Социо 3', tests: [1, 2] },
+  { id: 'socio4', name: 'Социо 4', tests: [1, 2] },
+  { id: 'socio5', name: 'Социо 5', tests: [1, 2] },
+  { id: 'politika1',   name: 'Политика 1',   tests: [1, 2, 3] },
+  { id: 'politika2',   name: 'Политика 2',   tests: [1, 2, 3] },
+  { id: 'politika3',   name: 'Политика 3',   tests: [1, 2, 3] },
+  { id: 'politikaT13', name: 'Политика Т13', tests: [1] },
+  { id: 'pravo1',      name: 'Право 1',      tests: [1, 2, 3] },
+  { id: 'pravo2',      name: 'Право 2',      tests: [1, 2, 3] },
+  { id: 'pravo3',      name: 'Право 3',      tests: [1, 2, 3] },
+  { id: 'ekonomika1',  name: 'Экономика 1',  tests: [1, 2, 3] },
+  { id: 'ekonomika2',  name: 'Экономика 2',  tests: [1, 2, 3] },
+  { id: 'ekonomika3',  name: 'Экономика 3',  tests: [1, 2, 3] },
+];
+
+const STUDENTS = [
+  'Кристина',
+  'Алина Ч (З)',
+  'Олечка',
+  'Алексей Овчинников',
+  'Таня',
+  'Диана',
+  'София Калайджи',
+  'Соня',
+  'Павел',
+  'Сашенька',
+  'Ляля',
+  'Алина П (В)',
+  'Варя',
+  'Ариана',
+  'Майя',
+  'Маша',
+  'Кира',
+];
+
+// data[studentName][blockId][testNum] = score
+let data = {};
+STUDENTS.forEach(s => { data[s] = {}; });
+
+function parseAndAdd() {
+  const text = document.getElementById('emailText').value.trim();
+  if (!text) return;
+
+  // Regex: "Имя... - Урок X. БЛОК Тест Y: название - Z%"
+  const regex = /([А-Яа-яЁё\s()]+?)\s*-\s*Урок\s*(\d+)\.\s*([А-Яа-яЁё]+)\s+Тест\s+(\d+):\s*[^-]+\s*-\s*(\d+)%/g;
+
+  let match;
+  let count = 0;
+
+  while ((match = regex.exec(text)) !== null) {
+    const name = match[1].trim();
+    const lesson = match[2];
+    const blockName = match[3].trim().toLowerCase();
+    const testNum = parseInt(match[4]);
+    const score = parseInt(match[5]);
+
+    const student = STUDENTS.find(s => s.toLowerCase().includes(name.toLowerCase()) || name.toLowerCase().includes(s.toLowerCase()));
+    const block = BLOCKS.find(b => b.name.toLowerCase().replace(' ', '') === blockName.replace(' ', ''));
+
+    if (student && block) {
+      if (!data[student][block.id]) data[student][block.id] = {};
+      data[student][block.id][testNum] = score;
+      count++;
+    }
+  }
+
+  if (count > 0) {
+    document.getElementById('emailText').value = '';
+    render();
+    alert(`✅ Добавлено ${count} результат(ов)`);
+  } else {
+    alert('❌ Не удалось распарсить данные. Проверь формат.');
+  }
+}
+
+// === АВТО-ЗАГРУЗКА ИЗ GAS ===
+async function autoFetchFromGAS() {
+  if (!GAS_RESULTS_URL || GAS_RESULTS_URL.includes('YOUR_GAS')) {
+    document.getElementById('fetchStatus').textContent = '⚠️ GAS_RESULTS_URL не настроен';
+    return;
+  }
+
+  document.getElementById('fetchStatus').textContent = '⏳ Загрузка из Google Sheet...';
+
+  try {
+    const resp = await fetch(GAS_RESULTS_URL);
+    const json = await resp.json();
+
+    if (!json.results || json.results.length === 0) {
+      document.getElementById('fetchStatus').textContent = 'ℹ️ Результатов пока нет';
+      return;
+    }
+
+    let added = 0;
+    json.results.forEach(row => {
+      const testId = Number(row.testId);
+      const score  = Number(row.score);
+      const name   = String(row.student || '').trim();
+
+      // Найти студента нечётким поиском
+      const student = STUDENTS.find(s =>
+        s.toLowerCase().includes(name.toLowerCase()) ||
+        name.toLowerCase().includes(s.toLowerCase())
+      );
+
+      // Найти маппинг по testId
+      const mapping = TEST_ID_MAP[testId];
+
+      if (student && mapping) {
+        if (!data[student][mapping.block]) data[student][mapping.block] = {};
+        data[student][mapping.block][mapping.test] = score;
+        added++;
+      }
+    });
+
+    render();
+    const ts = new Date().toLocaleTimeString('ru-RU');
+    document.getElementById('fetchStatus').textContent =
+      `✅ Загружено ${json.results.length} записей (${added} сопоставлено) · ${ts}`;
+    document.getElementById('updateTime').textContent = 'Обновлено: ' + ts;
+  } catch (err) {
+    document.getElementById('fetchStatus').textContent = '❌ Ошибка загрузки: ' + err.message;
+  }
+}
+
+function render() {
+  renderBlocks();
+  renderStudentsTable();
+  renderStats();
+}
+
+// Авто-запуск при загрузке страницы
+window.addEventListener('DOMContentLoaded', () => {
+  autoFetchFromGAS();
+});
+
+function renderBlocks() {
+  const grid = document.getElementById('blocksGrid');
+  grid.innerHTML = '';
+
+  BLOCKS.forEach(block => {
+    const card = document.createElement('div');
+    card.className = 'block-card';
+    card.innerHTML = `<div class="block-name">${block.name}</div>`;
+
+    block.tests.forEach(testNum => {
+      const key = `${block.id}-${testNum}`;
+      let scores = [];
+
+      STUDENTS.forEach(student => {
+        const s = data[student][block.id] && data[student][block.id][testNum];
+        if (s !== undefined) scores.push(s);
+      });
+
+      const avg = scores.length > 0 ? Math.round(scores.reduce((a,b)=>a+b,0)/scores.length) : null;
+      const hasData = scores.length > 0;
+
+      const item = document.createElement('div');
+      item.className = `test-item ${hasData ? 'has-data' : ''}`;
+      item.innerHTML = `
+        <div class="test-name">Тест ${testNum}</div>
+        ${hasData ? `<div class="test-score">${avg}% (${scores.length})</div>` : '<div class="test-score" style="color:var(--muted)">—</div>'}
+      `;
+      card.appendChild(item);
+    });
+
+    grid.appendChild(card);
+  });
+}
+
+function renderStudentsTable() {
+  const tbody = document.getElementById('studentsTable');
+  tbody.innerHTML = '';
+
+  const sorted = [...STUDENTS].sort((a, b) => {
+    const avgA = calcAvg(a);
+    const avgB = calcAvg(b);
+    return avgB - avgA;
+  });
+
+  sorted.forEach((student, idx) => {
+    const row = document.createElement('tr');
+    let html = `<td style="color:var(--muted);font-weight:600;font-size:12px">${idx+1}</td>`;
+    html += `<td class="student-name">${student}</td>`;
+
+    let testCount = 0;
+    BLOCKS.forEach((block, blockIdx) => {
+      block.tests.forEach((testNum, testIdx) => {
+        const cellIdx = blockIdx * 2 + testIdx + 1;
+        const score = data[student][block.id] && data[student][block.id][testNum];
+        if (score !== undefined) testCount++;
+        html += `<td class="test-score-cell ${score === undefined ? 'empty' : ''}">${score !== undefined ? score + '%' : '—'}</td>`;
+      });
+    });
+
+    const avg = calcAvg(student);
+    html += `<td class="avg-score">${avg}%</td>`;
+
+    row.innerHTML = html;
+    tbody.appendChild(row);
+  });
+
+  // Update headers
+  let headerIdx = 1;
+  BLOCKS.forEach(block => {
+    block.tests.forEach(testNum => {
+      document.getElementById(`header${headerIdx}`).textContent = `${block.name} T${testNum}`;
+      document.getElementById(`header${headerIdx}`).style.display = 'table-cell';
+      document.getElementById(`header${headerIdx}`).style.fontSize = '10px';
+      headerIdx++;
+    });
+  });
+}
+
+function calcAvg(student) {
+  let scores = [];
+  BLOCKS.forEach(block => {
+    block.tests.forEach(testNum => {
+      const s = data[student][block.id] && data[student][block.id][testNum];
+      if (s !== undefined) scores.push(s);
+    });
+  });
+  return scores.length > 0 ? Math.round(scores.reduce((a,b)=>a+b,0)/scores.length) : 0;
+}
+
+function renderStats() {
+  let totalResults = 0;
+  let allScores = [];
+
+  STUDENTS.forEach(student => {
+    BLOCKS.forEach(block => {
+      block.tests.forEach(testNum => {
+        const s = data[student][block.id] && data[student][block.id][testNum];
+        if (s !== undefined) {
+          totalResults++;
+          allScores.push(s);
+        }
+      });
+    });
+  });
+
+  const avgScore = allScores.length > 0 ? Math.round(allScores.reduce((a,b)=>a+b,0)/allScores.length) : 0;
+
+  document.getElementById('totalStudents').textContent = STUDENTS.length;
+  document.getElementById('totalTests').textContent = totalResults;
+  document.getElementById('avgScore').textContent = avgScore + '%';
+  document.getElementById('updateTime').textContent = 'Обновлено: ' + new Date().toLocaleString('ru-RU');
+}
+
+// Initial render
+render();
+
+// Сохранение в localStorage при изменении
+window.addEventListener('beforeunload', () => {
+  localStorage.setItem('testData', JSON.stringify(data));
+});
+
+// Загрузка из localStorage при загрузке
+window.addEventListener('load', () => {
+  const saved = localStorage.getItem('testData');
+  if (saved) {
+    data = JSON.parse(saved);
+    render();
+  }
+});
+</script>
+
+</body>
+</html>

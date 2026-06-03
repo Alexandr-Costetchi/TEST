@@ -356,6 +356,65 @@ function getStudentResults(studentName, testId, resultId) {
   return results;
 }
 
+// === EMAIL ДЛЯ ВНЕШНИХ ТЕСТОВ (GitHub Pages) ===
+function sendExternalTestEmail(testId, studentName, score, testTitle, blockName, correctCount, wrongCount, totalCount) {
+  if (!SEND_EMAIL) return false;
+
+  try {
+    let scoreColor = '#c0392b';
+    if (score >= 50 && score < 75) scoreColor = '#e8a020';
+    if (score >= 75) scoreColor = '#2e7d52';
+
+    const subject = `[${blockName}] ${studentName} — ${testTitle} — ${score}%`;
+
+    const html = `
+<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8">
+<style>
+  body { font-family: 'Segoe UI', Arial, sans-serif; background:#f9f9f9; padding:20px; color:#333; }
+  .container { max-width:600px; margin:0 auto; background:#fff; padding:30px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,.1); }
+  .header { background:linear-gradient(135deg,#2c5f8a,#3a78ad); color:#fff; padding:20px; border-radius:8px; margin-bottom:24px; text-align:center; }
+  .header h2 { margin:0; font-size:22px; }
+  .header p { margin:4px 0 0; font-size:13px; opacity:.9; }
+  .score-badge { display:inline-block; background:${scoreColor}; color:#fff; padding:10px 24px; border-radius:6px; font-size:20px; font-weight:700; margin:12px 0; }
+  .stats { display:flex; gap:16px; justify-content:center; margin-top:12px; }
+  .stat { text-align:center; padding:10px 18px; background:#f5f5f5; border-radius:6px; }
+  .stat-number { font-size:20px; font-weight:700; color:#2c5f8a; }
+  .stat-label { font-size:12px; color:#666; margin-top:4px; }
+  .footer { margin-top:24px; padding-top:16px; border-top:1px solid #e0e0e0; text-align:center; font-size:12px; color:#999; }
+  .footer a { color:#2c5f8a; }
+</style>
+</head><body>
+<div class="container">
+  <div class="header">
+    <h2>${testTitle}</h2>
+    <p>${blockName} · verny-kurs.ru</p>
+  </div>
+  <div style="text-align:center;">
+    <div style="margin-bottom:8px;font-size:15px;">Ученик: <strong>${studentName}</strong></div>
+    <div style="margin-bottom:8px;font-size:13px;color:#666;">Дата: ${new Date().toLocaleString('ru-RU')}</div>
+    <div class="score-badge">${score}%</div>
+    <div class="stats">
+      <div class="stat"><div class="stat-number" style="color:#2e7d52;">${correctCount}</div><div class="stat-label">Верно</div></div>
+      <div class="stat"><div class="stat-number" style="color:#c0392b;">${wrongCount}</div><div class="stat-label">Неверно</div></div>
+      <div class="stat"><div class="stat-number">${totalCount}</div><div class="stat-label">Всего</div></div>
+    </div>
+  </div>
+  <div class="footer">
+    <p>Система тестирования verny-kurs.ru · <a href="https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/">Открыть Google Sheet</a></p>
+    <p>Тест ID: ${testId} · Отправлено: ${new Date().toISOString()}</p>
+  </div>
+</div>
+</body></html>`;
+
+    GmailApp.sendEmail(TEACHER_EMAIL, subject, '', { htmlBody: html, name: 'Система тестирования verny-kurs.ru' });
+    Logger.log(`✅ External test email sent: ${studentName} / ${testTitle} / ${score}%`);
+    return true;
+  } catch (error) {
+    Logger.log(`❌ Ошибка отправки external email: ${error.message}`);
+    return false;
+  }
+}
+
 // === ИНТЕГРИРОВАТЬ В doPost() ===
 // Добавить эту строку в функцию doPost() ПОСЛЕ saveTestResults():
 //

@@ -19,6 +19,11 @@ const SHEET_RESULTS = 'Результаты теста';
 
 // === ENTRY POINT ===
 function doGet(e) {
+  // API endpoint: ?action=results → JSON для дашборда
+  if (e.parameter.action === 'results') {
+    return getResultsJSON();
+  }
+
   const testId = parseInt(e.parameter.test) || 33;
 
   try {
@@ -37,19 +42,57 @@ function doGet(e) {
   }
 }
 
+// === API: Отдать все результаты как JSON (для дашборда) ===
+function getResultsJSON() {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const resultsSheet = ss.getSheetByName(SHEET_RESULTS);
+
+    if (!resultsSheet || resultsSheet.getLastRow() < 2) {
+      return ContentService.createTextOutput(JSON.stringify({ results: [] }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    const data = resultsSheet.getRange(2, 1, resultsSheet.getLastRow() - 1, 10).getValues();
+    const results = [];
+
+    for (const row of data) {
+      if (!row[2] || row[2] === '') continue;
+      results.push({
+        num:     row[0],
+        date:    row[1] ? new Date(row[1]).toISOString() : '',
+        student: String(row[2]),
+        testId:  Number(row[3]),
+        score:   Number(row[4]),
+        correct: Number(row[5]),
+        partial: Number(row[6]),
+        wrong:   Number(row[7]),
+        total:   Number(row[8])
+      });
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({ results: results }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ error: err.message, results: [] }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
 // === POST обработчик для сохранения результатов ===
 function doPost(e) {
   try {
     const payload = JSON.parse(e.postData.contents);
+
+    // Внешние тесты (GitHub Pages HTML) присылают уже вычисленный результат
+    if (payload.externalTest === true) {
+      return handleExternalTestResult(payload);
+    }
+
+    // Стандартный путь (тесты из GAS doGet)
     const { testId, studentName, answers } = payload;
-
-    // Сохранить результаты
     const resultId = saveTestResults(testId, studentName, answers);
-
-    // Вычислить оценку
     const score = calculateScore(testId, answers);
-
-    // ✅ ОТПРАВИТЬ РЕЗУЛЬТАТЫ НА ПОЧТУ
     sendResultsEmail(testId, studentName, score, resultId);
 
     return ContentService.createTextOutput(JSON.stringify({
@@ -64,6 +107,36 @@ function doPost(e) {
       error: error.message
     })).setMimeType(ContentService.MimeType.JSON);
   }
+}
+
+// === Сохранить результат внешнего теста (GitHub Pages) ===
+function handleExternalTestResult(payload) {
+  const { testId, studentName, score, correctCount, wrongCount, totalCount, testTitle, blockName } = payload;
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const resultsSheet = ss.getSheetByName(SHEET_RESULTS);
+  if (!resultsSheet) throw new Error('Лист "Результаты теста" не найден');
+
+  const timestamp = new Date();
+  const rowNum = Math.max(0, resultsSheet.getLastRow() - 1) + 1;
+
+  const resultRow = [
+    rowNum, timestamp, studentName, testId, score,
+    correctCount || 0, 0, wrongCount || 0, totalCount || 0,
+    ''
+  ];
+
+  const lastRow = resultsSheet.getLastRow() + 1;
+  resultsSheet.getRange(lastRow, 1, 1, resultRow.length).setValues([resultRow]);
+
+  sendExternalTestEmail(testId, studentName, score, testTitle || 'Тест ' + testId, blockName || '', correctCount || 0, wrongCount || 0, totalCount || 0);
+
+  return ContentService.createTextOutput(JSON.stringify({
+    success: true,
+    rowNum: rowNum,
+    score: score,
+    emailSent: true
+  })).setMimeType(ContentService.MimeType.JSON);
 }
 
 // === Получить конфигурацию теста из листа "Архив" ===

@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1a5276">
+<title>Политика Блок 2 — ЕГЭ</title>
+<style>
+:root {
+  --primary: #1a5276;
+  --primary-light: #2471a3;
+  --accent: #d4a017;
+  --success: #1e8449;
+  --danger: #c0392b;
+  --bg: #f4f6f9;
+  --card: #ffffff;
+  --border: #d5d8dc;
+  --muted: #717d7e;
+  --radius: 10px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background:var(--bg); min-height:100vh; color:#2c3e50; }
+header { background:var(--primary); color:#fff; padding:16px 20px; position:sticky; top:0; z-index:100; display:flex; align-items:center; gap:14px; }
+.header-icon { width:40px; height:40px; background:rgba(255,255,255,.15); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:800; flex-shrink:0; }
+header h1 { font-size:1.1rem; line-height:1.3; }
+header p  { font-size:.78rem; opacity:.8; margin-top:2px; }
+#progress-wrap { height:4px; background:#d5d8dc; }
+#progress-bar { height:100%; width:0%; background:var(--accent); transition:width .3s; }
+.screen { display:none; }
+.screen.active { display:block; }
+.container { max-width:720px; margin:0 auto; padding:24px 16px 64px; }
+.welcome-card { background:var(--card); border-radius:var(--radius); padding:32px 28px; box-shadow:0 2px 12px rgba(0,0,0,.07); text-align:center; }
+.welcome-card h2 { font-size:1.5rem; color:var(--primary); margin-bottom:8px; }
+.welcome-card .subtitle { color:var(--muted); font-size:.92rem; margin-bottom:24px; line-height:1.5; }
+.info-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:24px; }
+.info-box { background:var(--bg); border-radius:8px; padding:12px 8px; font-size:.82rem; color:var(--muted); }
+.info-box strong { display:block; font-size:1.35rem; color:var(--primary); margin-bottom:2px; }
+.name-group { text-align:left; margin-bottom:24px; }
+.name-group label { display:block; font-weight:600; margin-bottom:7px; font-size:.92rem; }
+.name-group input { width:100%; padding:12px 14px; border:2px solid var(--border); border-radius:8px; font-size:1rem; outline:none; transition:border-color .2s; }
+.name-group input:focus { border-color:var(--primary-light); }
+.btn { display:inline-block; padding:13px 32px; background:var(--primary); color:#fff; border:none; border-radius:8px; font-size:1rem; font-weight:600; cursor:pointer; transition:background .2s, transform .1s; }
+.btn:hover { background:var(--primary-light); }
+.btn:active { transform:scale(.98); }
+.btn-accent { background:var(--accent); }
+.btn-accent:hover { background:#b8860b; }
+.progress-label { font-size:.82rem; color:var(--muted); margin-bottom:16px; }
+.q-card { background:var(--card); border-radius:var(--radius); border-left:4px solid var(--border); padding:20px 22px; margin-bottom:14px; box-shadow:0 1px 5px rgba(0,0,0,.05); }
+.q-card.answered { border-left-color:var(--primary-light); }
+.q-card.q-correct { border-left-color:var(--success); }
+.q-card.q-partial { border-left-color:var(--accent); }
+.q-card.q-wrong { border-left-color:var(--danger); }
+.q-header { display:flex; align-items:flex-start; gap:10px; margin-bottom:12px; }
+.q-num { min-width:30px; height:30px; background:var(--bg); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.88rem; color:var(--primary); flex-shrink:0; }
+.q-text { font-size:.94rem; line-height:1.55; font-weight:500; }
+.options { list-style:none; }
+.options li { margin-bottom:7px; }
+.option-label { display:flex; align-items:flex-start; gap:9px; padding:9px 12px; border:1.5px solid var(--border); border-radius:7px; cursor:pointer; font-size:.9rem; line-height:1.45; transition:background .15s, border-color .15s; user-select:none; }
+.option-label:hover { background:#eaf2fb; border-color:var(--primary-light); }
+.option-label.selected { background:#eaf2fb; border-color:var(--primary); }
+.res-correct-chosen { background:#d5f5e3 !important; border-color:var(--success) !important; }
+.res-wrong-chosen { background:#fde8e8 !important; border-color:var(--danger) !important; }
+.res-correct-missed { background:#fef9e7 !important; border-color:var(--accent) !important; }
+.q-comment { background:#fef9e7; border-left:3px solid var(--accent); padding:10px 14px; border-radius:0 6px 6px 0; font-size:.85rem; margin-top:10px; line-height:1.5; color:#555; }
+.score-circle { width:110px; height:110px; border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center; margin:0 auto 20px; font-size:28px; font-weight:800; color:#fff; }
+.score-circle.great { background:var(--success); }
+.score-circle.good  { background:var(--primary); }
+.score-circle.ok    { background:var(--accent); }
+.score-circle.poor  { background:var(--danger); }
+.score-label { font-size:11px; font-weight:400; opacity:.9; margin-top:2px; }
+.results-stats { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:14px; }
+.stat-pill { padding:8px 16px; border-radius:20px; font-size:.88rem; font-weight:600; }
+.stat-pill.c { background:#d5f5e3; color:#1e8449; }
+.stat-pill.p { background:#fef9e7; color:#d4a017; }
+.stat-pill.w { background:#fde8e8; color:#c0392b; }
+.results-card { background:var(--card); border-radius:var(--radius); padding:28px; box-shadow:0 2px 12px rgba(0,0,0,.08); text-align:center; margin-bottom:24px; }
+.section-title { font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:16px; padding-bottom:7px; border-bottom:1px solid var(--border); }
+.send-status { margin-top:12px; font-size:.88rem; min-height:22px; }
+.btn-row { text-align:center; margin-top:24px; }
+@media(max-width:480px) { .info-grid { grid-template-columns:repeat(3,1fr); } header h1 { font-size:1rem; } }
+</style>
+</head>
+<body>
+
+<!-- ⚙️ КОНФИГУРАЦИЯ — вставьте URL вашего GAS Web App -->
+<script>
+const GAS_ENDPOINT = 'YOUR_GAS_WEB_APP_URL_HERE';
+const TEST_ID      = 71;
+const TEST_TITLE   = 'Политика Блок 2';
+const BLOCK_NAME   = 'Политика';
+
+// Вопросы — формат: { num, text, options:[5 вариантов], correct:[номера верных 1-5], comment }
+const QUESTIONS = [
+  {
+    num: 1,
+    text: 'Выберите верные суждения о демократии и запишите цифры, под которыми они указаны.',
+    options: [
+      'В условиях демократии народ является источником государственной власти.',
+      'Демократический режим предполагает однопартийную систему.',
+      'Для демократии характерны разделение властей и верховенство закона.',
+      'При демократии права и свободы граждан законодательно закреплены и защищены.',
+      'Демократический режим исключает деятельность оппозиции.'
+    ],
+    correct: [1, 3, 4],
+    comment: 'Демократия основана на народовластии, разделении властей и защите прав граждан. Многопартийность и оппозиция — её необходимые элементы.'
+  },
+  {
+    num: 2,
+    text: 'Выберите верные суждения о гражданском обществе и запишите цифры, под которыми они указаны.',
+    options: [
+      'Гражданское общество — сфера самоорганизации граждан вне государственного контроля.',
+      'Институты гражданского общества включают профсоюзы, НКО, свободную прессу.',
+      'Гражданское общество тождественно государству.',
+      'Развитое гражданское общество является признаком правового государства.',
+      'В условиях тоталитаризма гражданское общество процветает.'
+    ],
+    correct: [1, 2, 4],
+    comment: 'Гражданское общество — система независимых от государства организаций, защищающих интересы граждан. Тоталитаризм подавляет гражданское общество.'
+  },
+  {
+    num: 3,
+    text: 'Выберите верные суждения об избирательных системах и запишите цифры, под которыми они указаны.',
+    options: [
+      'При мажоритарной системе относительного большинства побеждает кандидат с наибольшим числом голосов.',
+      'Пропорциональная система предполагает голосование за отдельных кандидатов, а не за партии.',
+      'Смешанная избирательная система сочетает элементы мажоритарной и пропорциональной систем.',
+      'Пропорциональная система обеспечивает представительство малых партий в парламенте.',
+      'В России используется только мажоритарная избирательная система.'
+    ],
+    correct: [1, 3, 4],
+    comment: 'Пропорциональная система — голосование за партийные списки. В России применяется смешанная система при выборах в Государственную Думу.'
+  },
+  {
+    num: 4,
+    text: 'Выберите верные суждения о политических партиях и запишите цифры, под которыми они указаны.',
+    options: [
+      'Политическая партия стремится к завоеванию и осуществлению государственной власти.',
+      'Партии не участвуют в избирательных кампаниях.',
+      'Партии выполняют функцию политической социализации граждан.',
+      'Партии выражают политические интересы определённых социальных групп.',
+      'Деятельность политических партий не регулируется законодательством.'
+    ],
+    correct: [1, 3, 4],
+    comment: 'Партии участвуют в выборах, выражают интересы социальных групп и социализируют граждан. В РФ их деятельность регулирует ФЗ «О политических партиях».'
+  },
+  {
+    num: 5,
+    text: 'Выберите верные суждения о правовом государстве и запишите цифры, под которыми они указаны.',
+    options: [
+      'В правовом государстве власть действует на основе воли правителя, а не закона.',
+      'В правовом государстве действует принцип верховенства Конституции и закона.',
+      'Правовое государство обеспечивает разделение законодательной, исполнительной и судебной власти.',
+      'В правовом государстве государство и гражданин несут взаимную ответственность.',
+      'В правовом государстве права и свободы человека являются высшей ценностью.'
+    ],
+    correct: [2, 3, 4, 5],
+    comment: 'Признаки правового государства: верховенство права, разделение властей, взаимная ответственность, приоритет прав человека.'
+  },
+  {
+    num: 6,
+    text: 'Выберите верные суждения о политическом участии граждан и запишите цифры, под которыми они указаны.',
+    options: [
+      'Участие в выборах является основной формой политического участия.',
+      'Политическое участие граждан ограничено только голосованием.',
+      'Членство в политической партии — форма политического участия.',
+      'Участие в митингах и пикетах относится к политическому участию.',
+      'В демократических государствах политическое участие граждан запрещено.'
+    ],
+    correct: [1, 3, 4],
+    comment: 'Формы политического участия: выборы, членство в партиях, митинги, обращения к власти, референдумы. В демократии участие граждан поощряется.'
+  },
+  {
+    num: 7,
+    text: 'Выберите верные суждения о политическом режиме и запишите цифры, под которыми они указаны.',
+    options: [
+      'Политический режим — совокупность методов и способов осуществления государственной власти.',
+      'При тоталитарном режиме государство контролирует все сферы общественной жизни.',
+      'Авторитаризм отличается от тоталитаризма сохранением элементов политического плюрализма.',
+      'Для демократического режима характерно отсутствие оппозиции.',
+      'Авторитарный режим допускает концентрацию власти в руках одного лица или группы.'
+    ],
+    correct: [1, 2, 3, 5],
+    comment: 'Тоталитаризм — полный контроль над обществом. Авторитаризм — концентрация власти при относительной свободе в неполитических сферах.'
+  },
+  {
+    num: 8,
+    text: 'Выберите верные суждения о федеративном государстве и запишите цифры, под которыми они указаны.',
+    options: [
+      'В федеративном государстве существуют два уровня государственной власти: федеральный и региональный.',
+      'Субъекты федерации полностью суверенны и вправе выйти из состава государства.',
+      'Россия является федеративным государством.',
+      'Субъекты федерации обладают собственными конституциями или уставами.',
+      'В федерации отсутствует единая конституция.'
+    ],
+    correct: [1, 3, 4],
+    comment: 'В РФ 89 субъектов. Субъекты не суверенны в полном смысле и не вправе односторонне выйти из федерации. Единая Конституция принята в 1993 году.'
+  },
+  {
+    num: 9,
+    text: 'Выберите верные суждения о местном самоуправлении в РФ и запишите цифры, под которыми они указаны.',
+    options: [
+      'Местное самоуправление является формой осуществления народом своей власти.',
+      'Органы местного самоуправления входят в систему органов государственной власти.',
+      'Местное самоуправление решает вопросы местного значения.',
+      'Население вправе участвовать в решении вопросов местного самоуправления.',
+      'Местное самоуправление финансируется только из федерального бюджета.'
+    ],
+    correct: [1, 3, 4],
+    comment: 'По Конституции РФ органы МСУ не входят в систему органов государственной власти. Они самостоятельны в пределах своих полномочий.'
+  },
+  {
+    num: 10,
+    text: 'Выберите верные суждения о многопартийной системе и запишите цифры, под которыми они указаны.',
+    options: [
+      'Многопартийная система характерна для демократических государств.',
+      'При многопартийной системе одна партия монопольно занимает все руководящие посты.',
+      'Многопартийность обеспечивает политическую конкуренцию и разнообразие взглядов.',
+      'В условиях многопартийной системы избиратели имеют реальный выбор.',
+      'Многопартийная система ослабляет гражданское общество.'
+    ],
+    correct: [1, 3, 4],
+    comment: 'Многопартийность — признак демократии. Она обеспечивает конкуренцию, политическое представительство разных групп и реальный выбор для избирателей.'
+  }
+];
+</script>
+
+<header>
+  <div class="header-icon">П</div>
+  <div>
+    <h1>Политика Блок 2</h1>
+    <p>ЕГЭ Обществознание · verny-kurs.ru</p>
+  </div>
+</header>
+<div id="progress-wrap"><div id="progress-bar"></div></div>
+
+<!-- Экран приветствия -->
+<div class="screen active" id="screen-welcome">
+  <div class="container">
+    <div class="welcome-card">
+      <h2>Политика — Блок 2</h2>
+      <p class="subtitle">Демократия · Партии · Гражданское общество<br>Правовое государство · Избирательные системы</p>
+      <div class="info-grid">
+        <div class="info-box"><strong id="q-count">10</strong>вопросов</div>
+        <div class="info-box"><strong>ЕГЭ</strong>Задание 20</div>
+        <div class="info-box"><strong>~15</strong>минут</div>
+      </div>
+      <div class="name-group">
+        <label for="student-name">Ваше имя:</label>
+        <input type="text" id="student-name" placeholder="Введите имя и фамилию" autocomplete="name">
+      </div>
+      <button class="btn" onclick="startTest()">Начать тест</button>
+    </div>
+  </div>
+</div>
+
+<!-- Экран теста -->
+<div class="screen" id="screen-test">
+  <div class="container">
+    <div class="progress-label">Отвечено: <span id="answered-num">0</span> / <span id="total-num">0</span></div>
+    <div id="questions-container"></div>
+    <div class="btn-row">
+      <button class="btn btn-accent" onclick="confirmSubmit()">Завершить тест</button>
+    </div>
+  </div>
+</div>
+
+<!-- Экран результатов -->
+<div class="screen" id="screen-results">
+  <div class="container">
+    <div class="results-card">
+      <div id="score-circle" class="score-circle good"></div>
+      <div style="color:var(--muted);font-size:.88rem;">Ученик: <strong id="result-name"></strong></div>
+      <div class="results-stats">
+        <div class="stat-pill c" id="stat-correct"></div>
+        <div class="stat-pill p" id="stat-partial"></div>
+        <div class="stat-pill w" id="stat-wrong"></div>
+      </div>
+      <div class="send-status" id="send-status">⏳ Отправка результатов...</div>
+    </div>
+    <div class="section-title">Разбор ответов</div>
+    <div id="results-container"></div>
+    <div class="btn-row">
+      <button class="btn btn-accent" onclick="retryTest()">Пройти ещё раз</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let userAnswers = {};
+let studentName = '';
+
+function initAnswers() {
+  userAnswers = {};
+  QUESTIONS.forEach(q => { userAnswers[q.num] = []; });
+  document.getElementById('q-count').textContent = QUESTIONS.length;
+}
+
+function startTest() {
+  studentName = document.getElementById('student-name').value.trim();
+  if (!studentName) { alert('Пожалуйста, введите ваше имя'); return; }
+  initAnswers();
+  buildQuestions();
+  showScreen('screen-test');
+  document.getElementById('total-num').textContent = QUESTIONS.length;
+}
+
+function buildQuestions() {
+  const container = document.getElementById('questions-container');
+  container.innerHTML = '';
+  QUESTIONS.forEach(q => {
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.id = 'q-' + q.num;
+    const opts = q.options.map((opt, i) => {
+      const num = i + 1;
+      const letter = String.fromCharCode(64 + num);
+      return `<li><label class="option-label" id="lbl-${q.num}-${num}"><input type="checkbox" style="flex-shrink:0;margin-top:2px;" onchange="toggleAnswer(${q.num},${num},this)"> <span>${letter}) ${opt}</span></label></li>`;
+    }).join('');
+    card.innerHTML = `<div class="q-header"><div class="q-num">${q.num}</div><div class="q-text">${q.text}</div></div><ul class="options">${opts}</ul>`;
+    container.appendChild(card);
+  });
+}
+
+function toggleAnswer(qId, optNum, checkbox) {
+  const idx = userAnswers[qId].indexOf(optNum);
+  if (idx > -1) userAnswers[qId].splice(idx, 1);
+  else userAnswers[qId].push(optNum);
+  const lbl = document.getElementById('lbl-' + qId + '-' + optNum);
+  if (lbl) lbl.classList.toggle('selected', checkbox.checked);
+  document.getElementById('q-' + qId).classList.toggle('answered', userAnswers[qId].length > 0);
+  updateProgress();
+}
+
+function updateProgress() {
+  const answered = QUESTIONS.filter(q => userAnswers[q.num].length > 0).length;
+  document.getElementById('answered-num').textContent = answered;
+  document.getElementById('progress-bar').style.width = (answered / QUESTIONS.length * 100) + '%';
+}
+
+function confirmSubmit() {
+  const answered = QUESTIONS.filter(q => userAnswers[q.num].length > 0).length;
+  if (answered < QUESTIONS.length) {
+    if (!confirm(`Вы ответили на ${answered} из ${QUESTIONS.length} вопросов. Завершить тест?`)) return;
+  }
+  submitTest();
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function retryTest() {
+  showScreen('screen-welcome');
+  document.getElementById('student-name').value = '';
+}
+
+function submitTest() {
+  // Вычислить результат локально
+  let correct = 0, partial = 0, wrong = 0;
+  QUESTIONS.forEach(q => {
+    const s = [...userAnswers[q.num]].sort((a,b)=>a-b);
+    const c = [...q.correct].sort((a,b)=>a-b);
+    if (JSON.stringify(s) === JSON.stringify(c)) correct++;
+    else if (s.some(a => c.includes(a))) partial++;
+    else wrong++;
+  });
+  const score = Math.round(correct / QUESTIONS.length * 100);
+
+  showResults(score, correct, partial, wrong);
+
+  // Отправить в GAS (no-cors, fire-and-forget)
+  if (GAS_ENDPOINT && !GAS_ENDPOINT.includes('YOUR_GAS')) {
+    fetch(GAS_ENDPOINT, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({
+        externalTest: true,
+        testId: TEST_ID,
+        studentName: studentName,
+        score: score,
+        correctCount: correct,
+        wrongCount: wrong,
+        totalCount: QUESTIONS.length,
+        testTitle: TEST_TITLE,
+        blockName: BLOCK_NAME
+      })
+    })
+    .then(() => {
+      document.getElementById('send-status').innerHTML = '✅ Результаты сохранены и отправлены преподавателю';
+    })
+    .catch(() => {
+      document.getElementById('send-status').innerHTML = '⚠️ Не удалось отправить (проверьте соединение)';
+    });
+  } else {
+    document.getElementById('send-status').innerHTML = '⚠️ GAS_ENDPOINT не настроен';
+  }
+}
+
+function showResults(score, correct, partial, wrong) {
+  document.getElementById('result-name').textContent = studentName;
+  document.getElementById('stat-correct').textContent = '✓ Верно: ' + correct;
+  document.getElementById('stat-partial').textContent = '~ Частично: ' + partial;
+  document.getElementById('stat-wrong').textContent = '✗ Неверно: ' + wrong;
+
+  const circle = document.getElementById('score-circle');
+  circle.innerHTML = `<span>${score}%</span><span class="score-label">результат</span>`;
+  circle.className = 'score-circle ' + (score>=80?'great':score>=60?'good':score>=40?'ok':'poor');
+
+  const container = document.getElementById('results-container');
+  container.innerHTML = '';
+  QUESTIONS.forEach(q => {
+    const s = userAnswers[q.num];
+    const c = q.correct;
+    const ss = [...s].sort((a,b)=>a-b);
+    const cs = [...c].sort((a,b)=>a-b);
+    let statusClass = 'q-wrong';
+    if (JSON.stringify(ss)===JSON.stringify(cs)) statusClass = 'q-correct';
+    else if (s.some(a=>c.includes(a))) statusClass = 'q-partial';
+
+    const opts = q.options.map((opt, i) => {
+      const n = i+1;
+      const isS = s.includes(n), isC = c.includes(n);
+      let cls = '';
+      if (isS && isC) cls = 'res-correct-chosen';
+      else if (isS && !isC) cls = 'res-wrong-chosen';
+      else if (!isS && isC) cls = 'res-correct-missed';
+      const letter = String.fromCharCode(64+n);
+      return `<li><label class="option-label ${cls}"><input type="checkbox" disabled ${isS?'checked':''}> <span>${letter}) ${opt}</span></label></li>`;
+    }).join('');
+
+    const card = document.createElement('div');
+    card.className = 'q-card ' + statusClass;
+    card.innerHTML = `<div class="q-header"><div class="q-num">${q.num}</div><div class="q-text">${q.text}</div></div><ul class="options">${opts}</ul>${q.comment?`<div class="q-comment">${q.comment}</div>`:''}`;
+    container.appendChild(card);
+  });
+
+  showScreen('screen-results');
+}
+
+document.addEventListener('DOMContentLoaded', initAnswers);
+</script>
+</body>
+</html>
