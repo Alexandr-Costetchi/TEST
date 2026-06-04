@@ -119,6 +119,7 @@ const EXTERNAL_TESTS_REGISTRY = {
   83:  { block: '5 Право',    title: 'Право Блок 3',      type: 'Итоговый', url: 'https://alexandr-costetchi.github.io/TEST/tests/pravo_blok3.html' },
   84:  { block: '5 Право',    title: 'Право Тест № 4',    type: 'Итоговый', url: 'https://alexandr-costetchi.github.io/TEST/tests/pravo_test4.html' },
   85:  { block: '5 Право',    title: 'Право Тест № 5',    type: 'Итоговый', url: 'https://alexandr-costetchi.github.io/TEST/tests/pravo_test5.html' },
+  86:  { block: '4 Политика',title: 'Политика. Тест 14', type: 'Итоговый', url: 'https://alexandr-costetchi.github.io/TEST/tests/politika_test14.html' },
   91:  { block: '6 Экономика',title: 'Экономика Блок 1',  type: 'Итоговый', url: 'https://alexandr-costetchi.github.io/TEST/tests/ekonomika_blok1.html' },
   92:  { block: '6 Экономика',title: 'Экономика Блок 2',  type: 'Итоговый', url: 'https://alexandr-costetchi.github.io/TEST/tests/ekonomika_blok2.html' },
   93:  { block: '6 Экономика',title: 'Экономика Блок 3',  type: 'Итоговый', url: 'https://alexandr-costetchi.github.io/TEST/tests/ekonomika_blok3.html' },
