@@ -6,6 +6,12 @@
       "runtimeExecutable": "python",
       "runtimeArgs": ["-m", "http.server", "8080", "-d", "D:\\my-website"],
       "port": 8080
+    },
+    {
+      "name": "widget",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8081", "-d", "D:\\ПРОБА GIT+CLAUDE"],
+      "port": 8081
     }
   ]
 }

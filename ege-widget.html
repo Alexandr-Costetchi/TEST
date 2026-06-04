@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>ЕГЭ Таймер</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 440px;
+    height: 155px;
+    background: #1A2634;
+    font-family: -apple-system, 'SF Pro Display', 'Segoe UI', sans-serif;
+    overflow: hidden;
+    user-select: none;
+    -webkit-app-region: drag;
+  }
+
+  .top-label {
+    text-align: center;
+    color: #c9a84c;
+    font-size: 7px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    padding-top: 10px;
+  }
+
+  .sub-label {
+    text-align: center;
+    color: #3a5a6a;
+    font-size: 7px;
+    letter-spacing: 0.5px;
+    margin-top: 3px;
+  }
+
+  .blocks {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 8px;
+    padding: 0 10px;
+  }
+
+  .block {
+    background: #0f1d2b;
+    border-radius: 10px;
+    width: 88px;
+    height: 90px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .block .num {
+    color: #f9f5ee;
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -1px;
+  }
+
+  .block.secs .num {
+    color: #c9a84c;
+  }
+
+  .sep {
+    color: #c9a84c;
+    font-size: 24px;
+    font-weight: 700;
+    width: 14px;
+    text-align: center;
+    padding-bottom: 10px;
+    flex-shrink: 0;
+  }
+
+  .labels {
+    display: flex;
+    justify-content: center;
+    padding: 0 10px;
+    margin-top: 5px;
+  }
+
+  .lbl-wrap {
+    width: 88px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .lbl-gap { width: 14px; flex-shrink: 0; }
+
+  .lbl {
+    color: #4a6a7a;
+    font-size: 6px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  .lbl.secs { color: #7a5a2a; }
+</style>
+</head>
+<body>
+
+<div class="top-label">ВЕРНЫЙ КУРС &nbsp;·&nbsp; ЕГЭ 2026</div>
+<div class="sub-label">ЕГЭ Обществознание &nbsp;·&nbsp; 11 июня 2026 &nbsp;·&nbsp; 10:00 МСК</div>
+
+<div class="blocks">
+  <div class="block"><span class="num" id="days">00</span></div>
+  <div class="sep">:</div>
+  <div class="block"><span class="num" id="hours">00</span></div>
+  <div class="sep">:</div>
+  <div class="block"><span class="num" id="mins">00</span></div>
+  <div class="sep">:</div>
+  <div class="block secs"><span class="num" id="secs">00</span></div>
+</div>
+
+<div class="labels">
+  <div class="lbl-wrap"><span class="lbl">ДНЕЙ</span></div>
+  <div class="lbl-gap"></div>
+  <div class="lbl-wrap"><span class="lbl">ЧАСОВ</span></div>
+  <div class="lbl-gap"></div>
+  <div class="lbl-wrap"><span class="lbl">МИНУТ</span></div>
+  <div class="lbl-gap"></div>
+  <div class="lbl-wrap"><span class="lbl secs">СЕКУНД</span></div>
+</div>
+
+<script>
+  const EGE_DATE = new Date('2026-06-11T10:00:00');
+
+  function pad2(n) { return n < 10 ? '0' + n : '' + n; }
+
+  function tick() {
+    const left = Math.max(0, EGE_DATE - new Date());
+    document.getElementById('days').textContent  = pad2(Math.floor(left / 86400000));
+    document.getElementById('hours').textContent = pad2(Math.floor((left % 86400000) / 3600000));
+    document.getElementById('mins').textContent  = pad2(Math.floor((left % 3600000) / 60000));
+    document.getElementById('secs').textContent  = pad2(Math.floor((left % 60000) / 1000));
+  }
+
+  tick();
+  setInterval(tick, 1000);
+</script>
+</body>
+</html>

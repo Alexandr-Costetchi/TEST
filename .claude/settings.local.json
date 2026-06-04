@@ -92,7 +92,23 @@
       "PowerShell($env:PYTHONIOENCODING='utf-8'; cd \"D:\\\\ПРОБА GIT+CLAUDE\"; py deploy_real_working.py 2>&1 | Select-Object -First 100)",
       "Bash(py add_tests_to_sheet.py)",
       "Bash(PYTHONIOENCODING=utf-8 py add_tests_to_sheet.py)",
-      "Bash(chmod +x setup_git_remotes.sh sync_tests.py)"
+      "Bash(chmod +x setup_git_remotes.sh sync_tests.py)",
+      "Bash(git remote *)",
+      "Bash(cat > *)",
+      "Bash(python3 -c \"import json; data=json.load\\(open\\('tests/meta/tests_inventory.json'\\)\\); print\\(f'Total Tests: {data[\\\\\"totalTests\\\\\"]}\\\\\\\\nTotal Questions: {data[\\\\\"totalQuestions\\\\\"]}\\\\\\\\nStatus: {data[\\\\\"syncStatus\\\\\"]}'\\)\")",
+      "Bash(PYTHONIOENCODING=utf-8 python3 sync_tests.py)",
+      "Bash(python3 -m http.server 8000)",
+      "Bash(cd /d \"D:\\\\ПРОБА GIT+CLAUDE\\\\tests\")",
+      "Bash(python -m http.server 8000)",
+      "Bash(curl -s http://localhost:8765/exam-test-player.html)",
+      "Bash(tasklist)",
+      "Bash(cd D:\\\\ПРОБА*GIT*)",
+      "Bash(dir tests *)",
+      "Bash(curl -s http://localhost:9999/exam-test-player.html)",
+      "mcp__8a3ec925-7a1b-49e1-99c2-896a9fb5c08c__get_figjam",
+      "Bash(findstr \"manifest\\\\|sw.js\")",
+      "Bash(curl -s https://verny-kurs.ru -H \"User-Agent: Mozilla/5.0\")",
+      "Bash(curl -s \"https://xn--80ajamkxegfkhb8o.xn--p1ai/dashboard\" -H \"User-Agent: Mozilla/5.0\" -L)"
     ]
   }
 }

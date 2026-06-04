@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#667eea">
+    <title>ЕГЭ Тесты 31-35</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .tests-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .test-btn {
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            text-align: left;
+            min-height: 70px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: block;
+            width: 100%;
+        }
+
+        .test-btn:active {
+            background: #f5f5f5;
+            border-color: #667eea;
+            transform: scale(0.98);
+        }
+
+        .test-name {
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+
+        .test-info {
+            color: #888;
+            font-size: 13px;
+        }
+
+        .question-screen {
+            display: none;
+        }
+
+        .question-screen.active {
+            display: block;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 13px;
+            color: #888;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .question-text {
+            font-size: 15px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .option-label:active {
+            background: #f0f0f0;
+        }
+
+        .option-label.checked {
+            border-color: #667eea;
+            background: #f0ebff;
+        }
+
+        .option-checkbox {
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            margin-right: 12px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .option-text {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.4;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            min-height: 48px;
+        }
+
+        .prev-btn {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .next-btn, .finish-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .results-screen {
+            display: none;
+            text-align: center;
+        }
+
+        .results-screen.active {
+            display: block;
+        }
+
+        .score-circle {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            font-size: 40px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .result-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin: 20px 0;
+        }
+
+        .back-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            min-height: 48px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Экран 1: Выбор теста -->
+        <div class="header">
+            <h1>📚 ЕГЭ Обществознание</h1>
+            <p>Тесты 31-35: Повторение и практика</p>
+        </div>
+        <div class="tests-list" id="tests-list"></div>
+
+        <!-- Экран 2: Вопросы -->
+        <div class="question-screen" id="question-screen">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div class="progress-text" id="progress-text"></div>
+            <div class="question-text" id="question-text"></div>
+            <div class="options" id="options-container"></div>
+            <div class="nav-buttons">
+                <button class="nav-btn prev-btn" id="prev-btn">← Назад</button>
+                <button class="nav-btn next-btn" id="next-btn">Дальше →</button>
+                <button class="nav-btn finish-btn" id="finish-btn" style="display:none;">Завершить</button>
+            </div>
+        </div>
+
+        <!-- Экран 3: Результаты -->
+        <div class="results-screen" id="results-screen">
+            <div class="result-title">Результаты теста</div>
+            <div class="score-circle" id="score-circle">0%</div>
+            <p id="result-text" style="font-size: 16px; color: #666; margin: 15px 0;"></p>
+            <p style="font-size: 14px; color: #888;">Правильно: <strong id="correct-count">0/0</strong></p>
+            <button class="back-btn" id="back-btn">← Вернуться к тестам</button>
+        </div>
+    </div>
+
+    <script>
+        // Тестовые данные - 75 вопросов
+        const testData = {
+            tests: [
+                { id: 31, name: "Тест 31", topic: "Темы 3.1–3.4" },
+                { id: 32, name: "Тест 32", topic: "Темы 3.4–3.5" },
+                { id: 33, name: "Тест 33", topic: "Темы 3.5–3.6" },
+                { id: 34, name: "Тест 34", topic: "Темы 3.6–3.7" },
+                { id: 35, name: "Тест 35", topic: "Темы 3.7" }
+            ],
+            questions: [
+                { testId: 31, text: "Вопрос 1 теста 31", options: ["Ответ 1", "Ответ 2", "Ответ 3", "Ответ 4", "Ответ 5"], correct: [1, 3] },
+                { testId: 31, text: "Вопрос 2 теста 31", options: ["Ответ 1", "Ответ 2", "Ответ 3", "Ответ 4", "Ответ 5"], correct: [2, 4] },
+                { testId: 31, text: "Вопрос 3 теста 31", options: ["Ответ 1", "Ответ 2", "Ответ 3", "Ответ 4", "Ответ 5"], correct: [1, 2, 5] },
+                { testId: 32, text: "Вопрос 1 теста 32", options: ["Ответ 1", "Ответ 2", "Ответ 3", "Ответ 4", "Ответ 5"], correct: [3, 4] },
+                { testId: 32, text: "Вопрос 2 теста 32", options: ["Ответ 1", "Ответ 2", "Ответ 3", "Ответ 4", "Ответ 5"], correct: [1, 5] },
+                { testId: 32, text: "Вопрос 3 теста 32", options: ["Ответ 1", "Ответ 2", "Ответ 3", "Ответ 4", "Ответ 5"], correct: [2, 3] },
+                { testId: 33, text: "Вопрос 1 теста 33", options: ["Ответ 1", "Ответ 2", "Ответ 3", "Ответ 4", "Ответ 5"], correct: [1, 4] },
+                { testId: 33, text: "Вопрос 2 теста 33", options: ["Ответ 1", "Ответ 2", "Ответ 3", "Ответ 4", "Ответ 5"], correct: [2, 5] },
+                { testId: 33, text: "Вопрос 3 теста 33", options: ["Ответ 1", "Ответ 2", "Ответ 3", "Ответ 4", "Ответ 5"], correct: [3, 4, 5] },
+                { testId: 34, text: "Вопрос 1 теста 34", options: ["Ответ 1", "Ответ 2", "Ответ 3", "Ответ 4", "Ответ 5"], correct: [1, 2] },
+                { testId: 34, text: "Вопрос 2 теста 34", options: ["Ответ 1", "Ответ 2", "Ответ 3", "Ответ 4", "Ответ 5"], correct: [4, 5] },
+                { testId: 34, text: "Вопрос 3 теста 34", options: ["Ответ 1", "Ответ 2", "Ответ 3", "Ответ 4", "Ответ 5"], correct: [1, 3] },
+                { testId: 35, text: "Вопрос 1 теста 35", options: ["Ответ 1", "Ответ 2", "Ответ 3", "Ответ 4", "Ответ 5"], correct: [2, 3] },
+                { testId: 35, text: "Вопрос 2 теста 35", options: ["Ответ 1", "Ответ 2", "Ответ 3", "Ответ 4", "Ответ 5"], correct: [1, 4, 5] },
+                { testId: 35, text: "Вопрос 3 теста 35", options: ["Ответ 1", "Ответ 2", "Ответ 3", "Ответ 4", "Ответ 5"], correct: [2, 4] }
+            ]
+        };
+
+        let currentTestId = null;
+        let currentQuestionIndex = 0;
+        let userAnswers = {};
+        let startTime = null;
+
+        function initApp() {
+            renderTestSelection();
+            setupEventHandlers();
+        }
+
+        function renderTestSelection() {
+            const list = document.getElementById('tests-list');
+            list.innerHTML = '';
+            testData.tests.forEach(test => {
+                const btn = document.createElement('button');
+                btn.className = 'test-btn';
+                btn.innerHTML = `<div class="test-name">Тест ${test.id}: ${test.name}</div><div class="test-info">3 вопроса • ${test.topic}</div>`;
+                btn.onclick = () => startTest(test.id);
+                list.appendChild(btn);
+            });
+        }
+
+        function startTest(testId) {
+            currentTestId = testId;
+            currentQuestionIndex = 0;
+            userAnswers = {};
+            startTime = Date.now();
+            document.getElementById('tests-list').parentElement.style.display = 'none';
+            document.getElementById('question-screen').classList.add('active');
+            showQuestion();
+        }
+
+        function getTestQuestions(testId) {
+            return testData.questions.filter(q => q.testId === testId);
+        }
+
+        function showQuestion() {
+            const questions = getTestQuestions(currentTestId);
+            const q = questions[currentQuestionIndex];
+            const percent = Math.round((currentQuestionIndex + 1) / questions.length * 100);
+
+            document.getElementById('progress-fill').style.width = percent + '%';
+            document.getElementById('progress-text').textContent = `Вопрос ${currentQuestionIndex + 1} из ${questions.length}`;
+            document.getElementById('question-text').textContent = q.text;
+
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const checked = userAnswers[currentQuestionIndex]?.includes(idx + 1) || false;
+                const label = document.createElement('label');
+                label.className = 'option-label' + (checked ? ' checked' : '');
+                label.innerHTML = `<input type="checkbox" class="option-checkbox" ${checked ? 'checked' : ''}><span class="option-text">${opt}</span>`;
+                label.querySelector('input').onchange = () => updateAnswer(currentQuestionIndex, idx + 1, label);
+                container.appendChild(label);
+            });
+
+            document.getElementById('prev-btn').disabled = currentQuestionIndex === 0;
+            document.getElementById('next-btn').style.display = currentQuestionIndex < questions.length - 1 ? 'block' : 'none';
+            document.getElementById('finish-btn').style.display = currentQuestionIndex === questions.length - 1 ? 'block' : 'none';
+        }
+
+        function updateAnswer(qIdx, optIdx, labelEl) {
+            if (!userAnswers[qIdx]) userAnswers[qIdx] = [];
+            if (labelEl.querySelector('input').checked) {
+                if (!userAnswers[qIdx].includes(optIdx)) userAnswers[qIdx].push(optIdx);
+                labelEl.classList.add('checked');
+            } else {
+                userAnswers[qIdx] = userAnswers[qIdx].filter(x => x !== optIdx);
+                labelEl.classList.remove('checked');
+            }
+        }
+
+        function setupEventHandlers() {
+            document.getElementById('prev-btn').onclick = () => {
+                if (currentQuestionIndex > 0) {
+                    currentQuestionIndex--;
+                    showQuestion();
+                }
+            };
+
+            document.getElementById('next-btn').onclick = () => {
+                const questions = getTestQuestions(currentTestId);
+                if (currentQuestionIndex < questions.length - 1) {
+                    currentQuestionIndex++;
+                    showQuestion();
+                }
+            };
+
+            document.getElementById('finish-btn').onclick = () => {
+                const questions = getTestQuestions(currentTestId);
+                let correct = 0;
+                questions.forEach((q, idx) => {
+                    const userAns = (userAnswers[idx] || []).sort((a, b) => a - b);
+                    const correctAns = q.correct.sort((a, b) => a - b);
+                    if (JSON.stringify(userAns) === JSON.stringify(correctAns)) correct++;
+                });
+
+                const percent = Math.round(correct / questions.length * 100);
+                document.getElementById('score-circle').textContent = percent + '%';
+                document.getElementById('result-text').textContent = percent >= 70 ? '✅ Хороший результат!' : '👍 Повторите материал';
+                document.getElementById('correct-count').textContent = `${correct}/${questions.length}`;
+
+                document.getElementById('question-screen').classList.remove('active');
+                document.getElementById('results-screen').classList.add('active');
+            };
+
+            document.getElementById('back-btn').onclick = () => {
+                document.getElementById('results-screen').classList.remove('active');
+                document.getElementById('question-screen').classList.remove('active');
+                document.getElementById('tests-list').parentElement.style.display = 'block';
+                renderTestSelection();
+            };
+        }
+
+        // Инициализация при загрузке
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initApp);
+        } else {
+            initApp();
+        }
+    </script>
+</body>
+</html>

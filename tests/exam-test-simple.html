@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ЕГЭ Тесты - Простая версия</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            background: #667eea;
+            padding: 10px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .test-btn {
+            display: block;
+            width: 100%;
+            padding: 20px;
+            margin: 10px 0;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .test-btn:active {
+            background: #764ba2;
+            transform: scale(0.98);
+        }
+        .question {
+            display: none;
+            margin-top: 20px;
+        }
+        .question.active {
+            display: block;
+        }
+        .question-text {
+            font-size: 16px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin: 8px 0;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f0f0;
+        }
+        .option input {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .nav-buttons button {
+            flex: 1;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .nav-buttons button:active {
+            background: #764ba2;
+        }
+        .results {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .results.active {
+            display: block;
+        }
+        .score {
+            font-size: 48px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="test-selection">
+            <h1>📚 ЕГЭ Обществознание</h1>
+            <p style="margin-bottom: 20px;">Выберите тест:</p>
+            <button class="test-btn" onclick="startTest()">Тест 31 - 15 вопросов</button>
+        </div>
+
+        <div id="test-content" class="question">
+            <div class="question-text" id="question-text">Загрузка...</div>
+            <div id="options"></div>
+            <div class="nav-buttons">
+                <button onclick="prevQuestion()">← Назад</button>
+                <button onclick="nextQuestion()">Дальше →</button>
+            </div>
+        </div>
+
+        <div id="results" class="results">
+            <h2>Результаты</h2>
+            <div class="score" id="score">0%</div>
+            <p id="result-text"></p>
+            <button class="test-btn" onclick="location.reload()">Начать заново</button>
+        </div>
+    </div>
+
+    <script>
+        // Минимальные тестовые данные - только первый тест
+        const testData = {
+            questions: [
+                {
+                    id: 1,
+                    text: "Выберите верные суждения о социальной дифференциации",
+                    options: ["Вариант 1", "Вариант 2", "Вариант 3", "Вариант 4", "Вариант 5"],
+                    correct: [1, 3]
+                },
+                {
+                    id: 2,
+                    text: "Выберите верные суждения о социальной стратификации",
+                    options: ["Вариант 1", "Вариант 2", "Вариант 3", "Вариант 4", "Вариант 5"],
+                    correct: [1, 3, 5]
+                },
+                {
+                    id: 3,
+                    text: "Выберите верные суждения об исторических типах стратификации",
+                    options: ["Вариант 1", "Вариант 2", "Вариант 3", "Вариант 4", "Вариант 5"],
+                    correct: [2, 3, 5]
+                }
+            ]
+        };
+
+        let currentQuestion = 0;
+        let answers = {};
+
+        function startTest() {
+            document.getElementById('test-selection').style.display = 'none';
+            document.getElementById('test-content').classList.add('active');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = testData.questions[currentQuestion];
+            document.getElementById('question-text').textContent = `${currentQuestion + 1}. ${q.text}`;
+
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const checked = answers[currentQuestion]?.includes(idx + 1) ? 'checked' : '';
+                optionsDiv.innerHTML += `
+                    <label class="option">
+                        <input type="checkbox" value="${idx + 1}" ${checked} onchange="updateAnswer(${currentQuestion}, ${idx + 1})">
+                        <span>${opt}</span>
+                    </label>
+                `;
+            });
+        }
+
+        function updateAnswer(qIdx, optIdx) {
+            if (!answers[qIdx]) answers[qIdx] = [];
+            const input = event.target;
+            if (input.checked) {
+                if (!answers[qIdx].includes(optIdx)) answers[qIdx].push(optIdx);
+            } else {
+                answers[qIdx] = answers[qIdx].filter(x => x !== optIdx);
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < testData.questions.length - 1) {
+                currentQuestion++;
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('test-content').classList.remove('active');
+            document.getElementById('results').classList.add('active');
+
+            let correct = 0;
+            testData.questions.forEach((q, idx) => {
+                const userAns = (answers[idx] || []).sort((a,b) => a-b);
+                const correctAns = q.correct.sort((a,b) => a-b);
+                if (JSON.stringify(userAns) === JSON.stringify(correctAns)) correct++;
+            });
+
+            const percent = Math.round(correct / testData.questions.length * 100);
+            document.getElementById('score').textContent = percent + '%';
+            document.getElementById('result-text').textContent = `Правильно: ${correct} из ${testData.questions.length}`;
+        }
+
+        // Автоматически показываем первый вопрос при загрузке
+        window.addEventListener('load', () => {
+            console.log('✅ Страница загружена');
+            console.log('✅ Тесты готовы: ', testData.questions.length, 'вопросов');
+        });
+    </script>
+</body>
+</html>
