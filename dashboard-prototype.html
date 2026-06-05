@@ -1,0 +1,1602 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет преподавателя - Верный Курс</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #0066cc;
+            --dark-text: #000;
+            --light-gray: #f5f5f5;
+            --border-color: #e0e0e0;
+            --success-color: #4caf50;
+            --error-color: #f44336;
+            --warning-color: #ff9800;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #fff;
+            color: var(--dark-text);
+            line-height: 1.6;
+        }
+
+        /* HEADER & NAVIGATION */
+        header {
+            background-color: #fff;
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--dark-text);
+        }
+
+        .logo-emoji {
+            margin-right: 0.5rem;
+        }
+
+        nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--dark-text);
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        nav a:hover {
+            color: var(--primary-blue);
+        }
+
+        nav a.active {
+            color: var(--primary-blue);
+            font-weight: 600;
+        }
+
+        nav a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background-color: var(--primary-blue);
+            border-radius: 2px;
+        }
+
+        /* STATUS BUTTONS */
+        .status-btns { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.5rem; }
+        .status-btn {
+            padding: 0.25rem 0.65rem; border-radius: 20px; border: 1px solid var(--border-color);
+            background: #fff; font-size: 0.75rem; cursor: pointer; transition: all 0.2s;
+        }
+        .status-btn:hover, .status-btn.chosen { color: #fff; border-color: transparent; }
+        .status-btn[data-s="conducted"]:hover,  .status-btn[data-s="conducted"].chosen  { background: var(--success-color); }
+        .status-btn[data-s="postponed"]:hover,  .status-btn[data-s="postponed"].chosen  { background: var(--warning-color); }
+        .status-btn[data-s="cancelled"]:hover,  .status-btn[data-s="cancelled"].chosen  { background: #9e9e9e; }
+        .status-btn[data-s="missed"]:hover,     .status-btn[data-s="missed"].chosen     { background: var(--error-color); }
+        .status-btn[data-s="planned"]:hover,    .status-btn[data-s="planned"].chosen    { background: var(--primary-blue); }
+
+        /* BADGES extended */
+        .badge-planned  { background: #e3f2fd; color: #1565c0; }
+        .badge-conducted{ background: #e8f5e9; color: #2e7d32; }
+        .badge-postponed{ background: #fff3e0; color: #e65100; }
+        .badge-cancelled{ background: #f5f5f5; color: #666; }
+        .badge-missed   { background: #ffebee; color: #c62828; }
+
+        /* PROGRESS BAR */
+        .progress-wrap { background: #eee; border-radius: 20px; height: 7px; overflow: hidden; margin: 0.4rem 0; }
+        .progress-bar  { height: 100%; border-radius: 20px; background: var(--primary-blue); transition: width .3s; }
+
+        /* TIMELINE */
+        .timeline-item { display: flex; gap: 0.75rem; padding: 0.7rem 0; border-bottom: 1px solid var(--border-color); }
+        .timeline-item:last-child { border-bottom: none; }
+        .tl-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--primary-blue); flex-shrink: 0; margin-top: 0.35rem; }
+        .tl-dot.green  { background: var(--success-color); }
+        .tl-dot.orange { background: var(--warning-color); }
+        .tl-dot.red    { background: var(--error-color); }
+        .tl-dot.gray   { background: #bbb; }
+        .tl-time { width: 90px; font-size: 0.8rem; color: #666; flex-shrink: 0; }
+        .tl-body { flex: 1; }
+        .tl-title { font-size: 0.9rem; font-weight: 600; }
+        .tl-sub   { font-size: 0.78rem; color: #999; margin-top: 0.15rem; }
+
+        /* CURRICULUM TABLE */
+        .curr-status { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: 500; }
+
+        /* XP */
+        .xp-block { background: var(--light-gray); border-radius: 8px; padding: 1rem; }
+        .xp-level-name { font-weight: 700; font-size: 1.1rem; }
+        .xp-sub { font-size: 0.8rem; color: #666; margin: 0.2rem 0 0.5rem; }
+
+        /* TOAST */
+        .toast {
+            position: fixed; bottom: 2rem; right: 2rem; background: #333; color: #fff;
+            padding: 0.85rem 1.2rem; border-radius: 8px; font-size: 0.88rem;
+            z-index: 9999; animation: slideUp 0.3s; box-shadow: 0 8px 24px rgba(0,0,0,.2); max-width: 300px;
+        }
+        .toast.success { background: var(--success-color); }
+        .toast.error   { background: var(--error-color); }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* HW CARD */
+        .hw-card { background: #fff; border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; margin-bottom: 0.75rem; }
+        .hw-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; }
+        .hw-title  { font-weight: 600; font-size: 0.92rem; }
+        .hw-meta   { font-size: 0.8rem; color: #666; margin-bottom: 0.75rem; }
+
+        /* STUDENT CARD extended */
+        .student-card { background: #fff; border: 1px solid var(--border-color); border-radius: 12px; padding: 1.25rem; transition: box-shadow 0.2s; }
+        .student-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.08); }
+        .student-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+        .sc-name  { font-weight: 700; font-size: 1rem; margin-bottom: 0.15rem; }
+        .sc-sub   { font-size: 0.8rem; color: #666; }
+        .sc-meta  { display: flex; flex-direction: column; gap: 0.35rem; margin: 0.75rem 0; font-size: 0.82rem; }
+        .sc-row   { display: flex; justify-content: space-between; }
+        .sc-label { color: #666; }
+        .sc-value { font-weight: 600; }
+        .sc-value.warn { color: var(--error-color); }
+
+        .profile-menu {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .profile-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0066cc, #0052a3);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .profile-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* MAIN CONTENT */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .dashboard-header {
+            margin-bottom: 3rem;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #000, #333);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .dashboard-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* QUICK ACTIONS */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .action-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .action-card:hover {
+            border-color: var(--primary-blue);
+            box-shadow: 0 8px 24px rgba(0, 102, 204, 0.15);
+            transform: translateY(-4px);
+        }
+
+        .action-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .action-card h2 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark-text);
+        }
+
+        .action-card p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        /* SECTIONS */
+        .section {
+            margin-bottom: 3rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .section-header h2 {
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-header .btn-secondary {
+            padding: 0.6rem 1.2rem;
+            font-size: 0.9rem;
+        }
+
+        /* TABLES */
+        .table-container {
+            overflow-x: auto;
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background-color: var(--light-gray);
+        }
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark-text);
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        tbody tr:hover {
+            background-color: var(--light-gray);
+            transition: background-color 0.2s ease;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* BUTTONS */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-blue), #0052a3);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 6px 16px rgba(0, 102, 204, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: #f0f0f0;
+            color: var(--dark-text);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--light-gray);
+        }
+
+        .btn-danger {
+            background-color: var(--error-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #d32f2f;
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+
+        /* MODALS */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-header h2 {
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: var(--dark-text);
+        }
+
+        /* FORMS */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark-text);
+        }
+
+        input[type="text"],
+        input[type="email"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .checkbox-item label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: normal;
+        }
+
+        .required {
+            color: var(--error-color);
+        }
+
+        .error-message {
+            display: none;
+            color: var(--error-color);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .form-group input.invalid,
+        .form-group select.invalid {
+            border-color: var(--error-color);
+            background-color: rgba(244, 67, 54, 0.05);
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* ALERT */
+        .alert {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .alert-success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #81c784;
+        }
+
+        .alert-error {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef5350;
+        }
+
+        .alert-warning {
+            background-color: #fff3e0;
+            color: #e65100;
+            border: 1px solid #ffb74d;
+        }
+
+        /* STATS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f8f9fa, #fff);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            nav {
+                gap: 1rem;
+            }
+
+            nav a {
+                font-size: 0.85rem;
+            }
+
+            .dashboard-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .action-card {
+                padding: 1.5rem;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 1.5rem;
+            }
+
+            table {
+                font-size: 0.9rem;
+            }
+
+            th, td {
+                padding: 0.75rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                padding: 1rem;
+            }
+
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            nav {
+                width: 100%;
+                gap: 0.5rem;
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+            }
+
+            nav a {
+                white-space: nowrap;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .dashboard-header h1 {
+                font-size: 1.4rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header h2 {
+                font-size: 1.3rem;
+            }
+        }
+
+        /* BADGES */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-active {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .badge-inactive {
+            background-color: #f5f5f5;
+            color: #666;
+        }
+
+        .badge-archived {
+            background-color: #ede7f6;
+            color: #512da8;
+        }
+
+        /* ACTION BUTTONS */
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-buttons .btn-small {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <span class="logo-emoji">📚</span>Верный Курс - Кабинет
+            </div>
+            <nav>
+                <a href="#" class="nav-link active" data-section="dashboard">🏠 Главная</a>
+                <a href="#" class="nav-link" data-section="students">🎓 Ученики</a>
+                <a href="#" class="nav-link" data-section="calendar">📅 Занятия</a>
+                <a href="#" class="nav-link" data-section="curriculum">📖 Программа</a>
+                <a href="#" class="nav-link" data-section="homework">✏️ ДЗ</a>
+                <a href="#" class="nav-link" data-section="analytics">📊 Аналитика</a>
+                <a href="#" class="nav-link" data-section="groups">👥 Группы</a>
+            </nav>
+            <div class="profile-menu">
+                <button class="profile-btn">👤</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <div class="container">
+        <!-- ALERTS -->
+        <div id="successAlert" class="alert alert-success">
+            <strong>Успешно!</strong> <span id="successMessage"></span>
+        </div>
+        <div id="errorAlert" class="alert alert-error">
+            <strong>Ошибка!</strong> <span id="errorMessage"></span>
+        </div>
+        <div id="warningAlert" class="alert alert-warning">
+            <strong>Внимание!</strong> <span id="warningMessage"></span>
+        </div>
+
+        <!-- DASHBOARD SECTION -->
+        <section id="dashboard-section" class="section-content">
+            <div class="dashboard-header">
+                <h1>👋 Добро пожаловать, Преподаватель!</h1>
+                <p>Управляйте учениками, расписанием и прогрессом в одном месте</p>
+            </div>
+
+            <!-- STATS -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="stat-students">0</div>
+                    <div class="stat-label">Активных учеников</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="stat-conducted">0</div>
+                    <div class="stat-label">Проведено занятий</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="stat-planned">0</div>
+                    <div class="stat-label">Запланировано</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="stat-hw">0</div>
+                    <div class="stat-label">ДЗ на проверке</div>
+                </div>
+            </div>
+            <!-- UPCOMING LESSONS TODAY -->
+            <h2 style="margin-bottom:1rem;font-size:1.3rem;">📅 Занятия сегодня</h2>
+            <div id="todayLessons" style="margin-bottom:2rem;"></div>
+
+            <!-- QUICK ACTIONS -->
+            <h2 style="margin-bottom: 1.5rem; font-size: 1.5rem;">⚡ Быстрые действия</h2>
+            <div class="quick-actions">
+                <div class="action-card" onclick="openModalAddStudent()">
+                    <span class="action-icon">🎓</span>
+                    <h2>Добавить ученика</h2>
+                    <p>Добавьте нового ученика в вашу базу за несколько кликов</p>
+                </div>
+                <div class="action-card" onclick="openModalCreateGroup()">
+                    <span class="action-icon">👥</span>
+                    <h2>Создать группу</h2>
+                    <p>Объедините учеников для групповых занятий</p>
+                </div>
+                <div class="action-card" onclick="showSection('calendar')">
+                    <span class="action-icon">📅</span>
+                    <h2>Расписание</h2>
+                    <p>Просмотрите и планируйте занятия на неделю</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- STUDENTS SECTION -->
+        <section id="students-section" class="section-content" style="display: none;">
+            <div class="section-header">
+                <h2>🎓 Мои ученики</h2>
+                <button class="btn btn-primary" onclick="openModalAddStudent()">+ Добавить ученика</button>
+            </div>
+            <div id="studentsList"></div>
+        </section>
+
+        <!-- GROUPS SECTION -->
+        <section id="groups-section" class="section-content" style="display: none;">
+            <div class="section-header">
+                <h2>👥 Мои группы</h2>
+                <button class="btn btn-primary" onclick="openModalCreateGroup()">+ Создать группу</button>
+            </div>
+
+            <div id="groupsList">
+                <div class="empty-state">
+                    <div class="empty-state-icon">👫</div>
+                    <h3>Нет групп</h3>
+                    <p>Создайте первую группу для объединения учеников</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CALENDAR/LESSONS SECTION -->
+        <section id="calendar-section" class="section-content" style="display: none;">
+            <div class="section-header">
+                <h2>📅 Занятия</h2>
+                <button class="btn btn-primary" onclick="openModalAddLesson()">+ Добавить занятие</button>
+            </div>
+            <!-- Filter by student -->
+            <div style="margin-bottom:1rem;display:flex;gap:0.75rem;flex-wrap:wrap;align-items:center;">
+                <span style="font-size:0.9rem;font-weight:500;">Ученик:</span>
+                <select id="lessonFilterStudent" class="btn btn-secondary btn-small" onchange="renderLessons()" style="padding:0.4rem 0.8rem;">
+                    <option value="">Все ученики</option>
+                </select>
+                <span style="font-size:0.9rem;font-weight:500;margin-left:0.5rem;">Статус:</span>
+                <select id="lessonFilterStatus" class="btn btn-secondary btn-small" onchange="renderLessons()" style="padding:0.4rem 0.8rem;">
+                    <option value="">Все</option>
+                    <option value="planned">Запланировано</option>
+                    <option value="conducted">Проведено</option>
+                    <option value="missed">Не состоялось</option>
+                    <option value="postponed">Перенесено</option>
+                    <option value="cancelled">Отменено</option>
+                </select>
+            </div>
+            <div id="lessonsList"></div>
+        </section>
+
+        <!-- CURRICULUM SECTION -->
+        <section id="curriculum-section" class="section-content" style="display: none;">
+            <div class="section-header">
+                <h2>📖 Учебный план</h2>
+                <button class="btn btn-primary" onclick="openModalAddTopic()">+ Добавить тему</button>
+            </div>
+            <div style="margin-bottom:1rem;display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
+                <span style="font-size:0.9rem;font-weight:500;">Ученик:</span>
+                <select id="currStudentFilter" class="btn btn-secondary btn-small" onchange="renderCurriculum()" style="padding:0.4rem 0.8rem;">
+                    <option value="">Выберите ученика</option>
+                </select>
+            </div>
+            <div id="curriculumTable"></div>
+        </section>
+
+        <!-- HOMEWORK SECTION -->
+        <section id="homework-section" class="section-content" style="display: none;">
+            <div class="section-header">
+                <h2>✏️ Домашние задания</h2>
+                <button class="btn btn-primary" onclick="openModalAssignHW()">+ Назначить ДЗ</button>
+            </div>
+            <div style="margin-bottom:1rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+                <button class="btn btn-secondary btn-small hw-filter-btn active" data-filter="all" onclick="filterHW('all',this)">Все</button>
+                <button class="btn btn-secondary btn-small hw-filter-btn" data-filter="submitted" onclick="filterHW('submitted',this)">На проверке</button>
+                <button class="btn btn-secondary btn-small hw-filter-btn" data-filter="pending" onclick="filterHW('pending',this)">Ожидают</button>
+                <button class="btn btn-secondary btn-small hw-filter-btn" data-filter="graded" onclick="filterHW('graded',this)">Проверено</button>
+            </div>
+            <div id="homeworkList"></div>
+        </section>
+
+        <!-- ANALYTICS SECTION -->
+        <section id="analytics-section" class="section-content" style="display: none;">
+            <div class="section-header">
+                <h2>📊 Аналитика</h2>
+            </div>
+            <div id="analyticsContent"></div>
+        </section>
+    </div>
+
+    <!-- MODAL: ADD LESSON -->
+    <div id="modalAddLesson" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="lessonModalTitle">Добавить занятие</h2>
+                <button class="close-btn" onclick="closeModalLesson()">&times;</button>
+            </div>
+            <form id="formLesson" onsubmit="handleSaveLesson(event)">
+                <div class="form-group">
+                    <label>Ученик <span class="required">*</span></label>
+                    <select id="lessonStudent" required>
+                        <option value="">Выберите ученика</option>
+                    </select>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                    <div class="form-group">
+                        <label>Дата <span class="required">*</span></label>
+                        <input type="date" id="lessonDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Время <span class="required">*</span></label>
+                        <input type="time" id="lessonTime" required value="14:00">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Тема</label>
+                    <select id="lessonTopic">
+                        <option value="">Выберите тему</option>
+                        <option>Человек и общество</option>
+                        <option>Деятельность человека</option>
+                        <option>Познание</option>
+                        <option>Социальные отношения</option>
+                        <option>Политика</option>
+                        <option>Политические режимы</option>
+                        <option>Право</option>
+                        <option>Конституционное право</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Комментарий</label>
+                    <textarea id="lessonComment" placeholder="Заметка..."></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModalLesson()">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ASSIGN HOMEWORK -->
+    <div id="modalAssignHW" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Назначить домашнее задание</h2>
+                <button class="close-btn" onclick="document.getElementById('modalAssignHW').classList.remove('show')">&times;</button>
+            </div>
+            <form onsubmit="handleAssignHW(event)">
+                <div class="form-group">
+                    <label>Ученик <span class="required">*</span></label>
+                    <select id="hwStudent" required>
+                        <option value="">Выберите ученика</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Название задания <span class="required">*</span></label>
+                    <input type="text" id="hwTitle" required placeholder="Эссе по теме...">
+                </div>
+                <div class="form-group">
+                    <label>Описание</label>
+                    <textarea id="hwDesc" placeholder="Что нужно сделать..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Срок сдачи</label>
+                    <input type="date" id="hwDue">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('modalAssignHW').classList.remove('show')">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Назначить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: GRADE HOMEWORK -->
+    <div id="modalGradeHW" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Проверить задание</h2>
+                <button class="close-btn" onclick="document.getElementById('modalGradeHW').classList.remove('show')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Оценка (%)</label>
+                <input type="number" id="gradeValue" min="0" max="100" value="85">
+            </div>
+            <div class="form-group">
+                <label>Комментарий</label>
+                <textarea id="gradeComment" placeholder="Молодец! Обрати внимание на..."></textarea>
+            </div>
+            <input type="hidden" id="gradingHWId">
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="document.getElementById('modalGradeHW').classList.remove('show')">Отмена</button>
+                <button class="btn btn-primary" onclick="handleGradeHW()">Выставить оценку</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD TOPIC -->
+    <div id="modalAddTopic" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Добавить тему</h2>
+                <button class="close-btn" onclick="document.getElementById('modalAddTopic').classList.remove('show')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Название темы <span class="required">*</span></label>
+                <input type="text" id="topicName" placeholder="Введите тему">
+            </div>
+            <div class="form-group">
+                <label>Раздел</label>
+                <select id="topicSection">
+                    <option>Раздел 1 — Человек</option>
+                    <option>Раздел 2 — Общество</option>
+                    <option>Раздел 3 — Социальные отношения</option>
+                    <option>Раздел 4 — Политика</option>
+                    <option>Раздел 5 — Право</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="document.getElementById('modalAddTopic').classList.remove('show')">Отмена</button>
+                <button class="btn btn-primary" onclick="handleAddTopic()">Добавить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD STUDENT -->
+    <div id="modalAddStudent" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Добавить ученика</h2>
+                <button class="close-btn" onclick="closeModalAddStudent()">&times;</button>
+            </div>
+            <form id="formAddStudent" onsubmit="handleAddStudent(event)">
+                <div class="form-group">
+                    <label for="studentName">Имя ученика <span class="required">*</span></label>
+                    <input type="text" id="studentName" required>
+                    <div class="error-message"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="studentClass">Класс <span class="required">*</span></label>
+                    <select id="studentClass" required>
+                        <option value="">Выберите класс</option>
+                        <option value="1">1 класс</option>
+                        <option value="2">2 класс</option>
+                        <option value="3">3 класс</option>
+                        <option value="4">4 класс</option>
+                        <option value="5">5 класс</option>
+                        <option value="6">6 класс</option>
+                        <option value="7">7 класс</option>
+                        <option value="8">8 класс</option>
+                        <option value="9">9 класс</option>
+                        <option value="10">10 класс</option>
+                        <option value="11">11 класс</option>
+                        <option value="other">Другое</option>
+                    </select>
+                    <div class="error-message"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="studentAvatar">Аватар (опционально)</label>
+                    <input type="text" id="studentAvatar" placeholder="URL изображения или эмодзи">
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModalAddStudent()">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Добавить ученика</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: CREATE GROUP -->
+    <div id="modalCreateGroup" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Создать группу</h2>
+                <button class="close-btn" onclick="closeModalCreateGroup()">&times;</button>
+            </div>
+            <form id="formCreateGroup" onsubmit="handleCreateGroup(event)">
+                <div class="form-group">
+                    <label for="groupName">Название группы <span class="required">*</span></label>
+                    <input type="text" id="groupName" required>
+                    <div class="error-message"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Выберите учеников <span class="required">*</span></label>
+                    <div id="studentCheckboxes" class="checkbox-group">
+                        <p style="color: #999; text-align: center; padding: 1rem;">Нет доступных учеников. Добавьте учеников сначала.</p>
+                    </div>
+                    <div class="error-message"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="groupNote">Заметка (опционально)</label>
+                    <textarea id="groupNote" placeholder="Описание группы, цели, расписание..."></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModalCreateGroup()">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Создать группу</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    // ── DATA ────────────────────────────────────────────
+    let students  = JSON.parse(localStorage.getItem('students'))   || [];
+    let groups    = JSON.parse(localStorage.getItem('groups'))     || [];
+    let lessons   = JSON.parse(localStorage.getItem('lessons'))    || [];
+    let homeworks = JSON.parse(localStorage.getItem('homeworks'))  || [];
+
+    const CURRICULUM_TEMPLATES = [
+        { order:1, topic:'Человек и общество',       section:'Раздел 1' },
+        { order:2, topic:'Деятельность человека',    section:'Раздел 1' },
+        { order:3, topic:'Познание',                 section:'Раздел 2' },
+        { order:4, topic:'Социальные отношения',     section:'Раздел 3' },
+        { order:5, topic:'Политика',                 section:'Раздел 4' },
+        { order:6, topic:'Политические режимы',      section:'Раздел 4' },
+        { order:7, topic:'Право',                    section:'Раздел 5' },
+        { order:8, topic:'Конституционное право',    section:'Раздел 5' },
+    ];
+
+    // ── NAVIGATION ─────────────────────────────────────
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', e => {
+            e.preventDefault();
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+            showSection(link.getAttribute('data-section'));
+        });
+    });
+
+    function showSection(section) {
+        document.querySelectorAll('.section-content').forEach(s => s.style.display = 'none');
+        document.getElementById(section + '-section').style.display = 'block';
+        if (section === 'students')  renderStudents();
+        if (section === 'groups')    renderGroups();
+        if (section === 'calendar')  { populateLessonStudentFilter(); renderLessons(); }
+        if (section === 'curriculum'){ populateCurrStudentFilter(); renderCurriculum(); }
+        if (section === 'homework')  renderHomework('all');
+        if (section === 'analytics') renderAnalytics();
+        if (section === 'dashboard') renderDashboard();
+    }
+
+    // ── DASHBOARD ──────────────────────────────────────
+    function renderDashboard() {
+        updateStats();
+        renderTodayLessons();
+    }
+
+    function updateStats() {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('stat-students').textContent  = students.filter(s => s.status === 'active').length;
+        document.getElementById('stat-conducted').textContent = lessons.filter(l => l.status === 'conducted').length;
+        document.getElementById('stat-planned').textContent   = lessons.filter(l => l.status === 'planned').length;
+        document.getElementById('stat-hw').textContent        = homeworks.filter(h => h.status === 'submitted').length;
+    }
+
+    function renderTodayLessons() {
+        const today = new Date().toISOString().split('T')[0];
+        const todayL = lessons.filter(l => l.date === today).sort((a,b) => a.time.localeCompare(b.time));
+        const el = document.getElementById('todayLessons');
+        if (!el) return;
+        if (!todayL.length) { el.innerHTML = '<p style="color:#999;font-size:.9rem;">Занятий сегодня нет</p>'; return; }
+        el.innerHTML = todayL.map(l => {
+            const stu = students.find(s => s.id === l.studentId);
+            return `<div style="display:flex;align-items:flex-start;gap:1rem;padding:.75rem 0;border-bottom:1px solid var(--border-color);flex-wrap:wrap;">
+                <div style="min-width:60px;font-size:.85rem;color:#666">${l.time}</div>
+                <div style="flex:1">
+                    <strong>${stu ? stu.name : '—'}</strong>
+                    <span style="color:#666;font-size:.85rem"> · ${l.topic || 'Тема не указана'}</span>
+                </div>
+                <div class="status-btns">
+                    <button class="status-btn${l.status==='conducted'?' chosen':''}" data-s="conducted" onclick="setStatus('${l.id}','conducted')">Проведено</button>
+                    <button class="status-btn${l.status==='missed'?' chosen':''}"    data-s="missed"    onclick="setStatus('${l.id}','missed')">Не состоялось</button>
+                    <button class="status-btn${l.status==='postponed'?' chosen':''}" data-s="postponed" onclick="setStatus('${l.id}','postponed')">Перенос</button>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    // ── LESSON STATUS + AUTO-SHIFT ─────────────────────
+    function setStatus(lessonId, status) {
+        const lesson = lessons.find(l => l.id === lessonId);
+        if (!lesson) return;
+        const prev = lesson.status;
+        lesson.status = status;
+
+        if (status === 'missed' && prev !== 'missed') {
+            autoShiftTopics(lesson);
+            showToast('Тема «' + (lesson.topic||'?') + '» перенесена на следующее занятие', 'error');
+        } else {
+            showToast('Статус: ' + statusLabel(status));
+        }
+        saveData();
+        renderDashboard();
+        if (document.getElementById('calendar-section').style.display !== 'none') renderLessons();
+    }
+
+    function autoShiftTopics(missed) {
+        const future = lessons
+            .filter(l => l.studentId === missed.studentId && l.status === 'planned' && l.date >= missed.date)
+            .sort((a,b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
+        if (!future.length) return;
+        const topicIdx = CURRICULUM_TEMPLATES.findIndex(t => t.topic === missed.topic);
+        if (topicIdx === -1) return;
+        future.forEach((l, i) => {
+            if (topicIdx + i < CURRICULUM_TEMPLATES.length)
+                l.topic = CURRICULUM_TEMPLATES[topicIdx + i].topic;
+        });
+    }
+
+    // ── STUDENTS ───────────────────────────────────────
+    function renderStudents() {
+        const container = document.getElementById('studentsList');
+        if (!students.length) {
+            container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📚</div><h3>Нет учеников</h3><p>Добавьте первого ученика</p></div>`;
+            return;
+        }
+        container.innerHTML = `<div class="student-card-grid">` +
+            students.map(s => {
+                const sLessons    = lessons.filter(l => l.studentId === s.id);
+                const conducted   = sLessons.filter(l => l.status === 'conducted').length;
+                const remaining   = (s.paidLessons || 0) - conducted;
+                const total       = CURRICULUM_TEMPLATES.length;
+                const pct         = Math.round(conducted / total * 100);
+                return `<div class="student-card">
+                    <div style="display:flex;gap:.75rem;align-items:center;margin-bottom:.85rem">
+                        <div style="width:40px;height:40px;border-radius:50%;background:#0066cc;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;flex-shrink:0">${s.name.split(' ').map(n=>n[0]).join('').slice(0,2)}</div>
+                        <div><div class="sc-name">${s.name}</div><div class="sc-sub">${s.class} класс</div></div>
+                    </div>
+                    <div style="margin-bottom:.75rem">
+                        <div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:.3rem"><span>Прогресс программы</span><strong>${pct}%</strong></div>
+                        <div class="progress-wrap"><div class="progress-bar" style="width:${pct}%"></div></div>
+                    </div>
+                    <div class="sc-meta">
+                        <div class="sc-row"><span class="sc-label">Оплачено занятий</span><span class="sc-value">${s.paidLessons||0}</span></div>
+                        <div class="sc-row"><span class="sc-label">Остаток</span><span class="sc-value ${remaining<=2?'warn':''}">${remaining} зан.</span></div>
+                        <div class="sc-row"><span class="sc-label">Проведено</span><span class="sc-value">${conducted}</span></div>
+                    </div>
+                    <div style="display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap">
+                        <button class="btn btn-small btn-secondary" onclick="openModalAddLesson('${s.id}')">+ Занятие</button>
+                        <button class="btn btn-small btn-secondary" onclick="openModalAssignHW('${s.id}')">+ ДЗ</button>
+                        <button class="btn btn-small btn-danger" onclick="deleteStudent('${s.id}')">Удалить</button>
+                    </div>
+                </div>`;
+            }).join('') + `</div>`;
+    }
+
+    // ── LESSONS ────────────────────────────────────────
+    function populateLessonStudentFilter() {
+        const sel = document.getElementById('lessonFilterStudent');
+        if (!sel) return;
+        sel.innerHTML = '<option value="">Все ученики</option>' +
+            students.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+    }
+
+    function renderLessons() {
+        const container = document.getElementById('lessonsList');
+        if (!container) return;
+        const stuFilter = document.getElementById('lessonFilterStudent')?.value || '';
+        const stFilter  = document.getElementById('lessonFilterStatus')?.value  || '';
+        let list = [...lessons];
+        if (stuFilter) list = list.filter(l => l.studentId === stuFilter);
+        if (stFilter)  list = list.filter(l => l.status === stFilter);
+        list.sort((a,b) => b.date.localeCompare(a.date) || b.time.localeCompare(a.time));
+
+        if (!list.length) { container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📅</div><h3>Нет занятий</h3></div>`; return; }
+
+        container.innerHTML = `<div class="table-container"><table>
+            <thead><tr><th>Дата</th><th>Время</th><th>Ученик</th><th>Тема</th><th>Статус</th><th>Изменить статус</th></tr></thead>
+            <tbody>${list.map(l => {
+                const stu = students.find(s => s.id === l.studentId);
+                return `<tr>
+                    <td>${fmtDate(l.date)}</td>
+                    <td>${l.time}</td>
+                    <td><strong>${stu?.name || '—'}</strong></td>
+                    <td>${l.topic || '—'}</td>
+                    <td>${statusBadge(l.status)}</td>
+                    <td><div class="status-btns">
+                        <button class="status-btn" data-s="conducted" onclick="setStatus('${l.id}','conducted')">✓</button>
+                        <button class="status-btn" data-s="missed"    onclick="setStatus('${l.id}','missed')">✗</button>
+                        <button class="status-btn" data-s="postponed" onclick="setStatus('${l.id}','postponed')">↩</button>
+                        <button class="status-btn" data-s="cancelled" onclick="setStatus('${l.id}','cancelled')">⊘</button>
+                    </div></td>
+                </tr>`;
+            }).join('')}</tbody>
+        </table></div>`;
+    }
+
+    // ── CURRICULUM ─────────────────────────────────────
+    function populateCurrStudentFilter() {
+        const sel = document.getElementById('currStudentFilter');
+        if (!sel) return;
+        sel.innerHTML = '<option value="">Выберите ученика</option>' +
+            students.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+    }
+
+    function renderCurriculum() {
+        const container = document.getElementById('curriculumTable');
+        if (!container) return;
+        const stuId = document.getElementById('currStudentFilter')?.value;
+        if (!stuId) { container.innerHTML = `<p style="color:#999;">Выберите ученика</p>`; return; }
+
+        const conducted = new Set(lessons.filter(l=>l.studentId===stuId&&l.status==='conducted').map(l=>l.topic));
+
+        container.innerHTML = `<div class="table-container"><table>
+            <thead><tr><th>#</th><th>Тема</th><th>Раздел</th><th>Статус</th><th>Занятие</th></tr></thead>
+            <tbody>${CURRICULUM_TEMPLATES.map(t => {
+                const status  = conducted.has(t.topic) ? 'conducted' : 'planned';
+                const lesson  = lessons.find(l=>l.studentId===stuId&&l.topic===t.topic);
+                return `<tr>
+                    <td style="color:#999">${t.order}</td>
+                    <td><strong>${t.topic}</strong></td>
+                    <td><span class="badge badge-inactive" style="font-size:.75rem">${t.section}</span></td>
+                    <td>${statusBadge(status)}</td>
+                    <td style="font-size:.85rem;color:#666">${lesson ? fmtDate(lesson.date) : '—'}</td>
+                </tr>`;
+            }).join('')}</tbody>
+        </table></div>
+        <div style="margin-top:1rem;padding:1rem;background:#fff3e0;border-radius:8px;font-size:.88rem;color:#e65100;border:1px solid #ffcc80">
+            <strong>⚠️ Автосдвиг:</strong> если занятие отмечено «Не состоялось», тема переносится на следующее занятие, остальные темы сдвигаются.
+        </div>`;
+    }
+
+    // ── HOMEWORK ───────────────────────────────────────
+    let currentHWFilter = 'all';
+
+    function filterHW(f, btn) {
+        currentHWFilter = f;
+        document.querySelectorAll('.hw-filter-btn').forEach(b => b.classList.toggle('active', b === btn));
+        renderHomework(f);
+    }
+
+    function renderHomework(filter) {
+        const container = document.getElementById('homeworkList');
+        if (!container) return;
+        let list = filter === 'all' ? homeworks : homeworks.filter(h => h.status === filter);
+        if (!list.length) { container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">✅</div><h3>Заданий нет</h3></div>`; return; }
+        const statusMap = { submitted:'На проверке', pending:'Ожидает', graded:'Проверено' };
+        const cls       = { submitted:'badge-archived', pending:'badge-inactive', graded:'badge-active' };
+        container.innerHTML = list.map(h => {
+            const stu = students.find(s => s.id === h.studentId);
+            return `<div class="hw-card">
+                <div class="hw-header">
+                    <div class="hw-title">${h.title}</div>
+                    <span class="badge ${cls[h.status]||''}">${statusMap[h.status]||h.status}</span>
+                </div>
+                <div class="hw-meta">${stu?.name||'—'} · Срок: ${h.dueDate ? fmtDate(h.dueDate) : 'не указан'}${h.result?' · Оценка: '+h.result+'%':''}</div>
+                ${h.status==='submitted'?`<button class="btn btn-small btn-primary" onclick="openModalGradeHW('${h.id}')">Проверить</button>`:''}
+            </div>`;
+        }).join('');
+    }
+
+    // ── ANALYTICS ─────────────────────────────────────
+    function renderAnalytics() {
+        const container = document.getElementById('analyticsContent');
+        if (!container) return;
+        container.innerHTML = `<div class="table-container"><table>
+            <thead><tr><th>Ученик</th><th>Проведено</th><th>Не состоялось</th><th>Перенесено</th><th>Посещаемость</th><th>Ср. оценка ДЗ</th></tr></thead>
+            <tbody>${students.map(s => {
+                const sl  = lessons.filter(l => l.studentId === s.id);
+                const con = sl.filter(l=>l.status==='conducted').length;
+                const mis = sl.filter(l=>l.status==='missed').length;
+                const pos = sl.filter(l=>l.status==='postponed').length;
+                const att = (con+mis)>0 ? Math.round(con/(con+mis)*100) : 100;
+                const hw  = homeworks.filter(h=>h.studentId===s.id&&h.result!=null);
+                const avg = hw.length ? Math.round(hw.reduce((a,b)=>a+b.result,0)/hw.length) : null;
+                return `<tr>
+                    <td><strong>${s.name}</strong></td>
+                    <td><span class="badge badge-active">${con}</span></td>
+                    <td><span class="badge badge-inactive" style="background:#ffebee;color:#c62828">${mis}</span></td>
+                    <td><span class="badge badge-inactive" style="background:#fff3e0;color:#e65100">${pos}</span></td>
+                    <td><strong>${att}%</strong></td>
+                    <td><strong>${avg!=null?avg+'%':'—'}</strong></td>
+                </tr>`;
+            }).join('')}</tbody>
+        </table></div>`;
+    }
+
+    // ── GROUPS ─────────────────────────────────────────
+    function renderGroups() {
+        const container = document.getElementById('groupsList');
+        if (!groups.length) {
+            container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">👫</div><h3>Нет групп</h3><p>Создайте первую группу</p></div>`;
+            return;
+        }
+        container.innerHTML = `<div class="table-container"><table>
+            <thead><tr><th>Название</th><th>Учеников</th><th>Создано</th><th>Действия</th></tr></thead>
+            <tbody>${groups.map(g => `<tr>
+                <td><strong>👥 ${g.name}</strong><br><small style="color:#999">${g.note||'Нет описания'}</small></td>
+                <td>${g.students.length}</td>
+                <td>${g.createdDate}</td>
+                <td><button class="btn btn-small btn-danger" onclick="deleteGroup('${g.id}')">Удалить</button></td>
+            </tr>`).join('')}</tbody>
+        </table></div>`;
+    }
+
+    // ── MODAL: ADD/EDIT LESSON ─────────────────────────
+    function openModalAddLesson(preStudentId = '') {
+        document.getElementById('lessonModalTitle').textContent = 'Добавить занятие';
+        const sel = document.getElementById('lessonStudent');
+        sel.innerHTML = '<option value="">Выберите ученика</option>' +
+            students.map(s => `<option value="${s.id}"${s.id===preStudentId?' selected':''}>${s.name}</option>`).join('');
+        document.getElementById('lessonDate').value = new Date().toISOString().split('T')[0];
+        document.getElementById('lessonComment').value = '';
+        document.getElementById('modalAddLesson').classList.add('show');
+    }
+
+    function closeModalLesson() {
+        document.getElementById('modalAddLesson').classList.remove('show');
+        document.getElementById('formLesson').reset();
+    }
+
+    function handleSaveLesson(e) {
+        e.preventDefault();
+        const studentId = document.getElementById('lessonStudent').value;
+        const date      = document.getElementById('lessonDate').value;
+        const time      = document.getElementById('lessonTime').value;
+        const topic     = document.getElementById('lessonTopic').value;
+        const comment   = document.getElementById('lessonComment').value;
+        if (!studentId||!date||!time) { showToast('Заполните обязательные поля','error'); return; }
+        lessons.push({ id:Date.now().toString(), studentId, date, time, topic, comment, status:'planned' });
+        saveData();
+        showToast('Занятие добавлено: '+fmtDate(date)+' '+time);
+        closeModalLesson();
+        renderDashboard();
+        if (document.getElementById('calendar-section').style.display !== 'none') renderLessons();
+    }
+
+    // ── MODAL: HOMEWORK ────────────────────────────────
+    function openModalAssignHW(preStudentId = '') {
+        const sel = document.getElementById('hwStudent');
+        sel.innerHTML = '<option value="">Выберите ученика</option>' +
+            students.map(s => `<option value="${s.id}"${s.id===preStudentId?' selected':''}>${s.name}</option>`).join('');
+        document.getElementById('modalAssignHW').classList.add('show');
+    }
+
+    function handleAssignHW(e) {
+        e.preventDefault();
+        const studentId = document.getElementById('hwStudent').value;
+        const title     = document.getElementById('hwTitle').value.trim();
+        const dueDate   = document.getElementById('hwDue').value;
+        if (!studentId||!title) { showToast('Заполните обязательные поля','error'); return; }
+        homeworks.push({ id:Date.now().toString(), studentId, title, dueDate, status:'pending', result:null });
+        saveData();
+        showToast('Домашнее задание назначено');
+        document.getElementById('modalAssignHW').classList.remove('show');
+        document.getElementById('formLesson')?.reset();
+        updateStats();
+        if (document.getElementById('homework-section').style.display !== 'none') renderHomework(currentHWFilter);
+    }
+
+    function openModalGradeHW(id) {
+        document.getElementById('gradingHWId').value = id;
+        document.getElementById('modalGradeHW').classList.add('show');
+    }
+
+    function handleGradeHW() {
+        const id     = document.getElementById('gradingHWId').value;
+        const result = parseInt(document.getElementById('gradeValue').value);
+        const hw     = homeworks.find(h => h.id === id);
+        if (!hw) return;
+        hw.status  = 'graded';
+        hw.result  = result;
+        saveData();
+        showToast('Оценка выставлена: '+result+'%');
+        document.getElementById('modalGradeHW').classList.remove('show');
+        updateStats();
+        renderHomework(currentHWFilter);
+    }
+
+    // ── MODAL: ADD TOPIC ───────────────────────────────
+    function openModalAddTopic() { document.getElementById('modalAddTopic').classList.add('show'); }
+
+    function handleAddTopic() {
+        const name = document.getElementById('topicName').value.trim();
+        if (!name) { showToast('Введите название темы','error'); return; }
+        CURRICULUM_TEMPLATES.push({ order: CURRICULUM_TEMPLATES.length+1, topic: name, section: document.getElementById('topicSection').value });
+        showToast('Тема добавлена');
+        document.getElementById('modalAddTopic').classList.remove('show');
+        renderCurriculum();
+    }
+
+    // ── STUDENTS MODAL ─────────────────────────────────
+    function openModalAddStudent() { document.getElementById('modalAddStudent').classList.add('show'); }
+    function closeModalAddStudent() {
+        document.getElementById('modalAddStudent').classList.remove('show');
+        document.getElementById('formAddStudent').reset();
+    }
+    function openModalCreateGroup() {
+        populateStudentCheckboxes();
+        document.getElementById('modalCreateGroup').classList.add('show');
+    }
+    function closeModalCreateGroup() {
+        document.getElementById('modalCreateGroup').classList.remove('show');
+        document.getElementById('formCreateGroup').reset();
+    }
+
+    function handleAddStudent(e) {
+        e.preventDefault();
+        const name  = document.getElementById('studentName').value.trim();
+        const cls   = document.getElementById('studentClass').value;
+        const avatar= document.getElementById('studentAvatar').value.trim() || '👤';
+        if (!name||!cls) { showToast('Заполните имя и класс','error'); return; }
+        students.push({ id:Date.now().toString(), name, class:cls, avatar, status:'active', paidLessons:8 });
+        saveData();
+        showToast('Ученик "'+name+'" добавлен');
+        closeModalAddStudent();
+        renderStudents();
+        updateStats();
+    }
+
+    function handleCreateGroup(e) {
+        e.preventDefault();
+        const name = document.getElementById('groupName').value.trim();
+        const note = document.getElementById('groupNote').value.trim();
+        const sel  = Array.from(document.querySelectorAll('#studentCheckboxes input:checked')).map(cb=>cb.value);
+        if (!name||!sel.length) { showToast('Заполните название и выберите учеников','error'); return; }
+        groups.push({ id:Date.now().toString(), name, students:sel, note, createdDate:new Date().toLocaleDateString('ru-RU') });
+        saveData();
+        showToast('Группа "'+name+'" создана');
+        closeModalCreateGroup();
+        renderGroups();
+        updateStats();
+    }
+
+    function populateStudentCheckboxes() {
+        const c = document.getElementById('studentCheckboxes');
+        c.innerHTML = !students.length ? '<p style="color:#999">Нет учеников</p>' :
+            students.map(s => `<div class="checkbox-item"><input type="checkbox" id="sc-${s.id}" value="${s.id}"><label for="sc-${s.id}" style="margin:0">${s.avatar} ${s.name} (${s.class} кл.)</label></div>`).join('');
+    }
+
+    function deleteStudent(id) {
+        if (!confirm('Удалить ученика?')) return;
+        students = students.filter(s => s.id !== id);
+        saveData(); showToast('Ученик удалён'); renderStudents(); updateStats();
+    }
+    function deleteGroup(id) {
+        if (!confirm('Удалить группу?')) return;
+        groups = groups.filter(g => g.id !== id);
+        saveData(); showToast('Группа удалена'); renderGroups(); updateStats();
+    }
+
+    // ── HELPERS ────────────────────────────────────────
+    function saveData() {
+        localStorage.setItem('students',  JSON.stringify(students));
+        localStorage.setItem('groups',    JSON.stringify(groups));
+        localStorage.setItem('lessons',   JSON.stringify(lessons));
+        localStorage.setItem('homeworks', JSON.stringify(homeworks));
+    }
+
+    function fmtDate(d) {
+        if (!d) return '—';
+        const dt = new Date(d+'T00:00:00');
+        return dt.toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric'});
+    }
+
+    function statusLabel(s) {
+        return {conducted:'Проведено',planned:'Запланировано',postponed:'Перенесено',cancelled:'Отменено',missed:'Не состоялось'}[s]||s;
+    }
+
+    function statusBadge(s) {
+        const cls = {conducted:'badge-conducted',planned:'badge-planned',postponed:'badge-postponed',cancelled:'badge-cancelled',missed:'badge-missed'};
+        return `<span class="badge ${cls[s]||'badge-inactive'}">${statusLabel(s)}</span>`;
+    }
+
+    function showToast(msg, type='success') {
+        const t = document.createElement('div');
+        t.className = 'toast ' + type;
+        t.textContent = msg;
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 3500);
+    }
+
+    // Close modals on outside click
+    window.addEventListener('click', e => {
+        ['modalAddStudent','modalCreateGroup','modalAddLesson','modalAssignHW','modalGradeHW','modalAddTopic'].forEach(id => {
+            const m = document.getElementById(id);
+            if (e.target === m) m.classList.remove('show');
+        });
+    });
+
+    // ── INIT ───────────────────────────────────────────
+    renderDashboard();
+    renderStudents();
+    renderGroups();
+    </script>
+</body>
+</html>

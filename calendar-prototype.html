@@ -1,0 +1,1642 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Календарь занятий - Верный Курс</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #0066cc;
+            --success-green: #4caf50;
+            --warning-orange: #ff9800;
+            --danger-red: #f44336;
+            --dark-text: #000;
+            --light-gray: #f5f5f5;
+            --border-color: #e0e0e0;
+            --color-individual: #2196F3;
+            --color-group: #4CAF50;
+            --color-canceled: #999;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #fff;
+            color: var(--dark-text);
+        }
+
+        /* HEADER */
+        header {
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo {
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        nav {
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--dark-text);
+            transition: color 0.3s;
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: var(--primary-blue);
+        }
+
+        .calendar-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-blue), #0052a3);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: var(--dark-text);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--light-gray);
+        }
+
+        .btn-small {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+
+        /* MAIN CONTAINER */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .calendar-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        /* VIEW CONTROLS */
+        .view-controls {
+            display: flex;
+            gap: 0.5rem;
+            background: var(--light-gray);
+            padding: 0.5rem;
+            border-radius: 6px;
+        }
+
+        .view-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .view-btn.active {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* NAVIGATION */
+        .calendar-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: var(--light-gray);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .date-display {
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-align: center;
+            flex: 1;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* FILTERS */
+        .filters-section {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .filter-label {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--border-color);
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn.active {
+            border-color: var(--primary-blue);
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--primary-blue);
+        }
+
+        /* CALENDAR GRID */
+        .calendar-grid {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        /* DAY VIEW */
+        .day-view {
+            display: none;
+        }
+
+        .day-view.active {
+            display: block;
+        }
+
+        .day-slots {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .time-slot {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            min-height: 80px;
+        }
+
+        .slot-time {
+            width: 80px;
+            padding: 1rem;
+            background: var(--light-gray);
+            border-right: 1px solid var(--border-color);
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .slot-content {
+            flex: 1;
+            padding: 0.5rem;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .slot-content:hover {
+            background: #f9f9f9;
+        }
+
+        .event {
+            background: var(--color-individual);
+            color: white;
+            padding: 0.8rem;
+            border-radius: 6px;
+            margin: 0.3rem 0;
+            font-size: 0.85rem;
+            cursor: grab;
+            transition: all 0.3s;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .event:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .event:active {
+            cursor: grabbing;
+        }
+
+        .event.dragging {
+            opacity: 0.7;
+            transform: scale(0.95);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .event.group {
+            background: var(--color-group);
+        }
+
+        .event.canceled, .event.cancelled {
+            background: var(--color-canceled);
+            text-decoration: line-through;
+        }
+        .event.conducted  { background: #43a047; }
+        .event.missed     { background: #e53935; }
+        .event.postponed  { background: #fb8c00; }
+
+        /* STATUS BUTTONS */
+        .status-btns { display:flex;gap:0.3rem;flex-wrap:wrap;margin-top:0.5rem; }
+        .status-btn  { padding:0.2rem 0.55rem;border-radius:20px;border:1px solid #ddd;background:#fff;font-size:0.72rem;cursor:pointer;transition:all .2s; }
+        .status-btn:hover,.status-btn.chosen { color:#fff;border-color:transparent; }
+        .status-btn[data-s="conducted"]:hover,.status-btn[data-s="conducted"].chosen { background:#43a047; }
+        .status-btn[data-s="postponed"]:hover,.status-btn[data-s="postponed"].chosen { background:#fb8c00; }
+        .status-btn[data-s="cancelled"]:hover,.status-btn[data-s="cancelled"].chosen { background:#9e9e9e; }
+        .status-btn[data-s="missed"]:hover,  .status-btn[data-s="missed"].chosen    { background:#e53935; }
+        .status-btn[data-s="planned"]:hover, .status-btn[data-s="planned"].chosen   { background:#0066cc; }
+
+        /* TOAST */
+        .toast { position:fixed;bottom:2rem;right:2rem;background:#333;color:#fff;padding:.8rem 1.2rem;border-radius:8px;font-size:.85rem;z-index:9999;animation:tSlide .3s;box-shadow:0 6px 20px rgba(0,0,0,.2);max-width:300px; }
+        .toast.success{background:#43a047;} .toast.error{background:#e53935;}
+        @keyframes tSlide{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+        .event-time {
+            font-size: 0.75rem;
+            opacity: 0.9;
+            margin-bottom: 0.3rem;
+        }
+
+        .event-title {
+            font-weight: 600;
+        }
+
+        /* WEEK VIEW */
+        .week-view {
+            display: none;
+        }
+
+        .week-view.active {
+            display: block;
+        }
+
+        .week-grid {
+            display: grid;
+            grid-template-columns: 80px repeat(7, 1fr);
+            gap: 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .week-header {
+            display: grid;
+            grid-template-columns: 80px repeat(7, 1fr);
+            gap: 0;
+            margin-bottom: 1rem;
+            background: var(--light-gray);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .day-header {
+            padding: 1rem;
+            text-align: center;
+            font-weight: 600;
+            border-right: 1px solid var(--border-color);
+        }
+
+        .day-header:last-child {
+            border-right: none;
+        }
+
+        .day-column {
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .day-column:last-child {
+            border-right: none;
+        }
+
+        .week-slot {
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.5rem;
+            min-height: 60px;
+            position: relative;
+        }
+
+        /* MONTH VIEW */
+        .month-view {
+            display: none;
+        }
+
+        .month-view.active {
+            display: block;
+        }
+
+        .month-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .month-header {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0;
+            margin-bottom: 0;
+            background: var(--light-gray);
+        }
+
+        .weekday-name {
+            padding: 1rem;
+            text-align: center;
+            font-weight: 600;
+            border-right: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .weekday-name:last-child {
+            border-right: none;
+        }
+
+        .day-cell {
+            border-right: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem;
+            min-height: 120px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .day-cell:hover {
+            background: #fafafa;
+        }
+
+        .day-cell.other-month {
+            background: var(--light-gray);
+            color: #999;
+        }
+
+        .day-number {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .day-events {
+            font-size: 0.8rem;
+        }
+
+        .day-event-dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-right: 0.3rem;
+        }
+
+        /* MODALS */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal.show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-header h2 {
+            font-size: 1.5rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+        }
+
+        /* FORMS */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        input[type="date"],
+        input[type="time"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-family: inherit;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        .required {
+            color: var(--danger-red);
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn-danger {
+            background: var(--danger-red);
+            color: white;
+        }
+
+        /* ALERTS */
+        .alert {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #81c784;
+        }
+
+        .alert-error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef5350;
+        }
+
+        .alert-warning {
+            background: #fff3e0;
+            color: #e65100;
+            border: 1px solid #ffb74d;
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #999;
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* WORKING HOURS SETTINGS */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .checkbox-item input {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .calendar-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .view-controls {
+                width: 100%;
+                justify-content: space-around;
+            }
+
+            .week-grid,
+            .week-header {
+                grid-template-columns: 50px repeat(7, 1fr);
+            }
+
+            .slot-time {
+                width: 50px;
+                padding: 0.5rem;
+                font-size: 0.75rem;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 1.5rem;
+            }
+
+            .calendar-nav {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .filters-section {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="header-container">
+            <div class="logo">📅 Верный Курс - Календарь</div>
+            <nav>
+                <a href="#" onclick="goToDashboard()">🏠 Главная</a>
+                <a href="#" class="active">📅 Календарь</a>
+                <a href="#" onclick="goToSection('students')">🎓 Ученики</a>
+                <a href="#" onclick="goToSection('groups')">👥 Группы</a>
+            </nav>
+            <div style="text-align: right;">
+                <button class="btn btn-small btn-secondary" onclick="openSettingsModal()">⚙️ Настройки</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ALERTS -->
+    <div class="container">
+        <div id="alertSuccess" class="alert alert-success"></div>
+        <div id="alertError" class="alert alert-error"></div>
+        <div id="alertWarning" class="alert alert-warning"></div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="container">
+        <!-- TITLE -->
+        <div class="calendar-header">
+            <h1 class="calendar-title">📅 Календарь занятий</h1>
+            <button class="btn btn-primary" onclick="openAddEventModal()">+ Новое занятие</button>
+        </div>
+
+        <!-- VIEW SELECTOR -->
+        <div style="margin-bottom: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; justify-content: space-between; align-items: center;">
+            <div class="view-controls">
+                <button class="view-btn active" onclick="switchView('day')">День</button>
+                <button class="view-btn" onclick="switchView('week')">Неделя</button>
+                <button class="view-btn" onclick="switchView('month')">Месяц</button>
+            </div>
+            <button class="btn btn-secondary btn-small" onclick="goToToday()">📍 Сегодня</button>
+        </div>
+
+        <!-- NAVIGATION -->
+        <div class="calendar-nav">
+            <button class="btn btn-secondary btn-small" onclick="previousPeriod()">◀ Назад</button>
+            <div class="date-display" id="dateDisplay">Сегодня</div>
+            <button class="btn btn-secondary btn-small" onclick="nextPeriod()">Вперёд ▶</button>
+        </div>
+
+        <!-- FILTERS -->
+        <div class="filters-section">
+            <span class="filter-label">Фильтр:</span>
+            <div class="filter-group">
+                <button class="filter-btn active" onclick="setFilter('all')">Все занятия</button>
+                <button class="filter-btn" onclick="setFilter('students')">Ученики</button>
+                <button class="filter-btn" onclick="setFilter('groups')">Группы</button>
+            </div>
+            <button class="btn btn-secondary btn-small" onclick="resetFilters()">🔄 Сбросить</button>
+        </div>
+
+        <!-- CALENDAR GRID -->
+        <div class="calendar-grid">
+            <!-- DAY VIEW -->
+            <div id="dayView" class="day-view active">
+                <div class="day-slots" id="daySlotsContainer"></div>
+            </div>
+
+            <!-- WEEK VIEW -->
+            <div id="weekView" class="week-view">
+                <div class="week-header" id="weekHeaderContainer"></div>
+                <div class="week-grid" id="weekGridContainer"></div>
+            </div>
+
+            <!-- MONTH VIEW -->
+            <div id="monthView" class="month-view">
+                <div class="month-header" id="monthHeaderContainer"></div>
+                <div class="month-grid" id="monthGridContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD/EDIT EVENT -->
+    <div id="eventModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="eventModalTitle">Занять время</h2>
+                <button class="close-btn" onclick="closeEventModal()">&times;</button>
+            </div>
+            <form id="eventForm" onsubmit="handleEventSubmit(event)">
+                <div class="form-group">
+                    <label for="eventDate">Дата <span class="required">*</span></label>
+                    <input type="date" id="eventDate" required>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="eventStartTime">Начало <span class="required">*</span></label>
+                        <input type="time" id="eventStartTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventEndTime">Окончание <span class="required">*</span></label>
+                        <input type="time" id="eventEndTime" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="eventType">Тип <span class="required">*</span></label>
+                    <select id="eventType" required onchange="updateParticipantsList()">
+                        <option value="">Выберите тип</option>
+                        <option value="student">Ученик</option>
+                        <option value="group">Группа</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="eventParticipant">Участник <span class="required">*</span></label>
+                    <select id="eventParticipant" required></select>
+                </div>
+
+                <div class="form-group">
+                    <label for="eventTopic">Тема занятия</label>
+                    <select id="eventTopic">
+                        <option value="">— не указана —</option>
+                        <option>Человек и общество</option>
+                        <option>Деятельность человека</option>
+                        <option>Познание</option>
+                        <option>Социальные отношения</option>
+                        <option>Политика</option>
+                        <option>Политические режимы</option>
+                        <option>Право</option>
+                        <option>Конституционное право</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Статус</label>
+                    <select id="eventStatus">
+                        <option value="planned">Запланировано</option>
+                        <option value="conducted">Проведено</option>
+                        <option value="postponed">Перенесено</option>
+                        <option value="cancelled">Отменено</option>
+                        <option value="missed">Не состоялось</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="eventComment">Комментарий</label>
+                    <textarea id="eventComment" placeholder="Заметка о занятии..."></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeEventModal()">Отмена</button>
+                    <button type="button" class="btn btn-danger btn-small" id="deleteEventBtn" style="display: none;" onclick="deleteEvent()">🗑️ Удалить</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: SETTINGS -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Настроить рабочее время</h2>
+                <button class="close-btn" onclick="closeSettingsModal()">&times;</button>
+            </div>
+            <form id="settingsForm" onsubmit="handleSettingsSave(event)">
+                <div class="form-group">
+                    <label>Шаблон расписания <span class="required">*</span></label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="radio" id="pattern1" name="pattern" value="weekday" checked>
+                            <label for="pattern1" style="margin: 0;">Будние дни (пн-пт)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="radio" id="pattern2" name="pattern" value="alldays">
+                            <label for="pattern2" style="margin: 0;">Все дни (пн-вс)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="radio" id="pattern3" name="pattern" value="evenweeks">
+                            <label for="pattern3" style="margin: 0;">Чётные недели</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="radio" id="pattern4" name="pattern" value="oddweeks">
+                            <label for="pattern4" style="margin: 0;">Нечётные недели</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="workStartTime">Время начала</label>
+                        <input type="time" id="workStartTime" value="09:00">
+                    </div>
+                    <div class="form-group">
+                        <label for="workEndTime">Время окончания</label>
+                        <input type="time" id="workEndTime" value="18:00">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Выходные дни</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="offDay6" value="Saturday" checked>
+                            <label for="offDay6" style="margin: 0;">Суббота</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="offDay0" value="Sunday" checked>
+                            <label for="offDay0" style="margin: 0;">Воскресенье</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeSettingsModal()">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ============ STATE ============
+        let currentView = 'day';
+        let currentDate = new Date();
+        let currentFilter = 'all';
+        let editingEventId = null;
+
+        let events = JSON.parse(localStorage.getItem('calendarEvents')) || [];
+        let students = JSON.parse(localStorage.getItem('students')) || [];
+        let groups = JSON.parse(localStorage.getItem('groups')) || [];
+
+        const CURRICULUM = [
+            'Человек и общество','Деятельность человека','Познание',
+            'Социальные отношения','Политика','Политические режимы',
+            'Право','Конституционное право',
+        ];
+        let workingHours = JSON.parse(localStorage.getItem('workingHours')) || {
+            pattern: 'weekday',
+            startTime: '09:00',
+            endTime: '18:00',
+            offDays: ['Saturday', 'Sunday']
+        };
+
+        // ============ INITIALIZATION ============
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCalendar();
+            updateParticipantsList();
+            setDateInputToToday();
+        });
+
+        // ============ VIEW SWITCHING ============
+        function switchView(view) {
+            currentView = view;
+            document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.getElementById('dayView').classList.remove('active');
+            document.getElementById('weekView').classList.remove('active');
+            document.getElementById('monthView').classList.remove('active');
+
+            if (view === 'day') document.getElementById('dayView').classList.add('active');
+            if (view === 'week') document.getElementById('weekView').classList.add('active');
+            if (view === 'month') document.getElementById('monthView').classList.add('active');
+
+            renderCalendar();
+        }
+
+        // ============ NAVIGATION ============
+        function goToToday() {
+            currentDate = new Date();
+            renderCalendar();
+        }
+
+        function previousPeriod() {
+            if (currentView === 'day') {
+                currentDate.setDate(currentDate.getDate() - 1);
+            } else if (currentView === 'week') {
+                currentDate.setDate(currentDate.getDate() - 7);
+            } else if (currentView === 'month') {
+                currentDate.setMonth(currentDate.getMonth() - 1);
+            }
+            renderCalendar();
+        }
+
+        function nextPeriod() {
+            if (currentView === 'day') {
+                currentDate.setDate(currentDate.getDate() + 1);
+            } else if (currentView === 'week') {
+                currentDate.setDate(currentDate.getDate() + 7);
+            } else if (currentView === 'month') {
+                currentDate.setMonth(currentDate.getMonth() + 1);
+            }
+            renderCalendar();
+        }
+
+        // ============ FILTERS ============
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderCalendar();
+        }
+
+        function resetFilters() {
+            currentFilter = 'all';
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.filter-btn')[0].classList.add('active');
+            renderCalendar();
+        }
+
+        // ============ EVENT FILTERING ============
+        function getFilteredEvents(date) {
+            let filtered = events.filter(e => {
+                const eventDate = new Date(e.date);
+                if (eventDate.toDateString() !== date.toDateString()) return false;
+
+                if (currentFilter === 'students') return e.type === 'student';
+                if (currentFilter === 'groups') return e.type === 'group';
+                return true;
+            });
+            return filtered;
+        }
+
+        // ============ RENDERING ============
+        function renderCalendar() {
+            if (currentView === 'day') renderDayView();
+            if (currentView === 'week') renderWeekView();
+            if (currentView === 'month') renderMonthView();
+            updateDateDisplay();
+        }
+
+        function updateDateDisplay() {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateStr = currentDate.toLocaleDateString('ru-RU', options);
+            document.getElementById('dateDisplay').textContent = dateStr;
+        }
+
+        // ============ DAY VIEW ============
+        function renderDayView() {
+            const container = document.getElementById('daySlotsContainer');
+            container.innerHTML = '';
+
+            const startHour = parseInt(workingHours.startTime.split(':')[0]);
+            const endHour = parseInt(workingHours.endTime.split(':')[0]);
+
+            for (let hour = startHour; hour < endHour; hour++) {
+                const slotDiv = document.createElement('div');
+                slotDiv.className = 'time-slot';
+
+                const timeDiv = document.createElement('div');
+                timeDiv.className = 'slot-time';
+                timeDiv.textContent = `${hour.toString().padStart(2, '0')}:00`;
+
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'slot-content';
+                contentDiv.onclick = () => openAddEventModal(currentDate, `${hour.toString().padStart(2, '0')}:00`);
+
+                const dayEvents = getFilteredEvents(currentDate).filter(e => {
+                    const eventHour = parseInt(e.startTime.split(':')[0]);
+                    return eventHour === hour;
+                });
+
+                dayEvents.forEach(event => {
+                    const eventDiv = document.createElement('div');
+                    const statusClass = {conducted:'conducted',missed:'missed',postponed:'postponed',cancelled:'cancelled canceled'}[event.status]||'';
+                    eventDiv.className = `event ${event.type === 'group' ? 'group' : ''} ${statusClass}`.trim();
+
+                    eventDiv.draggable = true;
+                    eventDiv.dataset.eventId = event.id;
+                    eventDiv.dataset.eventDate = event.date;
+                    eventDiv.dataset.eventTime = event.startTime;
+
+                    const name = event.type === 'student'
+                        ? students.find(s => s.id === event.participantId)?.name
+                        : groups.find(g => g.id === event.participantId)?.name;
+
+                    eventDiv.innerHTML = `
+                        <div class="event-time">${event.startTime} - ${event.endTime}</div>
+                        <div class="event-title">${name || 'Неизвестный'}</div>
+                        ${event.topic ? `<div style="font-size:.72rem;opacity:.85;margin-top:.2rem">${event.topic}</div>` : ''}
+                        <div class="status-btns" onclick="event.stopPropagation()">
+                            <button class="status-btn${event.status==='conducted'?' chosen':''}" data-s="conducted" onclick="quickSetStatus('${event.id}','conducted')">✓</button>
+                            <button class="status-btn${event.status==='missed'?' chosen':''}"    data-s="missed"    onclick="quickSetStatus('${event.id}','missed')">✗</button>
+                            <button class="status-btn${event.status==='postponed'?' chosen':''}" data-s="postponed" onclick="quickSetStatus('${event.id}','postponed')">↩</button>
+                        </div>
+                    `;
+
+                    eventDiv.addEventListener('dragstart', handleDragStart);
+                    eventDiv.addEventListener('dragend', handleDragEnd);
+
+                    eventDiv.onclick = (e) => {
+                        e.stopPropagation();
+                        openEventModal(event);
+                    };
+                    contentDiv.appendChild(eventDiv);
+                });
+
+                // Добавить drag-over эффект для слотов в день-представлении
+                contentDiv.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    contentDiv.style.backgroundColor = '#e8f4f8';
+                });
+
+                contentDiv.addEventListener('dragleave', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    contentDiv.style.backgroundColor = '';
+                });
+
+                contentDiv.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    contentDiv.style.backgroundColor = '';
+                    handleDropOnSlot(e, currentDate, hour);
+                });
+
+                slotDiv.appendChild(timeDiv);
+                slotDiv.appendChild(contentDiv);
+                container.appendChild(slotDiv);
+            }
+        }
+
+        // ============ WEEK VIEW ============
+        function renderWeekView() {
+            const weekStart = new Date(currentDate);
+            weekStart.setDate(weekStart.getDate() - weekStart.getDay() + 1);
+
+            // Header
+            const headerContainer = document.getElementById('weekHeaderContainer');
+            headerContainer.innerHTML = '<div class="day-header"></div>';
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(weekStart);
+                date.setDate(date.getDate() + i);
+                const header = document.createElement('div');
+                header.className = 'day-header';
+                const dayName = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+                header.textContent = `${dayName[i]} ${date.getDate()}`;
+                headerContainer.appendChild(header);
+            }
+
+            // Grid
+            const gridContainer = document.getElementById('weekGridContainer');
+            gridContainer.innerHTML = '';
+
+            const startHour = parseInt(workingHours.startTime.split(':')[0]);
+            const endHour = parseInt(workingHours.endTime.split(':')[0]);
+
+            for (let hour = startHour; hour < endHour; hour++) {
+                // Time label
+                const timeDiv = document.createElement('div');
+                timeDiv.className = 'slot-time';
+                timeDiv.textContent = `${hour.toString().padStart(2, '0')}:00`;
+                gridContainer.appendChild(timeDiv);
+
+                // Day columns
+                for (let i = 0; i < 7; i++) {
+                    const date = new Date(weekStart);
+                    date.setDate(date.getDate() + i);
+
+                    const slot = document.createElement('div');
+                    slot.className = 'week-slot';
+                    slot.onclick = () => openAddEventModal(date, `${hour.toString().padStart(2, '0')}:00`);
+
+                    const dayEvents = getFilteredEvents(date).filter(e => {
+                        const eventHour = parseInt(e.startTime.split(':')[0]);
+                        return eventHour === hour;
+                    });
+
+                    dayEvents.forEach(event => {
+                        const eventDiv = document.createElement('div');
+                        eventDiv.className = `event ${event.type === 'group' ? 'group' : ''}`;
+                        if (event.status === 'canceled') eventDiv.classList.add('canceled');
+
+                        const name = event.type === 'student'
+                            ? students.find(s => s.id === event.participantId)?.name
+                            : groups.find(g => g.id === event.participantId)?.name;
+
+                        eventDiv.textContent = name || 'Неизвестный';
+                        eventDiv.style.fontSize = '0.75rem';
+                        eventDiv.style.padding = '0.3rem';
+                        eventDiv.onclick = (e) => {
+                            e.stopPropagation();
+                            openEventModal(event);
+                        };
+                        slot.appendChild(eventDiv);
+                    });
+
+                    gridContainer.appendChild(slot);
+                }
+            }
+        }
+
+        // ============ MONTH VIEW ============
+        function renderMonthView() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+
+            const monthStart = new Date(year, month, 1);
+            const monthEnd = new Date(year, month + 1, 0);
+            const startDate = new Date(monthStart);
+            startDate.setDate(startDate.getDate() - monthStart.getDay() + 1);
+
+            // Header
+            const headerContainer = document.getElementById('monthHeaderContainer');
+            headerContainer.innerHTML = '';
+            const dayNames = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+            dayNames.forEach(day => {
+                const header = document.createElement('div');
+                header.className = 'weekday-name';
+                header.textContent = day;
+                headerContainer.appendChild(header);
+            });
+
+            // Grid
+            const gridContainer = document.getElementById('monthGridContainer');
+            gridContainer.innerHTML = '';
+
+            for (let i = 0; i < 42; i++) {
+                const date = new Date(startDate);
+                date.setDate(date.getDate() + i);
+
+                const cell = document.createElement('div');
+                cell.className = 'day-cell';
+
+                if (date.getMonth() !== month) {
+                    cell.classList.add('other-month');
+                }
+
+                const dayNumber = document.createElement('div');
+                dayNumber.className = 'day-number';
+                dayNumber.textContent = date.getDate();
+
+                const eventsList = document.createElement('div');
+                eventsList.className = 'day-events';
+
+                const dayEvents = getFilteredEvents(date);
+                if (dayEvents.length === 0) {
+                    eventsList.innerHTML = '<span style="color: #999;">—</span>';
+                } else {
+                    eventsList.innerHTML = dayEvents.map(e =>
+                        `<span class="day-event-dot" style="background: ${e.type === 'group' ? 'var(--color-group)' : 'var(--color-individual)'}"></span>`
+                    ).join('') + ` ${dayEvents.length}`;
+                }
+
+                cell.appendChild(dayNumber);
+                cell.appendChild(eventsList);
+
+                cell.onclick = () => {
+                    currentDate = new Date(date);
+                    currentView = 'day';
+                    switchView('day');
+                };
+
+                gridContainer.appendChild(cell);
+            }
+        }
+
+        // ============ MODALS ============
+        function openAddEventModal(date = currentDate, startTime = '09:00') {
+            editingEventId = null;
+            document.getElementById('eventModalTitle').textContent = 'Новое занятие';
+            document.getElementById('deleteEventBtn').style.display = 'none';
+
+            const dateStr = date.toISOString().split('T')[0];
+            document.getElementById('eventDate').value = dateStr;
+            document.getElementById('eventStartTime').value = startTime;
+            document.getElementById('eventEndTime').value = startTime;
+            document.getElementById('eventType').value = '';
+            document.getElementById('eventTopic').value = '';
+            document.getElementById('eventStatus').value = 'planned';
+            document.getElementById('eventComment').value = '';
+
+            document.getElementById('eventModal').classList.add('show');
+        }
+
+        function openEventModal(ev) {
+            editingEventId = ev.id;
+            document.getElementById('eventModalTitle').textContent = 'Редактировать занятие';
+            document.getElementById('deleteEventBtn').style.display = 'block';
+
+            document.getElementById('eventDate').value = ev.date;
+            document.getElementById('eventStartTime').value = ev.startTime;
+            document.getElementById('eventEndTime').value = ev.endTime;
+            document.getElementById('eventType').value = ev.type;
+            document.getElementById('eventTopic').value = ev.topic || '';
+            document.getElementById('eventStatus').value = ev.status || 'planned';
+
+            updateParticipantsList();
+            document.getElementById('eventParticipant').value = ev.participantId;
+            document.getElementById('eventComment').value = ev.comment || '';
+
+            document.getElementById('eventModal').classList.add('show');
+        }
+
+        function closeEventModal() {
+            document.getElementById('eventModal').classList.remove('show');
+            editingEventId = null;
+        }
+
+        function openSettingsModal() {
+            document.querySelector('input[name="pattern"][value="' + workingHours.pattern + '"]').checked = true;
+            document.getElementById('workStartTime').value = workingHours.startTime;
+            document.getElementById('workEndTime').value = workingHours.endTime;
+            document.getElementById('settingsModal').classList.add('show');
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').classList.remove('show');
+        }
+
+        // ============ FORM HANDLING ============
+        function updateParticipantsList() {
+            const type = document.getElementById('eventType').value;
+            const select = document.getElementById('eventParticipant');
+            select.innerHTML = '<option value="">Выберите участника</option>';
+
+            if (type === 'student') {
+                students.forEach(s => {
+                    const option = document.createElement('option');
+                    option.value = s.id;
+                    option.textContent = `${s.avatar} ${s.name} (${s.class} класс)`;
+                    select.appendChild(option);
+                });
+            } else if (type === 'group') {
+                groups.forEach(g => {
+                    const option = document.createElement('option');
+                    option.value = g.id;
+                    option.textContent = `👥 ${g.name}`;
+                    select.appendChild(option);
+                });
+            }
+        }
+
+        function handleEventSubmit(e) {
+            e.preventDefault();
+
+            const date = document.getElementById('eventDate').value;
+            const startTime = document.getElementById('eventStartTime').value;
+            const endTime = document.getElementById('eventEndTime').value;
+            const type = document.getElementById('eventType').value;
+            const participantId = document.getElementById('eventParticipant').value;
+            const comment = document.getElementById('eventComment').value;
+
+            if (!date || !startTime || !endTime || !type || !participantId) {
+                showAlert('error', 'Заполните все обязательные поля');
+                return;
+            }
+
+            if (startTime >= endTime) {
+                showAlert('error', 'Время окончания должно быть позже начала');
+                return;
+            }
+
+            const topic  = document.getElementById('eventTopic').value;
+            const status = document.getElementById('eventStatus').value;
+            const prevStatus = editingEventId ? (events.find(e=>e.id===editingEventId)||{}).status : null;
+
+            if (editingEventId) {
+                const ev = events.find(e => e.id === editingEventId);
+                ev.date = date; ev.startTime = startTime; ev.endTime = endTime;
+                ev.comment = comment; ev.topic = topic;
+                if (ev.status !== status) {
+                    ev.status = status;
+                    if (status === 'missed' && prevStatus !== 'missed') {
+                        autoShiftTopics(ev);
+                        showAlert('warning', 'Тема «'+(topic||'?')+'» перенесена на следующее занятие');
+                    } else { showAlert('success', 'Статус обновлён: '+statusLabel(status)); }
+                } else { showAlert('success', 'Занятие отредактировано!'); }
+            } else {
+                events.push({ id:Date.now().toString(), date, startTime, endTime, type, participantId, comment, topic, status: status||'planned' });
+                showAlert('success', 'Занятие добавлено!');
+            }
+
+            localStorage.setItem('calendarEvents', JSON.stringify(events));
+            closeEventModal();
+            renderCalendar();
+        }
+
+        function deleteEvent() {
+            if (confirm('Вы уверены? Это действие нельзя отменить.')) {
+                events = events.filter(e => e.id !== editingEventId);
+                localStorage.setItem('calendarEvents', JSON.stringify(events));
+                showAlert('success', 'Занятие удалено успешно!');
+                closeEventModal();
+                renderCalendar();
+            }
+        }
+
+        function handleSettingsSave(e) {
+            e.preventDefault();
+
+            workingHours.pattern = document.querySelector('input[name="pattern"]:checked').value;
+            workingHours.startTime = document.getElementById('workStartTime').value;
+            workingHours.endTime = document.getElementById('workEndTime').value;
+            workingHours.offDays = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
+                .map(cb => cb.value);
+
+            localStorage.setItem('workingHours', JSON.stringify(workingHours));
+            showAlert('success', 'Рабочее время обновлено!');
+            closeSettingsModal();
+            renderCalendar();
+        }
+
+        // ============ UTILITIES ============
+        function showAlert(type, message) {
+            const alertId = type === 'success' ? 'alertSuccess' : type === 'error' ? 'alertError' : 'alertWarning';
+            const element = document.getElementById(alertId);
+            element.textContent = message;
+            element.classList.add('show');
+            setTimeout(() => element.classList.remove('show'), 4000);
+        }
+
+        function setDateInputToToday() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('eventDate').value = today;
+        }
+
+        function goToDashboard() {
+            alert('Переход на главную (реализовать в полной версии)');
+        }
+
+        function goToSection(section) {
+            alert(`Переход в раздел ${section} (реализовать в полной версии)`);
+        }
+
+        // ============ DRAG AND DROP ============
+        let draggedEventData = null;
+
+        function handleDragStart(e) {
+            draggedEventData = {
+                eventId: e.target.dataset.eventId,
+                originalDate: e.target.dataset.eventDate,
+                originalTime: e.target.dataset.eventTime
+            };
+            e.target.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', e.target.innerHTML);
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+            document.querySelectorAll('.slot-content').forEach(slot => {
+                slot.style.backgroundColor = '';
+            });
+            draggedEventData = null;
+        }
+
+        function handleDropOnSlot(e, targetDate, targetHour) {
+            if (!draggedEventData) return;
+
+            const eventId = draggedEventData.eventId;
+            const event = events.find(ev => ev.id === eventId);
+
+            if (!event) return;
+
+            // Вычислить новое время
+            const newStartHour = targetHour.toString().padStart(2, '0');
+            const oldStartHour = parseInt(event.startTime.split(':')[0]);
+            const durationMinutes =
+                (parseInt(event.endTime.split(':')[0]) * 60 + parseInt(event.endTime.split(':')[1])) -
+                (oldStartHour * 60 + parseInt(event.startTime.split(':')[1]));
+
+            const newEndHour = Math.min(
+                targetHour + Math.ceil(durationMinutes / 60),
+                parseInt(workingHours.endTime.split(':')[0])
+            );
+
+            const newStartTime = `${newStartHour}:${event.startTime.split(':')[1]}`;
+            const newEndTime = `${newEndHour.toString().padStart(2, '0')}:${event.endTime.split(':')[1]}`;
+            const newDate = targetDate.toISOString().split('T')[0];
+
+            // Обновить событие
+            event.date = newDate;
+            event.startTime = newStartTime;
+            event.endTime = newEndTime;
+
+            // Сохранить в localStorage
+            localStorage.setItem('calendarEvents', JSON.stringify(events));
+
+            // Показать уведомление
+            const name = event.type === 'student'
+                ? students.find(s => s.id === event.participantId)?.name
+                : groups.find(g => g.id === event.participantId)?.name;
+
+            showAlert('success', `Занятие "${name}" перенесено на ${newStartTime}`);
+
+            // Перерендерить календарь
+            renderCalendar();
+        }
+
+        // Добавить drag-and-drop для неделя-представления
+        function setupWeekViewDragDrop() {
+            const weekSlots = document.querySelectorAll('.week-slot');
+
+            weekSlots.forEach((slot, index) => {
+                // Вычислить день и час из позиции
+                const hoursCount = parseInt(workingHours.endTime.split(':')[0]) -
+                                 parseInt(workingHours.startTime.split(':')[0]);
+                const slotIndex = index;
+                const hour = parseInt(workingHours.startTime.split(':')[0]) + Math.floor(slotIndex / 7);
+                const dayOffset = slotIndex % 7;
+
+                slot.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (draggedEventData) {
+                        slot.style.backgroundColor = '#e8f4f8';
+                        slot.style.borderRadius = '4px';
+                    }
+                });
+
+                slot.addEventListener('dragleave', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    slot.style.backgroundColor = '';
+                });
+
+                slot.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    slot.style.backgroundColor = '';
+
+                    if (!draggedEventData) return;
+
+                    const weekStart = new Date(currentDate);
+                    weekStart.setDate(weekStart.getDate() - weekStart.getDay() + 1);
+
+                    const targetDate = new Date(weekStart);
+                    targetDate.setDate(targetDate.getDate() + dayOffset);
+
+                    handleDropOnSlot(e, targetDate, hour);
+                });
+            });
+
+            // Добавить drag-and-drop к событиям в неделе
+            const weekEvents = document.querySelectorAll('#weekGridContainer .event');
+            weekEvents.forEach(eventDiv => {
+                eventDiv.draggable = true;
+                eventDiv.addEventListener('dragstart', handleDragStart);
+                eventDiv.addEventListener('dragend', handleDragEnd);
+            });
+        }
+
+        // Добавить drag-and-drop для месяц-представления
+        function setupMonthViewDragDrop() {
+            const dayCells = document.querySelectorAll('.day-cell');
+
+            dayCells.forEach((cell, index) => {
+                cell.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (draggedEventData) {
+                        cell.style.backgroundColor = '#fff9e6';
+                        cell.style.borderColor = '#ffa500';
+                    }
+                });
+
+                cell.addEventListener('dragleave', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    cell.style.backgroundColor = '';
+                    cell.style.borderColor = '';
+                });
+
+                cell.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    cell.style.backgroundColor = '';
+                    cell.style.borderColor = '';
+
+                    if (!draggedEventData) return;
+
+                    // Вычислить дату ячейки
+                    const monthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+                    const startDate = new Date(monthStart);
+                    startDate.setDate(startDate.getDate() - monthStart.getDay() + 1);
+
+                    const targetDate = new Date(startDate);
+                    targetDate.setDate(targetDate.getDate() + index);
+
+                    handleDropOnSlot(e, targetDate, 9); // Стандартный час 09:00
+                });
+            });
+
+            // Добавить drag-and-drop к событиям в месяце
+            const monthEvents = document.querySelectorAll('#monthGridContainer .event');
+            monthEvents.forEach(eventDiv => {
+                eventDiv.draggable = true;
+                eventDiv.addEventListener('dragstart', handleDragStart);
+                eventDiv.addEventListener('dragend', handleDragEnd);
+            });
+        }
+
+        // Переопределить renderCalendar для добавления drag-drop после рендеринга
+        const originalRenderCalendar = renderCalendar;
+        renderCalendar = function() {
+            originalRenderCalendar();
+            setTimeout(() => {
+                if (currentView === 'week') setupWeekViewDragDrop();
+                if (currentView === 'month') setupMonthViewDragDrop();
+            }, 0);
+        };
+
+        // Close modal on outside click
+        window.onclick = (e) => {
+            const modal = document.getElementById('eventModal');
+            const settingsModal = document.getElementById('settingsModal');
+            if (e.target === modal) closeEventModal();
+            if (e.target === settingsModal) closeSettingsModal();
+        };
+
+        // ── QUICK STATUS + AUTO-SHIFT ────────────────────
+        function quickSetStatus(id, status) {
+            const ev = events.find(e => e.id === id);
+            if (!ev) return;
+            const prev = ev.status;
+            ev.status = status;
+            if (status === 'missed' && prev !== 'missed') {
+                autoShiftTopics(ev);
+                showAlert('warning', 'Тема «'+(ev.topic||'?')+'» перенесена на следующее занятие');
+            } else {
+                showToast(statusLabel(status));
+            }
+            localStorage.setItem('calendarEvents', JSON.stringify(events));
+            renderCalendar();
+        }
+
+        function autoShiftTopics(missed) {
+            const participantId = missed.participantId;
+            const type          = missed.type;
+            const future = events
+                .filter(e => e.type===type && e.participantId===participantId && e.status==='planned' && e.date >= missed.date)
+                .sort((a,b) => a.date.localeCompare(b.date) || a.startTime.localeCompare(b.startTime));
+            if (!future.length) return;
+            const topicIdx = CURRICULUM.indexOf(missed.topic);
+            if (topicIdx === -1) return;
+            future.forEach((ev, i) => {
+                if (topicIdx + i < CURRICULUM.length) ev.topic = CURRICULUM[topicIdx + i];
+            });
+        }
+
+        function statusLabel(s) {
+            return {conducted:'Проведено',planned:'Запланировано',postponed:'Перенесено',cancelled:'Отменено',missed:'Не состоялось'}[s]||s;
+        }
+
+        function showToast(msg, type='success') {
+            const t = document.createElement('div');
+            t.className = 'toast ' + type;
+            t.textContent = msg;
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 3000);
+        }
+    </script>
+</body>
+</html>

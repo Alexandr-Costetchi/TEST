@@ -1,0 +1,1619 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Верный Курс — Платформа управления обучением</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --blue:#0066cc;--blue-light:#e8f0fb;--blue-dark:#0052a3;
+  --green:#43a047;--green-light:#e8f5e9;
+  --orange:#fb8c00;--orange-light:#fff3e0;
+  --red:#e53935;--red-light:#ffebee;
+  --purple:#8e24aa;--purple-light:#f3e5f5;
+  --gray:#f5f6fa;--border:#e0e4ed;--text:#1a1d2e;--muted:#6b7280;
+  --white:#fff;--shadow:0 2px 8px rgba(0,0,0,.08);
+  --radius:10px;--radius-sm:6px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--gray);color:var(--text);line-height:1.5}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:inherit}
+input,select,textarea{font-family:inherit}
+
+/* ── ROLE SWITCHER ─────────────────────────────── */
+.role-bar{background:var(--text);color:#fff;padding:.5rem 1.5rem;display:flex;align-items:center;gap:1rem;font-size:.85rem;flex-wrap:wrap}
+.role-bar span{opacity:.6}
+.role-pills{display:flex;gap:.4rem}
+.role-pill{padding:.25rem .9rem;border-radius:20px;border:1px solid rgba(255,255,255,.3);background:transparent;color:#fff;font-size:.82rem;transition:all .2s}
+.role-pill.active,.role-pill:hover{background:var(--blue);border-color:var(--blue)}
+
+/* ── HEADER ──────────────────────────────────────*/
+.app-header{background:#fff;border-bottom:1px solid var(--border);padding:0 2rem;position:sticky;top:0;z-index:200;box-shadow:var(--shadow)}
+.header-inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;gap:2rem;height:60px;flex-wrap:wrap}
+.logo{font-size:1.15rem;font-weight:700;white-space:nowrap}
+.main-nav{display:flex;gap:.25rem;flex:1;overflow-x:auto}
+.nav-item{padding:.45rem .9rem;border-radius:var(--radius-sm);font-size:.9rem;color:var(--muted);border:none;background:transparent;white-space:nowrap;transition:all .2s}
+.nav-item:hover{background:var(--gray);color:var(--text)}
+.nav-item.active{background:var(--blue-light);color:var(--blue);font-weight:600}
+.header-user{display:flex;align-items:center;gap:.75rem;margin-left:auto}
+.avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--blue-dark));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;flex-shrink:0}
+.user-name{font-size:.9rem;font-weight:500}
+.notif-badge{position:relative;cursor:pointer}
+.notif-badge .badge{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-size:.65rem;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+
+/* ── LAYOUT ──────────────────────────────────────*/
+.page-wrap{max-width:1400px;margin:0 auto;padding:1.5rem 2rem}
+.section{display:none}.section.active{display:block}
+.page-title{font-size:1.4rem;font-weight:700;margin-bottom:1.25rem}
+
+/* ── CARDS / GRIDS ───────────────────────────────*/
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow)}
+.card-title{font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:.75rem}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+.grid-auto{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem}
+@media(max-width:900px){.grid-4{grid-template-columns:repeat(2,1fr)}.grid-3{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.grid-4,.grid-3,.grid-2{grid-template-columns:1fr}}
+
+/* ── STAT CARDS ──────────────────────────────────*/
+.stat-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;display:flex;align-items:flex-start;gap:1rem}
+.stat-icon{width:44px;height:44px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+.stat-icon.blue{background:var(--blue-light)}
+.stat-icon.green{background:var(--green-light)}
+.stat-icon.orange{background:var(--orange-light)}
+.stat-icon.red{background:var(--red-light)}
+.stat-icon.purple{background:var(--purple-light)}
+.stat-value{font-size:1.6rem;font-weight:700;line-height:1}
+.stat-label{font-size:.8rem;color:var(--muted);margin-top:.2rem}
+.stat-diff{font-size:.75rem;margin-top:.3rem}
+.stat-diff.up{color:var(--green)}.stat-diff.down{color:var(--red)}
+
+/* ── TABLES ──────────────────────────────────────*/
+.table-wrap{overflow-x:auto;background:#fff;border:1px solid var(--border);border-radius:var(--radius)}
+table{width:100%;border-collapse:collapse}
+thead th{background:var(--gray);padding:.85rem 1rem;text-align:left;font-size:.82rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--border)}
+tbody td{padding:.85rem 1rem;border-bottom:1px solid var(--border);font-size:.9rem}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:#fafbfe}
+
+/* ── STATUS BADGES ───────────────────────────────*/
+.badge{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .7rem;border-radius:20px;font-size:.78rem;font-weight:500;white-space:nowrap}
+.badge-blue{background:var(--blue-light);color:var(--blue)}
+.badge-green{background:var(--green-light);color:var(--green)}
+.badge-orange{background:var(--orange-light);color:var(--orange)}
+.badge-red{background:var(--red-light);color:var(--red)}
+.badge-gray{background:#f0f1f5;color:var(--muted)}
+.badge-purple{background:var(--purple-light);color:var(--purple)}
+
+/* ── BUTTONS ─────────────────────────────────────*/
+.btn{padding:.5rem 1.1rem;border-radius:var(--radius-sm);border:none;font-size:.88rem;font-weight:500;transition:all .2s;display:inline-flex;align-items:center;gap:.4rem}
+.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:var(--blue-dark)}
+.btn-secondary{background:#f0f1f5;color:var(--text)}.btn-secondary:hover{background:#e5e7ef}
+.btn-success{background:var(--green);color:#fff}.btn-success:hover{background:#388e3c}
+.btn-danger{background:var(--red);color:#fff}.btn-danger:hover{background:#c62828}
+.btn-sm{padding:.35rem .8rem;font-size:.8rem}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}.btn-outline:hover{background:var(--gray)}
+
+/* ── PROGRESS BAR ────────────────────────────────*/
+.progress{background:#eee;border-radius:20px;height:8px;overflow:hidden}
+.progress-bar{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--blue),var(--blue-dark));transition:width .4s}
+.progress-bar.green{background:linear-gradient(90deg,var(--green),#2e7d32)}
+.progress-bar.orange{background:linear-gradient(90deg,var(--orange),#e65100)}
+
+/* ── FORMS ───────────────────────────────────────*/
+.form-group{margin-bottom:1rem}
+.form-label{display:block;font-size:.85rem;font-weight:600;margin-bottom:.4rem}
+.form-control{width:100%;padding:.6rem .85rem;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:.9rem;transition:border .2s}
+.form-control:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,102,204,.1)}
+textarea.form-control{resize:vertical;min-height:90px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+
+/* ── MODALS ──────────────────────────────────────*/
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:var(--radius);width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2);animation:slideUp .25s}
+@keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-header{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.modal-header h3{font-size:1.05rem;font-weight:700}
+.modal-close{background:none;border:none;font-size:1.3rem;color:var(--muted);line-height:1}
+.modal-body{padding:1.5rem}
+.modal-footer{padding:1rem 1.5rem;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:.75rem}
+
+/* ── ALERTS ──────────────────────────────────────*/
+.toast{position:fixed;bottom:2rem;right:2rem;background:#333;color:#fff;padding:.85rem 1.25rem;border-radius:var(--radius);font-size:.88rem;z-index:2000;animation:slideUp .3s;box-shadow:0 8px 24px rgba(0,0,0,.2);max-width:320px}
+.toast.success{background:var(--green)}.toast.error{background:var(--red)}
+
+/* ── LESSON STATUS BUTTONS ───────────────────────*/
+.status-btns{display:flex;gap:.4rem;flex-wrap:wrap}
+.status-btn{padding:.3rem .7rem;border-radius:20px;border:1px solid var(--border);background:#fff;font-size:.78rem;cursor:pointer;transition:all .2s}
+.status-btn:hover,.status-btn.chosen{color:#fff;border-color:transparent}
+.status-btn[data-s="conducted"]:hover,.status-btn[data-s="conducted"].chosen{background:var(--green)}
+.status-btn[data-s="postponed"]:hover,.status-btn[data-s="postponed"].chosen{background:var(--orange)}
+.status-btn[data-s="cancelled"]:hover,.status-btn[data-s="cancelled"].chosen{background:var(--muted)}
+.status-btn[data-s="missed"]:hover,.status-btn[data-s="missed"].chosen{background:var(--red)}
+.status-btn[data-s="planned"]:hover,.status-btn[data-s="planned"].chosen{background:var(--blue)}
+
+/* ── XP / GAMIFICATION ───────────────────────────*/
+.xp-bar-wrap{background:var(--gray);border-radius:var(--radius);padding:1rem 1.25rem}
+.xp-level{font-size:1.3rem;font-weight:700;margin-bottom:.3rem}
+.xp-sub{font-size:.82rem;color:var(--muted);margin-bottom:.7rem}
+.achievement{display:flex;align-items:center;gap:.75rem;padding:.6rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:#fff}
+.ach-icon{font-size:1.5rem;width:40px;text-align:center}
+.ach-title{font-size:.88rem;font-weight:600}
+.ach-desc{font-size:.78rem;color:var(--muted)}
+.achievements-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.75rem}
+
+/* ── CALENDAR MINI ───────────────────────────────*/
+.cal-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;font-size:.8rem}
+.cal-day-name{text-align:center;color:var(--muted);font-weight:600;padding:.3rem 0}
+.cal-day{text-align:center;padding:.4rem;border-radius:4px;cursor:pointer}
+.cal-day:hover{background:var(--blue-light)}
+.cal-day.today{background:var(--blue);color:#fff;font-weight:700}
+.cal-day.has-event{font-weight:600;position:relative}
+.cal-day.has-event::after{content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--blue)}
+.cal-day.has-event.today::after{background:#fff}
+.cal-day.other-month{opacity:.35}
+
+/* ── TIMELINE ────────────────────────────────────*/
+.timeline{display:flex;flex-direction:column;gap:0}
+.timeline-item{display:flex;gap:1rem;padding:.85rem 0;border-bottom:1px solid var(--border)}
+.timeline-item:last-child{border-bottom:none}
+.tl-time{width:80px;font-size:.82rem;color:var(--muted);flex-shrink:0;padding-top:.1rem}
+.tl-dot{width:10px;height:10px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-top:.3rem}
+.tl-dot.green{background:var(--green)}.tl-dot.orange{background:var(--orange)}.tl-dot.red{background:var(--red)}.tl-dot.gray{background:#bbb}
+.tl-body{flex:1}
+.tl-title{font-size:.92rem;font-weight:600}
+.tl-sub{font-size:.8rem;color:var(--muted);margin-top:.15rem}
+
+/* ── CURRICULUM TABLE ────────────────────────────*/
+.curr-table tbody td:first-child{font-weight:500}
+.curr-status{display:inline-flex;align-items:center;gap:.3rem;font-size:.82rem;padding:.2rem .6rem;border-radius:20px}
+
+/* ── STUDENT CARD ────────────────────────────────*/
+.student-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;transition:box-shadow .2s}
+.student-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.1)}
+.student-card-header{display:flex;gap:.85rem;align-items:center;margin-bottom:.85rem}
+.student-card-name{font-weight:700;font-size:.95rem}
+.student-card-sub{font-size:.8rem;color:var(--muted)}
+.student-card-meta{display:flex;flex-direction:column;gap:.4rem;font-size:.82rem}
+.meta-row{display:flex;justify-content:space-between}
+.meta-label{color:var(--muted)}
+.meta-value{font-weight:600}
+
+/* ── FINANCE CARD ────────────────────────────────*/
+.finance-row{display:flex;justify-content:space-between;align-items:center;padding:.7rem 0;border-bottom:1px solid var(--border)}
+.finance-row:last-child{border-bottom:none}
+.fin-amount{font-size:1rem;font-weight:700}
+.fin-amount.green{color:var(--green)}.fin-amount.red{color:var(--red)}.fin-amount.orange{color:var(--orange)}
+
+/* ── TABS ────────────────────────────────────────*/
+.tabs{display:flex;gap:.25rem;border-bottom:2px solid var(--border);margin-bottom:1.25rem;overflow-x:auto}
+.tab{padding:.5rem 1rem;border:none;background:transparent;font-size:.9rem;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:all .2s}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:600}
+
+/* ── WEEK CALENDAR ───────────────────────────────*/
+.week-grid{display:grid;grid-template-columns:60px repeat(7,1fr);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:#fff}
+.wg-header{background:var(--gray);padding:.6rem .3rem;text-align:center;font-size:.78rem;font-weight:600;border-bottom:1px solid var(--border)}
+.wg-time{font-size:.72rem;color:var(--muted);padding:.4rem .5rem;background:var(--gray);border-right:1px solid var(--border);border-bottom:1px solid var(--border);text-align:right}
+.wg-cell{border-right:1px solid var(--border);border-bottom:1px solid var(--border);min-height:48px;padding:.25rem;position:relative;cursor:pointer}
+.wg-cell:hover{background:#f9faff}
+.wg-event{background:var(--blue);color:#fff;border-radius:4px;padding:.3rem .5rem;font-size:.72rem;cursor:pointer;margin-bottom:2px}
+.wg-event.green{background:var(--green)}.wg-event.orange{background:var(--orange)}.wg-event.red{background:var(--red)}.wg-event.gray{background:var(--muted)}
+
+/* ── HOMEWORK ────────────────────────────────────*/
+.hw-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:1rem;margin-bottom:.75rem}
+.hw-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem}
+.hw-title{font-weight:600;font-size:.92rem}
+.hw-meta{font-size:.8rem;color:var(--muted);margin-bottom:.75rem}
+.hw-files{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.5rem}
+.hw-file{background:var(--gray);border-radius:4px;padding:.3rem .65rem;font-size:.78rem;display:flex;align-items:center;gap:.3rem}
+
+/* ── NOTIFICATION ITEM ───────────────────────────*/
+.notif-item{display:flex;gap:1rem;padding:.85rem 0;border-bottom:1px solid var(--border)}
+.notif-item:last-child{border-bottom:none}
+.notif-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.notif-body{flex:1}
+.notif-text{font-size:.88rem}
+.notif-time{font-size:.76rem;color:var(--muted);margin-top:.2rem}
+.notif-item.unread .notif-text{font-weight:600}
+
+/* ── CRM ─────────────────────────────────────────*/
+.crm-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:1rem}
+.crm-name{font-weight:700;margin-bottom:.4rem}
+.crm-source{font-size:.78rem;color:var(--muted)}
+.crm-actions{display:flex;gap:.4rem;margin-top:.85rem;flex-wrap:wrap}
+
+/* ── EMPTY STATE ─────────────────────────────────*/
+.empty{text-align:center;padding:3rem 1rem;color:var(--muted)}
+.empty-icon{font-size:3rem;margin-bottom:.75rem;opacity:.4}
+
+/* ── SCROLLBAR ───────────────────────────────────*/
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:10px}
+
+/* ── RESPONSIVE ──────────────────────────────────*/
+@media(max-width:768px){
+  .page-wrap{padding:1rem}
+  .app-header{padding:0 1rem}
+  .main-nav{gap:.1rem}
+  .nav-item{padding:.4rem .7rem;font-size:.82rem}
+  .week-grid{display:none}
+  .form-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ROLE SWITCHER -->
+<div class="role-bar">
+  <span>Роль просмотра:</span>
+  <div class="role-pills">
+    <button class="role-pill" data-role="student" onclick="switchRole('student')">Ученик</button>
+    <button class="role-pill active" data-role="teacher" onclick="switchRole('teacher')">Педагог</button>
+    <button class="role-pill" data-role="admin" onclick="switchRole('admin')">Администратор</button>
+  </div>
+  <span style="margin-left:auto;opacity:.45;font-size:.78rem">демо-режим</span>
+</div>
+
+<!-- APP HEADER -->
+<header class="app-header">
+  <div class="header-inner">
+    <div class="logo">📚 Верный Курс</div>
+    <nav class="main-nav" id="mainNav"></nav>
+    <div class="header-user">
+      <div class="notif-badge" onclick="switchTo('notifications')">
+        <span style="font-size:1.2rem">🔔</span>
+        <span class="badge">3</span>
+      </div>
+      <div class="avatar" id="headerAvatar">П</div>
+      <div class="user-name" id="headerName">Преподаватель</div>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN CONTENT -->
+<div class="page-wrap" id="appContent"></div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalBox">
+    <div class="modal-header">
+      <h3 id="modalTitle"></h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer" id="modalFooter"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  DEMO DATA
+// ═══════════════════════════════════════════════════
+const DEMO = {
+  currentUser: { role:'teacher', name:'Мария Иванова', avatar:'М' },
+
+  students: [
+    { id:'s1', name:'Алексей Смирнов', grade:11, course:'ЕГЭ Обществознание', tariff:'Стандарт', startDate:'2025-09-01', paidLessons:24, conductedLessons:14, phone:'+7 999 111-22-33', email:'alex@mail.ru', xp:340, level:2 },
+    { id:'s2', name:'Дарья Козлова',   grade:11, course:'ЕГЭ Обществознание', tariff:'Интенсив', startDate:'2025-10-01', paidLessons:30, conductedLessons:10, phone:'+7 999 444-55-66', email:'dasha@mail.ru', xp:180, level:1 },
+    { id:'s3', name:'Иван Петров',     grade:10, course:'ОГЭ Обществознание', tariff:'Базовый',  startDate:'2025-11-01', paidLessons:16, conductedLessons:6,  phone:'+7 999 777-88-99', email:'ivan@mail.ru', xp:90,  level:1 },
+  ],
+
+  curriculum: [
+    { id:'t1', order:1, topic:'Человек и общество',      section:'Раздел 1', status:'conducted', materials:true, hw:true, hwResult:78 },
+    { id:'t2', order:2, topic:'Деятельность человека',   section:'Раздел 1', status:'conducted', materials:true, hw:true, hwResult:85 },
+    { id:'t3', order:3, topic:'Познание',                section:'Раздел 2', status:'conducted', materials:true, hw:true, hwResult:90 },
+    { id:'t4', order:4, topic:'Социальные отношения',    section:'Раздел 3', status:'planned',   materials:true, hw:false,hwResult:null},
+    { id:'t5', order:5, topic:'Политика',                section:'Раздел 4', status:'planned',   materials:false,hw:false,hwResult:null},
+    { id:'t6', order:6, topic:'Политические режимы',     section:'Раздел 4', status:'planned',   materials:false,hw:false,hwResult:null},
+    { id:'t7', order:7, topic:'Право',                   section:'Раздел 5', status:'planned',   materials:false,hw:false,hwResult:null},
+    { id:'t8', order:8, topic:'Основы конституционного права', section:'Раздел 5', status:'planned',materials:false,hw:false,hwResult:null},
+  ],
+
+  lessons: [
+    { id:'l1', date:'2026-05-29', time:'14:00', duration:60, studentId:'s1', topic:'Социальные отношения', status:'conducted', comment:'Отлично разобрали стратификацию' },
+    { id:'l2', date:'2026-06-05', time:'14:00', duration:60, studentId:'s1', topic:'Политика', status:'planned',   comment:'' },
+    { id:'l3', date:'2026-06-05', time:'16:00', duration:60, studentId:'s2', topic:'Познание', status:'planned',   comment:'' },
+    { id:'l4', date:'2026-06-07', time:'12:00', duration:60, studentId:'s3', topic:'Деятельность', status:'planned', comment:'' },
+    { id:'l5', date:'2026-06-12', time:'14:00', duration:60, studentId:'s1', topic:'Политические режимы', status:'planned', comment:'' },
+    { id:'l6', date:'2026-06-12', time:'16:00', duration:60, studentId:'s2', topic:'Социальные отношения', status:'planned', comment:'' },
+    { id:'l7', date:'2026-05-22', time:'14:00', duration:60, studentId:'s1', topic:'Познание', status:'conducted', comment:'Тест 90%' },
+    { id:'l8', date:'2026-05-15', time:'14:00', duration:60, studentId:'s1', topic:'Деятельность', status:'missed',   comment:'Не вышел на связь' },
+  ],
+
+  homeworks: [
+    { id:'h1', studentId:'s1', lessonId:'l7', title:'Тест по теме Познание', dueDate:'2026-06-05', status:'submitted', result:90, file:'test_poznanie.pdf' },
+    { id:'h2', studentId:'s1', lessonId:'l1', title:'Эссе: стратификация', dueDate:'2026-06-07', status:'pending',    result:null, file:null },
+    { id:'h3', studentId:'s2', lessonId:'l3', title:'Схема: виды деятельности', dueDate:'2026-06-08', status:'pending', result:null, file:null },
+  ],
+
+  materials: [
+    { id:'m1', title:'Презентация: Человек и общество', type:'presentation', topic:'t1', date:'2025-10-05' },
+    { id:'m2', title:'Конспект: Деятельность',          type:'note',         topic:'t2', date:'2025-10-12' },
+    { id:'m3', title:'Тест: Познание (30 вопросов)',     type:'test',         topic:'t3', date:'2025-10-19' },
+    { id:'m4', title:'Видео: Социальная структура',     type:'video',        topic:'t4', date:'2025-11-02' },
+    { id:'m5', title:'Презентация: Политические режимы',type:'presentation', topic:'t5', date:'2025-11-09' },
+  ],
+
+  notifications: [
+    { id:'n1', type:'lesson',  text:'Занятие через 24 часа: Политика, 06.06 в 14:00', time:'05.06.2026 12:00', read:false },
+    { id:'n2', type:'hw',      text:'Алексей Смирнов сдал домашнее задание по Познанию', time:'04.06.2026 18:30', read:false },
+    { id:'n3', type:'payment', text:'Поступила оплата: Козлова Дарья — 6 000 ₽', time:'03.06.2026 11:00', read:false },
+    { id:'n4', type:'lesson',  text:'Занятие проведено: Смирнов Алексей 29.05', time:'29.05.2026 15:10', read:true },
+    { id:'n5', type:'lesson',  text:'Занятие не состоялось: Смирнов Алексей 15.05 — тема перенесена', time:'15.05.2026 14:05', read:true },
+  ],
+
+  payments: [
+    { id:'p1', studentId:'s1', amount:9600,  date:'2026-05-01', type:'income',  note:'Оплата за май (8 занятий)' },
+    { id:'p2', studentId:'s2', amount:12000, date:'2026-05-01', type:'income',  note:'Оплата за май (10 занятий)' },
+    { id:'p3', studentId:'s3', amount:6400,  date:'2026-05-10', type:'income',  note:'Оплата 8 занятий' },
+    { id:'p4', studentId:'s1', amount:9600,  date:'2026-06-01', type:'income',  note:'Оплата за июнь' },
+  ],
+
+  leads: [
+    { id:'cr1', name:'Анна Волкова',  phone:'+7 900 123-45-67', source:'Inst', subject:'Биология', date:'2026-06-01', status:'new' },
+    { id:'cr2', name:'Сергей Белов',  phone:'+7 900 765-43-21', source:'VK',   subject:'Обществознание', date:'2026-05-28', status:'inWork' },
+    { id:'cr3', name:'Ольга Фёдорова',phone:'+7 900 555-66-77', source:'Сайт', subject:'История',  date:'2026-05-25', status:'converted' },
+  ],
+
+  achievements: [
+    { id:'a1', icon:'🔥', title:'Первый урок',    desc:'Посетил первое занятие',    unlocked:true },
+    { id:'a2', icon:'📚', title:'5 уроков подряд',desc:'Не пропустил 5 занятий',    unlocked:true },
+    { id:'a3', icon:'✍️', title:'Трудолюбие',     desc:'Сдал 3 домашних задания',   unlocked:true },
+    { id:'a4', icon:'⭐', title:'Отличник',        desc:'Тест выше 90%',             unlocked:true },
+    { id:'a5', icon:'🏆', title:'Эксперт',         desc:'Набери 500 XP',             unlocked:false },
+    { id:'a6', icon:'🎯', title:'Мастер ЕГЭ',      desc:'Пройди всю программу',      unlocked:false },
+  ]
+};
+
+const LEVELS = [
+  { name:'Новичок',      minXp:0   },
+  { name:'Исследователь',minXp:150 },
+  { name:'Эксперт',      minXp:400 },
+  { name:'Мастер ЕГЭ',   minXp:700 },
+];
+
+function getLevelInfo(xp){
+  let level = LEVELS[0];
+  for(const l of LEVELS) if(xp >= l.minXp) level = l;
+  const idx = LEVELS.indexOf(level);
+  const next = LEVELS[idx+1];
+  const pct = next ? Math.round((xp - level.minXp)/(next.minXp - level.minXp)*100) : 100;
+  return { name:level.name, xp, pct, next: next?.name||'Максимальный уровень', nextXp: next?.minXp||level.minXp };
+}
+
+// ═══════════════════════════════════════════════════
+//  ROLE CONFIG
+// ═══════════════════════════════════════════════════
+const ROLES = {
+  student:{
+    label:'Ученик', avatar:'А',name:'Алексей Смирнов',
+    nav:[
+      { id:'s-dash',   label:'Главная',      icon:'🏠' },
+      { id:'s-program',label:'Программа',    icon:'📖' },
+      { id:'s-calendar',label:'Расписание',  icon:'📅' },
+      { id:'s-materials',label:'Материалы',  icon:'📂' },
+      { id:'s-homework',label:'Домашние задания',icon:'✏️' },
+      { id:'s-stats',  label:'Статистика',   icon:'📊' },
+      { id:'notifications',label:'Уведомления',icon:'🔔'},
+    ]
+  },
+  teacher:{
+    label:'Педагог', avatar:'М', name:'Мария Иванова',
+    nav:[
+      { id:'t-dash',    label:'Главная',     icon:'🏠' },
+      { id:'t-students',label:'Ученики',     icon:'🎓' },
+      { id:'t-calendar',label:'Календарь',   icon:'📅' },
+      { id:'t-curriculum',label:'Учебный план',icon:'📖' },
+      { id:'t-homework',label:'Домашние задания',icon:'✏️' },
+      { id:'t-analytics',label:'Аналитика',  icon:'📊' },
+      { id:'notifications',label:'Уведомления',icon:'🔔'},
+    ]
+  },
+  admin:{
+    label:'Администратор', avatar:'А', name:'Александр К.',
+    nav:[
+      { id:'a-dash',    label:'Главная',     icon:'🏠' },
+      { id:'a-students',label:'Ученики',     icon:'🎓' },
+      { id:'a-teachers',label:'Педагоги',    icon:'👩‍🏫' },
+      { id:'a-schedule',label:'Расписание',  icon:'📅' },
+      { id:'a-finance', label:'Финансы',     icon:'💰' },
+      { id:'a-crm',     label:'Заявки (CRM)',icon:'📋' },
+      { id:'a-analytics',label:'Аналитика', icon:'📊' },
+      { id:'notifications',label:'Уведомления',icon:'🔔'},
+    ]
+  }
+};
+
+// ═══════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════
+let currentRole = 'teacher';
+let currentSection = 't-dash';
+let lessons = JSON.parse(JSON.stringify(DEMO.lessons)); // mutable copy
+
+// ═══════════════════════════════════════════════════
+//  ROUTING
+// ═══════════════════════════════════════════════════
+function switchRole(role){
+  currentRole = role;
+  document.querySelectorAll('.role-pill').forEach(p => p.classList.toggle('active', p.dataset.role===role));
+  const cfg = ROLES[role];
+  document.getElementById('headerAvatar').textContent = cfg.avatar;
+  document.getElementById('headerName').textContent = cfg.name;
+  buildNav();
+  const first = cfg.nav[0].id;
+  switchTo(first);
+}
+
+function buildNav(){
+  const nav = document.getElementById('mainNav');
+  nav.innerHTML = '';
+  ROLES[currentRole].nav.forEach(item => {
+    const btn = document.createElement('button');
+    btn.className = 'nav-item' + (item.id===currentSection?' active':'');
+    btn.dataset.section = item.id;
+    btn.innerHTML = `${item.icon} ${item.label}`;
+    btn.onclick = () => switchTo(item.id);
+    nav.appendChild(btn);
+  });
+}
+
+function switchTo(id){
+  currentSection = id;
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.section===id));
+  renderSection(id);
+}
+
+function renderSection(id){
+  const content = document.getElementById('appContent');
+  const renderers = {
+    // Student
+    's-dash': renderStudentDash,
+    's-program': renderStudentProgram,
+    's-calendar': renderStudentCalendar,
+    's-materials': renderStudentMaterials,
+    's-homework': renderStudentHomework,
+    's-stats': renderStudentStats,
+    // Teacher
+    't-dash': renderTeacherDash,
+    't-students': renderTeacherStudents,
+    't-calendar': renderTeacherCalendar,
+    't-curriculum': renderTeacherCurriculum,
+    't-homework': renderTeacherHomework,
+    't-analytics': renderTeacherAnalytics,
+    // Admin
+    'a-dash': renderAdminDash,
+    'a-students': renderAdminStudents,
+    'a-teachers': renderAdminTeachers,
+    'a-schedule': renderAdminSchedule,
+    'a-finance': renderAdminFinance,
+    'a-crm': renderAdminCRM,
+    'a-analytics': renderAdminAnalytics,
+    // Shared
+    'notifications': renderNotifications,
+  };
+  if(renderers[id]) content.innerHTML = renderers[id]();
+  else content.innerHTML = `<p class="muted">Раздел "${id}" в разработке</p>`;
+  bindAfterRender(id);
+}
+
+// ═══════════════════════════════════════════════════
+//  STUDENT VIEWS
+// ═══════════════════════════════════════════════════
+function renderStudentDash(){
+  const s = DEMO.students[0];
+  const lvl = getLevelInfo(s.xp);
+  const upcoming = lessons.filter(l=>l.studentId==='s1'&&l.status==='planned').sort((a,b)=>a.date.localeCompare(b.date));
+  const nextLesson = upcoming[0];
+  const pendingHW = DEMO.homeworks.filter(h=>h.studentId==='s1'&&h.status==='pending');
+  const conducted = lessons.filter(l=>l.studentId==='s1'&&l.status==='conducted').length;
+  const progress = Math.round(conducted/DEMO.curriculum.length*100);
+
+  return `
+<h2 class="page-title">Добро пожаловать, ${s.name.split(' ')[0]}!</h2>
+
+<div class="grid-4" style="margin-bottom:1.25rem">
+  ${statCard('📅','Следующее занятие', nextLesson ? fmtDate(nextLesson.date)+' '+nextLesson.time : 'Не назначено','blue')}
+  ${statCard('📖','Прогресс курса',progress+'%','green')}
+  ${statCard('✏️','Ожидает сдачи ДЗ',pendingHW.length,'orange')}
+  ${statCard('⭐','Уровень',lvl.name,'purple')}
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title">Ближайшее занятие</div>
+    ${nextLesson ? `
+      <div style="font-size:1.1rem;font-weight:700;margin-bottom:.5rem">${nextLesson.topic}</div>
+      <div style="font-size:.9rem;color:var(--muted);margin-bottom:1rem">${fmtDate(nextLesson.date)} в ${nextLesson.time}</div>
+      <div class="progress"><div class="progress-bar" style="width:100%"></div></div>
+      <div style="font-size:.78rem;color:var(--muted);margin-top:.4rem">Подготовьтесь: повторите материалы прошлого занятия</div>
+    ` : '<div class="empty"><div class="empty-icon">📅</div>Занятий пока нет</div>'}
+  </div>
+  <div class="card">
+    <div class="card-title">Мой прогресс XP</div>
+    <div class="xp-bar-wrap">
+      <div class="xp-level">${lvl.name}</div>
+      <div class="xp-sub">${lvl.xp} XP → следующий: ${lvl.next} (${lvl.nextXp} XP)</div>
+      <div class="progress"><div class="progress-bar" style="width:${lvl.pct}%"></div></div>
+      <div style="font-size:.78rem;color:var(--muted);margin-top:.4rem">${lvl.pct}% до следующего уровня</div>
+    </div>
+  </div>
+</div>
+
+<div class="grid-2" style="margin-top:1rem">
+  <div class="card">
+    <div class="card-title">Домашние задания</div>
+    ${pendingHW.length===0?'<div class="empty" style="padding:1.5rem 0"><div class="empty-icon">✅</div>Все ДЗ выполнены!</div>':
+    pendingHW.map(h=>`
+      <div class="hw-card">
+        <div class="hw-header">
+          <div class="hw-title">${h.title}</div>
+          <span class="badge badge-orange">Ожидает</span>
+        </div>
+        <div class="hw-meta">До: ${fmtDate(h.dueDate)}</div>
+        <button class="btn btn-primary btn-sm" onclick="openSubmitHW('${h.id}')">Сдать задание</button>
+      </div>
+    `).join('')}
+  </div>
+  <div class="card">
+    <div class="card-title">Последние материалы</div>
+    ${DEMO.materials.slice(0,4).map(m=>`
+      <div style="display:flex;align-items:center;gap:.75rem;padding:.6rem 0;border-bottom:1px solid var(--border)">
+        <span style="font-size:1.3rem">${materialIcon(m.type)}</span>
+        <div>
+          <div style="font-size:.88rem;font-weight:500">${m.title}</div>
+          <div style="font-size:.76rem;color:var(--muted)">${m.date}</div>
+        </div>
+        <button class="btn btn-outline btn-sm" style="margin-left:auto">Открыть</button>
+      </div>
+    `).join('')}
+  </div>
+</div>`;
+}
+
+function renderStudentProgram(){
+  return `
+<h2 class="page-title">Моя программа</h2>
+<div style="margin-bottom:1rem;display:flex;gap:1rem;align-items:center;flex-wrap:wrap">
+  <div style="font-size:.9rem;color:var(--muted)">Курс: <strong>ЕГЭ Обществознание</strong></div>
+  <div style="font-size:.9rem;color:var(--muted)">Пройдено: <strong>${DEMO.curriculum.filter(t=>t.status==='conducted').length} / ${DEMO.curriculum.length} тем</strong></div>
+</div>
+<div class="table-wrap">
+<table class="curr-table">
+  <thead><tr><th>#</th><th>Тема</th><th>Раздел</th><th>Статус</th><th>Материалы</th><th>ДЗ</th><th>Результат</th></tr></thead>
+  <tbody>
+  ${DEMO.curriculum.map(t=>`
+    <tr>
+      <td style="color:var(--muted)">${t.order}</td>
+      <td><strong>${t.topic}</strong></td>
+      <td><span class="badge badge-gray">${t.section}</span></td>
+      <td>${topicStatusBadge(t.status)}</td>
+      <td>${t.materials ? '<button class="btn btn-outline btn-sm">📂 Открыть</button>' : '<span style="color:var(--muted)">—</span>'}</td>
+      <td>${t.hw ? (t.hwResult ? `<span class="badge badge-green">Сдано</span>` : `<span class="badge badge-orange">Ожидает</span>`) : '<span style="color:var(--muted)">—</span>'}</td>
+      <td>${t.hwResult ? `<strong>${t.hwResult}%</strong>` : '—'}</td>
+    </tr>
+  `).join('')}
+  </tbody>
+</table>
+</div>`;
+}
+
+function renderStudentCalendar(){
+  const studentLessons = lessons.filter(l=>l.studentId==='s1').sort((a,b)=>a.date.localeCompare(b.date));
+  return `
+<h2 class="page-title">Моё расписание</h2>
+<div class="grid-2">
+  <div class="card">
+    ${miniCalendar(studentLessons)}
+  </div>
+  <div class="card">
+    <div class="card-title">Все занятия</div>
+    <div class="timeline">
+    ${studentLessons.map(l=>`
+      <div class="timeline-item">
+        <div class="tl-time">${fmtDate(l.date)}<br>${l.time}</div>
+        <div class="tl-dot ${lessonStatusColor(l.status)}"></div>
+        <div class="tl-body">
+          <div class="tl-title">${l.topic}</div>
+          <div class="tl-sub">${lessonStatusLabel(l.status)} ${l.comment?'· '+l.comment:''}</div>
+        </div>
+      </div>
+    `).join('')}
+    </div>
+  </div>
+</div>`;
+}
+
+function renderStudentMaterials(){
+  const types = ['all','presentation','video','note','test'];
+  return `
+<h2 class="page-title">Библиотека материалов</h2>
+<div class="tabs" id="matTabs">
+  ${types.map((t,i)=>`<button class="tab${i===0?' active':''}" onclick="filterMaterials('${t}',this)">${t==='all'?'Все':materialTypeLabel(t)}</button>`).join('')}
+</div>
+<div id="materialsList">
+  ${renderMaterialsList('all')}
+</div>`;
+}
+
+function renderMaterialsList(type){
+  const list = type==='all'?DEMO.materials:DEMO.materials.filter(m=>m.type===type);
+  if(!list.length) return `<div class="empty"><div class="empty-icon">📂</div>Материалов нет</div>`;
+  return `<div class="grid-auto">
+    ${list.map(m=>`
+      <div class="card" style="cursor:pointer">
+        <div style="font-size:2rem;margin-bottom:.75rem">${materialIcon(m.type)}</div>
+        <div style="font-weight:600;margin-bottom:.25rem">${m.title}</div>
+        <div style="font-size:.8rem;color:var(--muted);margin-bottom:.75rem">${materialTypeLabel(m.type)} · ${m.date}</div>
+        <button class="btn btn-primary btn-sm" style="width:100%">Открыть</button>
+      </div>
+    `).join('')}
+  </div>`;
+}
+
+function renderStudentHomework(){
+  const submitted = DEMO.homeworks.filter(h=>h.studentId==='s1'&&h.status==='submitted');
+  const pending   = DEMO.homeworks.filter(h=>h.studentId==='s1'&&h.status==='pending');
+  return `
+<h2 class="page-title">Домашние задания</h2>
+<div class="tabs">
+  <button class="tab active">К сдаче (${pending.length})</button>
+  <button class="tab">Сданные (${submitted.length})</button>
+</div>
+${pending.map(h=>`
+  <div class="hw-card">
+    <div class="hw-header">
+      <div class="hw-title">${h.title}</div>
+      <span class="badge badge-orange">Ожидает</span>
+    </div>
+    <div class="hw-meta">Срок сдачи: ${fmtDate(h.dueDate)}</div>
+    <button class="btn btn-primary" onclick="openSubmitHW('${h.id}')">Сдать задание</button>
+  </div>
+`).join('')}
+${submitted.map(h=>`
+  <div class="hw-card">
+    <div class="hw-header">
+      <div class="hw-title">${h.title}</div>
+      <span class="badge badge-green">Сдано — ${h.result}%</span>
+    </div>
+    <div class="hw-meta">Проверено преподавателем</div>
+    ${h.file?`<div class="hw-files"><div class="hw-file">📄 ${h.file}</div></div>`:''}
+  </div>
+`).join('')}`;
+}
+
+function renderStudentStats(){
+  const s = DEMO.students[0];
+  const conducted = lessons.filter(l=>l.studentId==='s1'&&l.status==='conducted').length;
+  const missed    = lessons.filter(l=>l.studentId==='s1'&&l.status==='missed').length;
+  const total     = conducted+missed;
+  const attendance= total>0?Math.round(conducted/total*100):0;
+  const results   = DEMO.curriculum.filter(t=>t.hwResult).map(t=>t.hwResult);
+  const avgScore  = results.length>0?Math.round(results.reduce((a,b)=>a+b,0)/results.length):0;
+  const lvl = getLevelInfo(s.xp);
+
+  return `
+<h2 class="page-title">Моя статистика</h2>
+<div class="grid-4" style="margin-bottom:1.25rem">
+  ${statCard('📅','Проведено занятий',conducted,'blue')}
+  ${statCard('✅','Посещаемость',attendance+'%','green')}
+  ${statCard('📝','Средний балл',avgScore+'%','orange')}
+  ${statCard('⭐','Набрано XP',s.xp,'purple')}
+</div>
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title">Прогресс программы</div>
+    ${DEMO.curriculum.map(t=>`
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem">
+        <div style="font-size:.88rem;flex:1">${t.topic}</div>
+        <div style="width:120px;margin:0 1rem"><div class="progress"><div class="progress-bar${t.status==='conducted'?' green':''}" style="width:${t.status==='conducted'?100:0}%"></div></div></div>
+        <div style="font-size:.82rem;width:50px;text-align:right">${t.hwResult?t.hwResult+'%':'—'}</div>
+      </div>
+    `).join('')}
+  </div>
+  <div class="card">
+    <div class="card-title">Достижения</div>
+    <div class="achievements-grid">
+      ${DEMO.achievements.map(a=>`
+        <div class="achievement" style="${a.unlocked?'':'opacity:.4;filter:grayscale(1)'}">
+          <div class="ach-icon">${a.icon}</div>
+          <div><div class="ach-title">${a.title}</div><div class="ach-desc">${a.desc}</div></div>
+        </div>
+      `).join('')}
+    </div>
+  </div>
+</div>`;
+}
+
+// ═══════════════════════════════════════════════════
+//  TEACHER VIEWS
+// ═══════════════════════════════════════════════════
+function renderTeacherDash(){
+  const today = '2026-06-05';
+  const todayLessons = lessons.filter(l=>l.date===today&&l.status==='planned');
+  const pendingReviews = DEMO.homeworks.filter(h=>h.status==='submitted');
+  const totalStudents = DEMO.students.length;
+  const thisMonthConducted = lessons.filter(l=>l.date.startsWith('2026-06')&&l.status==='conducted').length;
+
+  return `
+<h2 class="page-title">Рабочий стол</h2>
+<div class="grid-4" style="margin-bottom:1.25rem">
+  ${statCard('🎓','Активных учеников',totalStudents,'blue')}
+  ${statCard('📅','Занятий сегодня',todayLessons.length,'green')}
+  ${statCard('✏️','На проверке ДЗ',pendingReviews.length,'orange')}
+  ${statCard('📊','Занятий в июне',thisMonthConducted,'purple')}
+</div>
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title" style="display:flex;justify-content:space-between">
+      Занятия сегодня
+      <button class="btn btn-primary btn-sm" onclick="openAddLessonModal()">+ Добавить</button>
+    </div>
+    ${todayLessons.length===0?'<div class="empty" style="padding:1.5rem 0"><div class="empty-icon">☀️</div>Занятий сегодня нет</div>':
+    todayLessons.map(l=>{
+      const stu = DEMO.students.find(s=>s.id===l.studentId);
+      return `
+      <div style="display:flex;align-items:center;gap:.85rem;padding:.75rem 0;border-bottom:1px solid var(--border)">
+        <div class="avatar" style="width:36px;height:36px;font-size:.85rem">${stu?.name.split(' ').map(n=>n[0]).join('').slice(0,2)}</div>
+        <div style="flex:1">
+          <div style="font-weight:600;font-size:.9rem">${stu?.name}</div>
+          <div style="font-size:.8rem;color:var(--muted)">${l.time} · ${l.topic}</div>
+        </div>
+        <div class="status-btns">
+          <button class="status-btn${l.status==='conducted'?' chosen':''}" data-s="conducted" onclick="setLessonStatus('${l.id}','conducted')">Проведено</button>
+          <button class="status-btn${l.status==='missed'?' chosen':''}" data-s="missed" onclick="setLessonStatus('${l.id}','missed')">Не состоялось</button>
+          <button class="status-btn${l.status==='postponed'?' chosen':''}" data-s="postponed" onclick="setLessonStatus('${l.id}','postponed')">Перенос</button>
+        </div>
+      </div>`;
+    }).join('')}
+  </div>
+  <div class="card">
+    <div class="card-title">Ближайшие занятия</div>
+    <div class="timeline">
+    ${lessons.filter(l=>l.status==='planned').sort((a,b)=>a.date.localeCompare(b.date)).slice(0,5).map(l=>{
+      const stu = DEMO.students.find(s=>s.id===l.studentId);
+      return `
+      <div class="timeline-item">
+        <div class="tl-time">${fmtDate(l.date)}<br>${l.time}</div>
+        <div class="tl-dot"></div>
+        <div class="tl-body">
+          <div class="tl-title">${stu?.name}</div>
+          <div class="tl-sub">${l.topic}</div>
+        </div>
+      </div>`;
+    }).join('')}
+    </div>
+  </div>
+</div>
+<div class="card" style="margin-top:1rem">
+  <div class="card-title">Домашние задания на проверку</div>
+  ${pendingReviews.length===0?'<div class="empty" style="padding:1rem 0"><div class="empty-icon">✅</div>Всё проверено</div>':
+  pendingReviews.map(h=>{
+    const stu = DEMO.students.find(s=>s.id===h.studentId);
+    return `
+    <div style="display:flex;align-items:center;gap:1rem;padding:.7rem 0;border-bottom:1px solid var(--border)">
+      <div style="flex:1">
+        <strong>${stu?.name}</strong>
+        <span style="color:var(--muted);font-size:.85rem"> — ${h.title}</span>
+      </div>
+      <div style="font-size:.8rem;color:var(--muted)">${h.file||'Текстовый ответ'}</div>
+      <button class="btn btn-success btn-sm" onclick="openGradeHW('${h.id}')">Проверить</button>
+    </div>`;
+  }).join('')}
+</div>`;
+}
+
+function renderTeacherStudents(){
+  return `
+<h2 class="page-title" style="display:flex;justify-content:space-between;align-items:center">
+  Мои ученики
+  <button class="btn btn-primary" onclick="openAddStudentModal()">+ Добавить ученика</button>
+</h2>
+<div class="grid-auto">
+${DEMO.students.map(s=>{
+  const conducted = lessons.filter(l=>l.studentId===s.id&&l.status==='conducted').length;
+  const remaining = s.paidLessons - s.conductedLessons;
+  const progress = Math.round(conducted/DEMO.curriculum.length*100);
+  return `
+  <div class="student-card">
+    <div class="student-card-header">
+      <div class="avatar">${s.name.split(' ').map(n=>n[0]).join('').slice(0,2)}</div>
+      <div>
+        <div class="student-card-name">${s.name}</div>
+        <div class="student-card-sub">${s.grade} класс · ${s.course}</div>
+      </div>
+    </div>
+    <div style="margin-bottom:.75rem">
+      <div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:.3rem">
+        <span>Прогресс программы</span><strong>${progress}%</strong>
+      </div>
+      <div class="progress"><div class="progress-bar" style="width:${progress}%"></div></div>
+    </div>
+    <div class="student-card-meta">
+      <div class="meta-row"><span class="meta-label">Тариф</span><span class="meta-value">${s.tariff}</span></div>
+      <div class="meta-row"><span class="meta-label">Начало</span><span class="meta-value">${fmtDate(s.startDate)}</span></div>
+      <div class="meta-row"><span class="meta-label">Оплачено</span><span class="meta-value">${s.paidLessons} зан.</span></div>
+      <div class="meta-row"><span class="meta-label">Остаток</span><span class="meta-value ${remaining<=2?'fin-amount red':''}">${remaining} зан.</span></div>
+      <div class="meta-row"><span class="meta-label">Телефон</span><span class="meta-value">${s.phone}</span></div>
+    </div>
+    <div style="display:flex;gap:.5rem;margin-top:1rem">
+      <button class="btn btn-primary btn-sm" onclick="openStudentCard('${s.id}')">Карточка</button>
+      <button class="btn btn-outline btn-sm" onclick="switchTo('t-curriculum')">Программа</button>
+      <button class="btn btn-outline btn-sm" onclick="openAddLessonModal()">+ Занятие</button>
+    </div>
+  </div>`;
+}).join('')}
+</div>`;
+}
+
+function renderTeacherCalendar(){
+  return `
+<h2 class="page-title" style="display:flex;justify-content:space-between;align-items:center">
+  Календарь занятий
+  <button class="btn btn-primary" onclick="openAddLessonModal()">+ Занятие</button>
+</h2>
+<div id="calTabs" class="tabs">
+  <button class="tab active" onclick="showCalView('week',this)">Неделя</button>
+  <button class="tab" onclick="showCalView('list',this)">Список</button>
+</div>
+<div id="calView">${buildWeekView()}</div>`;
+}
+
+function buildWeekView(){
+  const weekDays = [];
+  const base = new Date('2026-06-05');
+  const dow = base.getDay();
+  const monday = new Date(base); monday.setDate(base.getDate()-(dow===0?6:dow-1));
+  for(let i=0;i<7;i++){const d=new Date(monday);d.setDate(monday.getDate()+i);weekDays.push(d);}
+  const hours = [9,10,11,12,13,14,15,16,17,18];
+  const dayNames = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+  let html = `<div class="week-grid">
+    <div class="wg-header"></div>
+    ${weekDays.map((d,i)=>`<div class="wg-header">${dayNames[i]}<br><span style="font-size:.9rem;font-weight:700">${d.getDate()}</span></div>`).join('')}`;
+  hours.forEach(h=>{
+    html += `<div class="wg-time">${h}:00</div>`;
+    weekDays.forEach(d=>{
+      const dateStr = d.toISOString().split('T')[0];
+      const cellLessons = lessons.filter(l=>l.date===dateStr&&parseInt(l.time)===h||l.date===dateStr&&l.time.startsWith(h+':'));
+      html += `<div class="wg-cell" onclick="openAddLessonModal()">`;
+      cellLessons.forEach(l=>{
+        const stu = DEMO.students.find(s=>s.id===l.studentId);
+        const color = l.status==='conducted'?'green':l.status==='missed'?'red':l.status==='postponed'?'orange':'';
+        html += `<div class="wg-event ${color}" onclick="event.stopPropagation();openLessonDetail('${l.id}')">${stu?.name.split(' ')[0]}<br>${l.topic.slice(0,12)}…</div>`;
+      });
+      html += `</div>`;
+    });
+  });
+  html += `</div>`;
+  return html;
+}
+
+function buildListView(){
+  const sorted = [...lessons].sort((a,b)=>a.date.localeCompare(b.date));
+  return `<div class="table-wrap"><table>
+    <thead><tr><th>Дата</th><th>Время</th><th>Ученик</th><th>Тема</th><th>Статус</th><th>Действия</th></tr></thead>
+    <tbody>
+    ${sorted.map(l=>{
+      const stu = DEMO.students.find(s=>s.id===l.studentId);
+      return `<tr>
+        <td>${fmtDate(l.date)}</td>
+        <td>${l.time}</td>
+        <td><strong>${stu?.name}</strong></td>
+        <td>${l.topic}</td>
+        <td>${lessonStatusBadge(l.status)}</td>
+        <td>
+          <div class="status-btns">
+            <button class="status-btn" data-s="conducted" onclick="setLessonStatus('${l.id}','conducted')">✓</button>
+            <button class="status-btn" data-s="missed" onclick="setLessonStatus('${l.id}','missed')">✗</button>
+            <button class="status-btn" data-s="postponed" onclick="setLessonStatus('${l.id}','postponed')">↩</button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('')}
+    </tbody>
+  </table></div>`;
+}
+
+function renderTeacherCurriculum(){
+  return `
+<h2 class="page-title">Учебный план</h2>
+<div class="tabs">
+  <button class="tab active">Алексей Смирнов</button>
+  <button class="tab">Дарья Козлова</button>
+  <button class="tab">Иван Петров</button>
+  <button class="tab">+ Создать шаблон</button>
+</div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.75rem">
+  <div style="font-size:.9rem;color:var(--muted)">Курс: <strong>ЕГЭ Обществознание</strong> · Пройдено: <strong>${DEMO.curriculum.filter(t=>t.status==='conducted').length}/${DEMO.curriculum.length}</strong> тем</div>
+  <button class="btn btn-primary" onclick="openAddTopicModal()">+ Добавить тему</button>
+</div>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>#</th><th>Тема</th><th>Раздел</th><th>Статус</th><th>Материалы</th><th>ДЗ</th><th>Результат</th><th>Занятие</th></tr></thead>
+  <tbody>
+  ${DEMO.curriculum.map(t=>{
+    const lesson = lessons.find(l=>l.studentId==='s1'&&l.topic===t.topic);
+    return `<tr>
+      <td style="color:var(--muted)">${t.order}</td>
+      <td><strong>${t.topic}</strong></td>
+      <td><span class="badge badge-gray">${t.section}</span></td>
+      <td>${topicStatusBadge(t.status)}</td>
+      <td>${t.materials?`<button class="btn btn-outline btn-sm">📂</button>`:'<span style="color:var(--muted)">—</span>'}</td>
+      <td>${t.hw?(t.hwResult?`<span class="badge badge-green">${t.hwResult}%</span>`:`<span class="badge badge-orange">Ожидает</span>`):'<button class="btn btn-outline btn-sm" onclick="openAssignHW()">+ ДЗ</button>'}</td>
+      <td>${t.hwResult?`<strong>${t.hwResult}%</strong>`:'—'}</td>
+      <td>${lesson?`${fmtDate(lesson.date)}`:'<span style="color:var(--muted)">—</span>'}</td>
+    </tr>`;
+  }).join('')}
+  </tbody>
+</table>
+</div>
+<div class="card" style="margin-top:1rem;background:var(--orange-light);border-color:#ffcc80">
+  <strong>⚠️ Логика автосдвига тем</strong>
+  <p style="font-size:.88rem;margin-top:.5rem;color:var(--muted)">Если занятие отмечено как «Не состоялось», тема автоматически переносится на следующее запланированное занятие, а все последующие темы сдвигаются вперёд. Пример: урок 15.05 «Деятельность» не состоялся → тема перешла на 22.05, а «Познание» сдвинулось на 29.05.</p>
+</div>`;
+}
+
+function renderTeacherHomework(){
+  return `
+<h2 class="page-title" style="display:flex;justify-content:space-between;align-items:center">
+  Домашние задания
+  <button class="btn btn-primary" onclick="openAssignHW()">+ Назначить ДЗ</button>
+</h2>
+<div class="tabs">
+  <button class="tab active">На проверке (${DEMO.homeworks.filter(h=>h.status==='submitted').length})</button>
+  <button class="tab">Ожидают сдачи (${DEMO.homeworks.filter(h=>h.status==='pending').length})</button>
+  <button class="tab">Всё</button>
+</div>
+${DEMO.homeworks.map(h=>{
+  const stu = DEMO.students.find(s=>s.id===h.studentId);
+  const statusBadge = h.status==='submitted'?'<span class="badge badge-blue">На проверке</span>':h.status==='pending'?'<span class="badge badge-orange">Ожидает</span>':'<span class="badge badge-green">Проверено</span>';
+  return `
+  <div class="hw-card">
+    <div class="hw-header">
+      <div class="hw-title">${h.title}</div>
+      ${statusBadge}
+    </div>
+    <div class="hw-meta">${stu?.name} · Срок: ${fmtDate(h.dueDate)}</div>
+    ${h.file?`<div class="hw-files"><div class="hw-file">📄 ${h.file}</div></div>`:''}
+    ${h.status==='submitted'?`<button class="btn btn-success btn-sm" style="margin-top:.75rem" onclick="openGradeHW('${h.id}')">Проверить и выставить оценку</button>`:''}
+  </div>`;
+}).join('')}`;
+}
+
+function renderTeacherAnalytics(){
+  return `
+<h2 class="page-title">Аналитика</h2>
+<div class="tabs">
+  <button class="tab active">По ученикам</button>
+  <button class="tab">За месяц</button>
+  <button class="tab">KPI</button>
+</div>
+<div class="table-wrap" style="margin-bottom:1.25rem">
+<table>
+  <thead><tr><th>Ученик</th><th>Проведено</th><th>Отменено</th><th>Не состоялось</th><th>Перенесено</th><th>Посещаемость</th><th>Средний балл</th></tr></thead>
+  <tbody>
+  ${DEMO.students.map(s=>{
+    const sLessons = lessons.filter(l=>l.studentId===s.id);
+    const conducted = sLessons.filter(l=>l.status==='conducted').length;
+    const cancelled = sLessons.filter(l=>l.status==='cancelled').length;
+    const missed    = sLessons.filter(l=>l.status==='missed').length;
+    const postponed = sLessons.filter(l=>l.status==='postponed').length;
+    const total = conducted+missed;
+    const att = total>0?Math.round(conducted/total*100):100;
+    const results = DEMO.curriculum.filter(t=>t.hwResult).map(t=>t.hwResult);
+    const avg = results.length>0?Math.round(results.reduce((a,b)=>a+b,0)/results.length):0;
+    return `<tr>
+      <td><strong>${s.name}</strong></td>
+      <td><span class="badge badge-green">${conducted}</span></td>
+      <td><span class="badge badge-gray">${cancelled}</span></td>
+      <td><span class="badge badge-red">${missed}</span></td>
+      <td><span class="badge badge-orange">${postponed}</span></td>
+      <td><strong>${att}%</strong></td>
+      <td><strong>${avg>0?avg+'%':'—'}</strong></td>
+    </tr>`;
+  }).join('')}
+  </tbody>
+</table>
+</div>
+<div class="grid-3">
+  ${statCard('📅','Всего занятий в июне',lessons.filter(l=>l.date.startsWith('2026-06')).length,'blue')}
+  ${statCard('⏱️','Учебных часов',lessons.filter(l=>l.status==='conducted').length+' ч.','green')}
+  ${statCard('💰','Выручка за июнь','28 800 ₽','orange')}
+</div>`;
+}
+
+// ═══════════════════════════════════════════════════
+//  ADMIN VIEWS
+// ═══════════════════════════════════════════════════
+function renderAdminDash(){
+  const totalConducted = lessons.filter(l=>l.status==='conducted').length;
+  return `
+<h2 class="page-title">Панель администратора</h2>
+<div class="grid-4" style="margin-bottom:1.25rem">
+  ${statCard('🎓','Учеников всего',DEMO.students.length,'blue')}
+  ${statCard('👩‍🏫','Педагогов',2,'green')}
+  ${statCard('📅','Занятий в июне',lessons.filter(l=>l.date.startsWith('2026-06')).length,'orange')}
+  ${statCard('💰','Выручка июнь','28 800 ₽','purple')}
+</div>
+<div class="grid-3" style="margin-bottom:1rem">
+  ${statCard('📋','Новых заявок',DEMO.leads.filter(l=>l.status==='new').length,'blue')}
+  ${statCard('✅','Проведено занятий',totalConducted,'green')}
+  ${statCard('📉','Отменено',lessons.filter(l=>l.status==='cancelled').length,'red')}
+</div>
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title">Новые заявки</div>
+    ${DEMO.leads.filter(l=>l.status==='new').map(lead=>`
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:.65rem 0;border-bottom:1px solid var(--border)">
+        <div>
+          <div style="font-weight:600">${lead.name}</div>
+          <div style="font-size:.8rem;color:var(--muted)">${lead.subject} · ${lead.source} · ${fmtDate(lead.date)}</div>
+        </div>
+        <div style="display:flex;gap:.4rem">
+          <button class="btn btn-primary btn-sm">Взять в работу</button>
+        </div>
+      </div>
+    `).join('')}
+  </div>
+  <div class="card">
+    <div class="card-title">Долги по оплате</div>
+    ${DEMO.students.map(s=>{
+      const remaining = s.paidLessons - s.conductedLessons;
+      if(remaining>3) return '';
+      return `<div class="finance-row">
+        <div><div style="font-weight:600">${s.name}</div><div style="font-size:.8rem;color:var(--muted)">Остаток: ${remaining} занятий</div></div>
+        <div class="fin-amount ${remaining<=1?'red':'orange'}">${remaining<=1?'Срочно!':'Скоро!'}</div>
+      </div>`;
+    }).join('')}
+  </div>
+</div>`;
+}
+
+function renderAdminStudents(){
+  return `
+<h2 class="page-title" style="display:flex;justify-content:space-between;align-items:center">
+  Управление учениками
+  <button class="btn btn-primary" onclick="openAddStudentModal()">+ Добавить</button>
+</h2>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Ученик</th><th>Класс</th><th>Курс</th><th>Тариф</th><th>Педагог</th><th>Оплачено</th><th>Остаток</th><th>Действия</th></tr></thead>
+  <tbody>
+  ${DEMO.students.map(s=>`
+    <tr>
+      <td><strong>${s.name}</strong><div style="font-size:.78rem;color:var(--muted)">${s.email}</div></td>
+      <td>${s.grade}</td>
+      <td>${s.course}</td>
+      <td><span class="badge badge-blue">${s.tariff}</span></td>
+      <td>Мария И.</td>
+      <td><span class="badge badge-green">${s.paidLessons} зан.</span></td>
+      <td><span class="badge ${s.paidLessons-s.conductedLessons<=2?'badge-red':'badge-orange'}">${s.paidLessons-s.conductedLessons} зан.</span></td>
+      <td><div style="display:flex;gap:.3rem">
+        <button class="btn btn-outline btn-sm">Карточка</button>
+        <button class="btn btn-danger btn-sm">Удалить</button>
+      </div></td>
+    </tr>
+  `).join('')}
+  </tbody>
+</table>
+</div>`;
+}
+
+function renderAdminTeachers(){
+  const teachers = [
+    { name:'Мария Иванова',  subject:'Обществознание,История', students:3, lessons:14, salary:42000, paid:42000 },
+    { name:'Андрей Соколов', subject:'Математика',              students:5, lessons:20, salary:55000, paid:40000 },
+  ];
+  return `
+<h2 class="page-title" style="display:flex;justify-content:space-between;align-items:center">
+  Педагоги
+  <button class="btn btn-primary">+ Добавить педагога</button>
+</h2>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Педагог</th><th>Предмет</th><th>Учеников</th><th>Занятий в мес.</th><th>Начислено</th><th>Выплачено</th><th>Долг</th><th>Действия</th></tr></thead>
+  <tbody>
+  ${teachers.map(t=>`
+    <tr>
+      <td><strong>${t.name}</strong></td>
+      <td style="font-size:.85rem">${t.subject}</td>
+      <td>${t.students}</td>
+      <td>${t.lessons}</td>
+      <td class="fin-amount green">${t.salary.toLocaleString('ru')} ₽</td>
+      <td class="fin-amount">${t.paid.toLocaleString('ru')} ₽</td>
+      <td class="${t.salary-t.paid>0?'fin-amount red':'fin-amount green'}">${(t.salary-t.paid).toLocaleString('ru')} ₽</td>
+      <td><button class="btn btn-primary btn-sm">Профиль</button></td>
+    </tr>
+  `).join('')}
+  </tbody>
+</table>
+</div>`;
+}
+
+function renderAdminSchedule(){
+  return `
+<h2 class="page-title">Расписание школы</h2>
+${buildWeekView()}`;
+}
+
+function renderAdminFinance(){
+  const totalIncome = DEMO.payments.reduce((a,p)=>a+p.amount,0);
+  const teacherSalary = 42000+40000;
+  const profit = totalIncome - teacherSalary;
+  return `
+<h2 class="page-title">Финансы</h2>
+<div class="grid-4" style="margin-bottom:1.25rem">
+  ${statCard('💰','Выручка',totalIncome.toLocaleString('ru')+' ₽','green')}
+  ${statCard('💸','Зарплаты педагогов',teacherSalary.toLocaleString('ru')+' ₽','orange')}
+  ${statCard('📈','Прибыль',profit.toLocaleString('ru')+' ₽','blue')}
+  ${statCard('⚠️','Долги учеников','0 ₽','red')}
+</div>
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title">По ученикам</div>
+    ${DEMO.students.map(s=>{
+      const paid = DEMO.payments.filter(p=>p.studentId===s.id).reduce((a,p)=>a+p.amount,0);
+      const remaining = s.paidLessons - s.conductedLessons;
+      return `<div class="finance-row">
+        <div>
+          <div style="font-weight:600">${s.name}</div>
+          <div style="font-size:.8rem;color:var(--muted)">Остаток: ${remaining} зан.</div>
+        </div>
+        <div>
+          <div class="fin-amount green">${paid.toLocaleString('ru')} ₽</div>
+          <div style="font-size:.75rem;color:var(--muted)">оплачено</div>
+        </div>
+      </div>`;
+    }).join('')}
+  </div>
+  <div class="card">
+    <div class="card-title">Последние платежи</div>
+    ${DEMO.payments.slice().reverse().map(p=>{
+      const stu = DEMO.students.find(s=>s.id===p.studentId);
+      return `<div class="finance-row">
+        <div>
+          <div style="font-weight:600">${stu?.name}</div>
+          <div style="font-size:.8rem;color:var(--muted)">${p.note} · ${fmtDate(p.date)}</div>
+        </div>
+        <div class="fin-amount green">+${p.amount.toLocaleString('ru')} ₽</div>
+      </div>`;
+    }).join('')}
+  </div>
+</div>`;
+}
+
+function renderAdminCRM(){
+  const statusMap = { new:'Новая', inWork:'В работе', converted:'Конвертирован' };
+  const statusBadge = { new:'badge-blue', inWork:'badge-orange', converted:'badge-green' };
+  return `
+<h2 class="page-title" style="display:flex;justify-content:space-between;align-items:center">
+  CRM — Заявки
+  <button class="btn btn-primary">+ Добавить заявку</button>
+</h2>
+<div class="grid-auto">
+${DEMO.leads.map(lead=>`
+  <div class="crm-card">
+    <div class="crm-name">${lead.name}</div>
+    <div style="margin-bottom:.5rem"><span class="badge ${statusBadge[lead.status]}">${statusMap[lead.status]}</span></div>
+    <div class="crm-source">📞 ${lead.phone}</div>
+    <div class="crm-source" style="margin-top:.25rem">Предмет: ${lead.subject} · Источник: ${lead.source}</div>
+    <div class="crm-source">Дата: ${fmtDate(lead.date)}</div>
+    <div class="crm-actions">
+      <button class="btn btn-primary btn-sm">Позвонить</button>
+      <button class="btn btn-outline btn-sm">Записать</button>
+      ${lead.status!=='converted'?`<button class="btn btn-success btn-sm">Конвертировать</button>`:''}
+    </div>
+  </div>
+`).join('')}
+</div>`;
+}
+
+function renderAdminAnalytics(){
+  const totalLessons = lessons.length;
+  const conducted = lessons.filter(l=>l.status==='conducted').length;
+  const cancelled = lessons.filter(l=>l.status==='cancelled').length;
+  const missed    = lessons.filter(l=>l.status==='missed').length;
+  const leads_converted = DEMO.leads.filter(l=>l.status==='converted').length;
+  const conversion = Math.round(leads_converted/DEMO.leads.length*100);
+
+  return `
+<h2 class="page-title">Аналитика школы</h2>
+<div class="grid-4" style="margin-bottom:1.25rem">
+  ${statCard('🎓','Учеников',DEMO.students.length,'blue')}
+  ${statCard('📅','Занятий всего',totalLessons,'green')}
+  ${statCard('🔄','Конверсия заявок',conversion+'%','orange')}
+  ${statCard('💰','Выручка','28 800 ₽','purple')}
+</div>
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title">Занятия по статусам</div>
+    ${[
+      ['Проведено',conducted,'green'],
+      ['Запланировано',lessons.filter(l=>l.status==='planned').length,'blue'],
+      ['Не состоялось',missed,'red'],
+      ['Перенесено',lessons.filter(l=>l.status==='postponed').length,'orange'],
+      ['Отменено',cancelled,'gray'],
+    ].map(([label,val,color])=>`
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:.65rem">
+        <div style="width:120px;font-size:.88rem">${label}</div>
+        <div style="flex:1"><div class="progress"><div class="progress-bar ${color==='green'?'green':color==='orange'?'orange':''}" style="width:${totalLessons>0?Math.round(val/totalLessons*100):0}%;background:${color==='gray'?'#bbb':color==='red'?'var(--red)':color==='blue'?'var(--blue)':''};"></div></div></div>
+        <div style="width:30px;text-align:right;font-weight:700;font-size:.88rem">${val}</div>
+      </div>
+    `).join('')}
+  </div>
+  <div class="card">
+    <div class="card-title">KPI педагогов</div>
+    ${[
+      { name:'Мария Иванова', kpi:92, lessons:14, students:3 },
+      { name:'Андрей Соколов', kpi:88, lessons:20, students:5 },
+    ].map(t=>`
+      <div style="margin-bottom:1rem">
+        <div style="display:flex;justify-content:space-between;margin-bottom:.3rem">
+          <strong>${t.name}</strong>
+          <span style="color:var(--green);font-weight:700">${t.kpi}%</span>
+        </div>
+        <div class="progress" style="margin-bottom:.3rem"><div class="progress-bar green" style="width:${t.kpi}%"></div></div>
+        <div style="font-size:.78rem;color:var(--muted)">${t.lessons} занятий · ${t.students} учеников</div>
+      </div>
+    `).join('')}
+  </div>
+</div>`;
+}
+
+// ═══════════════════════════════════════════════════
+//  SHARED VIEWS
+// ═══════════════════════════════════════════════════
+function renderNotifications(){
+  return `
+<h2 class="page-title">Уведомления</h2>
+<div class="card">
+  ${DEMO.notifications.map(n=>`
+    <div class="notif-item ${n.read?'':'unread'}">
+      <div class="notif-icon" style="background:${n.type==='lesson'?'var(--blue-light)':n.type==='hw'?'var(--green-light)':'var(--orange-light)'}">
+        ${n.type==='lesson'?'📅':n.type==='hw'?'✏️':'💰'}
+      </div>
+      <div class="notif-body">
+        <div class="notif-text">${n.text}</div>
+        <div class="notif-time">${n.time}</div>
+      </div>
+      ${!n.read?'<span class="badge badge-blue" style="flex-shrink:0">Новое</span>':''}
+    </div>
+  `).join('')}
+</div>`;
+}
+
+// ═══════════════════════════════════════════════════
+//  MODALS
+// ═══════════════════════════════════════════════════
+function openModal(title, bodyHTML, footerHTML=''){
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalBody').innerHTML = bodyHTML;
+  document.getElementById('modalFooter').innerHTML = footerHTML || `<button class="btn btn-secondary" onclick="closeModal()">Закрыть</button>`;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal(){ document.getElementById('modalOverlay').classList.remove('open'); }
+window.onclick = e => { if(e.target.id==='modalOverlay') closeModal(); };
+
+function openAddStudentModal(){
+  openModal('Добавить ученика', `
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Фамилия Имя *</label><input class="form-control" id="ns-name" placeholder="Иванов Иван"></div>
+      <div class="form-group"><label class="form-label">Класс</label><select class="form-control" id="ns-grade">${[10,11,9,8].map(g=>`<option>${g}</option>`).join('')}</select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Телефон</label><input class="form-control" id="ns-phone" placeholder="+7 999 ..."></div>
+      <div class="form-group"><label class="form-label">Email</label><input class="form-control" id="ns-email" type="email"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Курс</label><select class="form-control" id="ns-course"><option>ЕГЭ Обществознание</option><option>ОГЭ Обществознание</option><option>ЕГЭ История</option></select></div>
+      <div class="form-group"><label class="form-label">Тариф</label><select class="form-control" id="ns-tariff"><option>Базовый</option><option>Стандарт</option><option>Интенсив</option></select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Оплачено занятий</label><input class="form-control" id="ns-paid" type="number" value="8"></div>
+      <div class="form-group"><label class="form-label">Дата начала</label><input class="form-control" id="ns-start" type="date" value="2026-06-05"></div>
+    </div>
+  `, `
+    <button class="btn btn-secondary" onclick="closeModal()">Отмена</button>
+    <button class="btn btn-primary" onclick="saveNewStudent()">Добавить ученика</button>
+  `);
+}
+
+function saveNewStudent(){
+  const name = document.getElementById('ns-name').value.trim();
+  if(!name){ showToast('Введите имя ученика','error'); return; }
+  showToast('Ученик "'+name+'" добавлен');
+  closeModal();
+}
+
+function openAddLessonModal(){
+  openModal('Новое занятие', `
+    <div class="form-group"><label class="form-label">Ученик *</label>
+      <select class="form-control" id="nl-student">
+        ${DEMO.students.map(s=>`<option value="${s.id}">${s.name}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Дата *</label><input class="form-control" id="nl-date" type="date" value="2026-06-05"></div>
+      <div class="form-group"><label class="form-label">Время *</label><input class="form-control" id="nl-time" type="time" value="14:00"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Тема</label>
+      <select class="form-control" id="nl-topic">
+        ${DEMO.curriculum.map(t=>`<option>${t.topic}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">Комментарий</label><textarea class="form-control" id="nl-comment" rows="2"></textarea></div>
+  `, `
+    <button class="btn btn-secondary" onclick="closeModal()">Отмена</button>
+    <button class="btn btn-primary" onclick="saveNewLesson()">Добавить занятие</button>
+  `);
+}
+
+function saveNewLesson(){
+  const date = document.getElementById('nl-date').value;
+  const time = document.getElementById('nl-time').value;
+  const topic = document.getElementById('nl-topic').value;
+  const studentId = document.getElementById('nl-student').value;
+  if(!date||!time){ showToast('Заполните дату и время','error'); return; }
+  const newLesson = { id:'l'+Date.now(), date, time, duration:60, studentId, topic, status:'planned', comment:'' };
+  lessons.push(newLesson);
+  showToast('Занятие добавлено: '+fmtDate(date)+' '+time);
+  closeModal();
+  renderSection(currentSection);
+}
+
+function openLessonDetail(id){
+  const l = lessons.find(l=>l.id===id);
+  if(!l) return;
+  const stu = DEMO.students.find(s=>s.id===l.studentId);
+  openModal('Занятие — '+stu?.name, `
+    <div style="display:flex;flex-direction:column;gap:.75rem">
+      <div class="finance-row"><span>Дата:</span><strong>${fmtDate(l.date)} в ${l.time}</strong></div>
+      <div class="finance-row"><span>Тема:</span><strong>${l.topic}</strong></div>
+      <div class="finance-row"><span>Статус:</span>${lessonStatusBadge(l.status)}</div>
+      ${l.comment?`<div class="finance-row"><span>Комментарий:</span><span>${l.comment}</span></div>`:''}
+    </div>
+    <hr style="margin:1rem 0;border:none;border-top:1px solid var(--border)">
+    <div class="card-title">Изменить статус:</div>
+    <div class="status-btns" style="margin-top:.5rem">
+      <button class="status-btn${l.status==='conducted'?' chosen':''}" data-s="conducted" onclick="setLessonStatus('${l.id}','conducted');closeModal();renderSection(currentSection)">Проведено</button>
+      <button class="status-btn${l.status==='planned'?' chosen':''}" data-s="planned" onclick="setLessonStatus('${l.id}','planned');closeModal();renderSection(currentSection)">Запланировано</button>
+      <button class="status-btn${l.status==='postponed'?' chosen':''}" data-s="postponed" onclick="setLessonStatus('${l.id}','postponed');closeModal();renderSection(currentSection)">Перенесено</button>
+      <button class="status-btn${l.status==='cancelled'?' chosen':''}" data-s="cancelled" onclick="setLessonStatus('${l.id}','cancelled');closeModal();renderSection(currentSection)">Отменено</button>
+      <button class="status-btn${l.status==='missed'?' chosen':''}" data-s="missed" onclick="setLessonStatus('${l.id}','missed');closeModal();renderSection(currentSection)">Не состоялось</button>
+    </div>
+  `);
+}
+
+function openSubmitHW(hwId){
+  openModal('Сдать домашнее задание', `
+    <div class="form-group"><label class="form-label">Текстовый ответ</label><textarea class="form-control" rows="4" placeholder="Напишите ответ..."></textarea></div>
+    <div class="form-group"><label class="form-label">Загрузить файл</label><input class="form-control" type="file"></div>
+  `, `
+    <button class="btn btn-secondary" onclick="closeModal()">Отмена</button>
+    <button class="btn btn-primary" onclick="showToast('Задание отправлено!');closeModal()">Отправить</button>
+  `);
+}
+
+function openGradeHW(hwId){
+  const hw = DEMO.homeworks.find(h=>h.id===hwId);
+  const stu = DEMO.students.find(s=>s.id===hw?.studentId);
+  openModal('Проверить ДЗ — '+stu?.name, `
+    <div style="margin-bottom:1rem;padding:1rem;background:var(--gray);border-radius:var(--radius-sm)">
+      <strong>${hw?.title}</strong>
+      ${hw?.file?`<div class="hw-files" style="margin-top:.5rem"><div class="hw-file">📄 ${hw.file}</div></div>`:''}
+    </div>
+    <div class="form-group"><label class="form-label">Оценка (%)</label><input class="form-control" id="hw-grade" type="number" min="0" max="100" value="85"></div>
+    <div class="form-group"><label class="form-label">Комментарий преподавателя</label><textarea class="form-control" rows="3" placeholder="Молодец! Обрати внимание на..."></textarea></div>
+  `, `
+    <button class="btn btn-secondary" onclick="closeModal()">Отмена</button>
+    <button class="btn btn-success" onclick="showToast('Оценка выставлена: '+document.getElementById('hw-grade').value+'%');closeModal()">Выставить оценку</button>
+  `);
+}
+
+function openAddTopicModal(){
+  openModal('Добавить тему', `
+    <div class="form-group"><label class="form-label">Название темы *</label><input class="form-control" placeholder="Введите тему"></div>
+    <div class="form-group"><label class="form-label">Раздел</label>
+      <select class="form-control">
+        <option>Раздел 1 — Человек</option><option>Раздел 2 — Общество</option><option>Раздел 3 — Социальные отношения</option>
+        <option>Раздел 4 — Политика</option><option>Раздел 5 — Право</option>
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">Позиция в плане</label><input class="form-control" type="number" value="${DEMO.curriculum.length+1}"></div>
+  `, `
+    <button class="btn btn-secondary" onclick="closeModal()">Отмена</button>
+    <button class="btn btn-primary" onclick="showToast('Тема добавлена');closeModal()">Добавить</button>
+  `);
+}
+
+function openAssignHW(){
+  openModal('Назначить домашнее задание', `
+    <div class="form-group"><label class="form-label">Ученик *</label>
+      <select class="form-control">${DEMO.students.map(s=>`<option value="${s.id}">${s.name}</option>`).join('')}</select>
+    </div>
+    <div class="form-group"><label class="form-label">Название задания *</label><input class="form-control" placeholder="Эссе по теме..."></div>
+    <div class="form-group"><label class="form-label">Описание</label><textarea class="form-control" rows="3" placeholder="Что нужно сделать..."></textarea></div>
+    <div class="form-group"><label class="form-label">Срок сдачи</label><input class="form-control" type="date" value="2026-06-10"></div>
+  `, `
+    <button class="btn btn-secondary" onclick="closeModal()">Отмена</button>
+    <button class="btn btn-primary" onclick="showToast('Домашнее задание назначено');closeModal()">Назначить</button>
+  `);
+}
+
+function openStudentCard(id){
+  const s = DEMO.students.find(st=>st.id===id);
+  if(!s) return;
+  const sLessons = lessons.filter(l=>l.studentId===id);
+  const conducted = sLessons.filter(l=>l.status==='conducted').length;
+  const remaining = s.paidLessons - s.conductedLessons;
+  openModal('Карточка ученика', `
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem">
+      <div class="avatar" style="width:48px;height:48px;font-size:1.1rem">${s.name.split(' ').map(n=>n[0]).join('').slice(0,2)}</div>
+      <div><div style="font-size:1.1rem;font-weight:700">${s.name}</div><div style="color:var(--muted)">${s.grade} класс</div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:.5rem">
+      <div class="finance-row"><span>Курс</span><strong>${s.course}</strong></div>
+      <div class="finance-row"><span>Тариф</span><span class="badge badge-blue">${s.tariff}</span></div>
+      <div class="finance-row"><span>Телефон</span><strong>${s.phone}</strong></div>
+      <div class="finance-row"><span>Email</span><strong>${s.email}</strong></div>
+      <div class="finance-row"><span>Начало обучения</span><strong>${fmtDate(s.startDate)}</strong></div>
+      <div class="finance-row"><span>Оплачено занятий</span><strong>${s.paidLessons}</strong></div>
+      <div class="finance-row"><span>Проведено занятий</span><strong>${conducted}</strong></div>
+      <div class="finance-row"><span>Остаток</span><strong class="${remaining<=2?'fin-amount red':''}">${remaining} занятий</strong></div>
+    </div>
+  `);
+}
+
+// ═══════════════════════════════════════════════════
+//  BUSINESS LOGIC — AUTO TOPIC SHIFT
+// ═══════════════════════════════════════════════════
+function setLessonStatus(lessonId, status){
+  const lesson = lessons.find(l=>l.id===lessonId);
+  if(!lesson) return;
+  const prevStatus = lesson.status;
+  lesson.status = status;
+
+  if(status==='missed' && prevStatus!=='missed'){
+    autoShiftTopics(lesson);
+    showToast('Занятие не состоялось. Тема «'+lesson.topic+'» перенесена на следующее занятие.', 'error');
+  } else {
+    showToast('Статус занятия обновлён: '+lessonStatusLabel(status));
+  }
+  renderSection(currentSection);
+}
+
+function autoShiftTopics(missedLesson){
+  // Find all future planned lessons for same student, sorted by date
+  const futureLessons = lessons
+    .filter(l => l.studentId===missedLesson.studentId && l.status==='planned' && l.date >= missedLesson.date)
+    .sort((a,b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
+
+  if(futureLessons.length===0) return;
+
+  // Find index of missed lesson's topic in curriculum
+  const currIdx = DEMO.curriculum.findIndex(t=>t.topic===missedLesson.topic);
+  if(currIdx===-1) return;
+
+  // Shift all topics forward by one position for subsequent lessons
+  for(let i=0; i<futureLessons.length && i+currIdx < DEMO.curriculum.length; i++){
+    futureLessons[i].topic = DEMO.curriculum[currIdx+i].topic;
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  AFTER-RENDER BINDINGS
+// ═══════════════════════════════════════════════════
+function bindAfterRender(id){
+  if(id==='s-materials'){
+    window.filterMaterials = (type, btn) => {
+      document.querySelectorAll('#matTabs .tab').forEach(t=>t.classList.remove('active'));
+      if(btn) btn.classList.add('active');
+      document.getElementById('materialsList').innerHTML = renderMaterialsList(type);
+    };
+  }
+  if(id==='t-calendar'){
+    window.showCalView = (view, btn) => {
+      document.querySelectorAll('#calTabs .tab').forEach(t=>t.classList.remove('active'));
+      if(btn) btn.classList.add('active');
+      document.getElementById('calView').innerHTML = view==='week' ? buildWeekView() : buildListView();
+    };
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════
+function fmtDate(dateStr){
+  if(!dateStr) return '—';
+  const d = new Date(dateStr+'T00:00:00');
+  return d.toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric'});
+}
+
+function statCard(icon, label, value, color){
+  return `<div class="stat-card"><div class="stat-icon ${color}">${icon}</div><div><div class="stat-value">${value}</div><div class="stat-label">${label}</div></div></div>`;
+}
+
+function topicStatusBadge(status){
+  const map = {
+    conducted:  ['badge-green','Пройдено'],
+    planned:    ['badge-blue','Запланировано'],
+    postponed:  ['badge-orange','Перенесено'],
+    cancelled:  ['badge-gray','Отменено'],
+    'not-started':['badge-gray','Не начато'],
+  };
+  const [cls, label] = map[status]||['badge-gray',status];
+  return `<span class="badge ${cls}">${label}</span>`;
+}
+
+function lessonStatusBadge(status){
+  const map = {
+    conducted: ['badge-green','Проведено'],
+    planned:   ['badge-blue','Запланировано'],
+    postponed: ['badge-orange','Перенесено'],
+    cancelled: ['badge-gray','Отменено'],
+    missed:    ['badge-red','Не состоялось'],
+  };
+  const [cls, label] = map[status]||['badge-gray',status];
+  return `<span class="badge ${cls}">${label}</span>`;
+}
+
+function lessonStatusLabel(status){
+  const map = { conducted:'Проведено', planned:'Запланировано', postponed:'Перенесено', cancelled:'Отменено', missed:'Не состоялось' };
+  return map[status]||status;
+}
+
+function lessonStatusColor(status){
+  const map = { conducted:'green', planned:'', postponed:'orange', cancelled:'gray', missed:'red' };
+  return map[status]||'';
+}
+
+function materialIcon(type){
+  return { presentation:'📊', video:'🎬', note:'📄', test:'📝', file:'📎' }[type]||'📂';
+}
+function materialTypeLabel(type){
+  return { presentation:'Презентации', video:'Видео', note:'Конспекты', test:'Тесты', file:'Файлы' }[type]||type;
+}
+
+function miniCalendar(calLessons){
+  const today = new Date('2026-06-05');
+  const year = today.getFullYear(), month = today.getMonth();
+  const firstDay = new Date(year, month, 1);
+  const startDow = (firstDay.getDay()+6)%7;
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  const dayNames = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+  const monthNames = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+  const lessonDates = new Set(calLessons.map(l=>l.date));
+  let html = `<div class="card-title">${monthNames[month]} ${year}</div>
+    <div class="cal-grid">
+    ${dayNames.map(d=>`<div class="cal-day-name">${d}</div>`).join('')}`;
+  for(let i=0;i<startDow;i++) html += `<div class="cal-day other-month"></div>`;
+  for(let d=1;d<=daysInMonth;d++){
+    const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday = d===today.getDate();
+    const hasEvent = lessonDates.has(dateStr);
+    html += `<div class="cal-day${isToday?' today':''}${hasEvent?' has-event':''}">${d}</div>`;
+  }
+  html += `</div>`;
+  return html;
+}
+
+function showToast(msg, type='success'){
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 3500);
+}
+
+// ═══════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════
+switchRole('teacher');
+</script>
+</body>
+</html>
