@@ -235,14 +235,83 @@ textarea.form-control{resize:vertical;min-height:90px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:#ccc;border-radius:10px}
 
+/* ── BURGER / MOBILE NAV ─────────────────────────*/
+.burger-btn{display:none;flex-direction:column;gap:5px;padding:.45rem;border:none;background:transparent;cursor:pointer;flex-shrink:0}
+.burger-btn span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px;transition:all .3s}
+.drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300}
+.drawer-overlay.open{display:block}
+.nav-drawer{position:fixed;top:0;left:-290px;width:280px;height:100%;background:#fff;z-index:400;padding:1.25rem 1rem;overflow-y:auto;transition:left .28s cubic-bezier(.4,0,.2,1);box-shadow:4px 0 24px rgba(0,0,0,.12)}
+.nav-drawer.open{left:0}
+.drawer-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;padding-bottom:.85rem;border-bottom:1px solid var(--border)}
+.drawer-logo{font-size:1rem;font-weight:700}
+.drawer-close{background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--muted);padding:.25rem}
+.drawer-nav-item{display:flex;align-items:center;gap:.75rem;width:100%;padding:.75rem 1rem;border:none;background:transparent;text-align:left;font-size:.93rem;color:var(--text);border-radius:var(--radius-sm);cursor:pointer;transition:background .2s;margin-bottom:.2rem}
+.drawer-nav-item:hover{background:var(--gray)}
+.drawer-nav-item.active{background:var(--blue-light);color:var(--blue);font-weight:600}
+
+/* ── FILTER PILLS ────────────────────────────────*/
+.filter-pills{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1rem}
+.filter-pill{padding:.3rem .9rem;border-radius:20px;border:1px solid var(--border);background:#fff;font-size:.82rem;cursor:pointer;transition:all .2s;white-space:nowrap}
+.filter-pill.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+/* ── SEARCH BAR ──────────────────────────────────*/
+.search-wrap{position:relative;margin-bottom:1rem}
+.search-wrap input{width:100%;padding:.6rem 1rem .6rem 2.4rem;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:.9rem;transition:border .2s}
+.search-wrap input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,102,204,.1)}
+.search-wrap .si{position:absolute;left:.8rem;top:50%;transform:translateY(-50%);font-size:.85rem;pointer-events:none}
+.search-results{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);z-index:200;max-height:320px;overflow-y:auto}
+.sr-item{display:flex;align-items:center;gap:.75rem;padding:.65rem 1rem;cursor:pointer;font-size:.88rem;border-bottom:1px solid var(--border)}
+.sr-item:last-child{border-bottom:none}
+.sr-item:hover{background:var(--gray)}
+.sr-type{font-size:.72rem;color:var(--muted);background:var(--gray);padding:.15rem .5rem;border-radius:10px;flex-shrink:0}
+
+/* ── TODAY WIDGET ────────────────────────────────*/
+.today-widget{background:linear-gradient(135deg,var(--blue),var(--blue-dark));color:#fff;border-radius:var(--radius);padding:1.25rem 1.5rem;margin-bottom:1.25rem}
+.today-greeting{font-size:1.2rem;font-weight:700;margin-bottom:.2rem}
+.today-date-line{font-size:.83rem;opacity:.75;margin-bottom:1rem}
+.today-tasks-row{display:flex;gap:.65rem;flex-wrap:wrap}
+.today-chip{background:rgba(255,255,255,.18);border-radius:var(--radius-sm);padding:.45rem .85rem;font-size:.83rem;display:flex;align-items:center;gap:.4rem;cursor:pointer;transition:background .2s}
+.today-chip:hover{background:rgba(255,255,255,.28)}
+.today-chip.urgent{background:rgba(229,57,53,.35)}
+.today-chip.ok{background:rgba(67,160,71,.3)}
+
+/* ── BULK ACTION BAR ─────────────────────────────*/
+.bulk-bar{position:sticky;top:60px;z-index:150;background:#fff;border:1px solid var(--blue);border-radius:var(--radius);padding:.7rem 1.25rem;margin-bottom:1rem;display:flex;align-items:center;gap:.75rem;box-shadow:0 4px 16px rgba(0,102,204,.15);animation:slideUp .2s}
+.bulk-label{font-weight:600;font-size:.9rem;flex:1}
+
+/* ── BLOCK PROGRESS (student) ────────────────────*/
+.block-row{display:flex;align-items:center;gap:1rem;margin-bottom:.8rem}
+.block-name{width:160px;font-size:.88rem;flex-shrink:0}
+.block-pct{width:42px;text-align:right;font-weight:700;font-size:.82rem}
+
+/* ── MISTAKE TRAINER ─────────────────────────────*/
+.trainer-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem;margin-bottom:.85rem}
+.trainer-q{font-size:.92rem;font-weight:600;line-height:1.4;margin-bottom:.85rem}
+.trainer-opts{display:flex;flex-direction:column;gap:.4rem}
+.t-opt{padding:.5rem .9rem;border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;font-size:.87rem;transition:all .15s;text-align:left;background:#fff}
+.t-opt:hover:not(:disabled){background:var(--blue-light);border-color:var(--blue)}
+.t-opt.correct{background:var(--green-light)!important;border-color:var(--green)!important;color:var(--green);font-weight:600}
+.t-opt.wrong{background:var(--red-light)!important;border-color:var(--red)!important;color:var(--red)}
+
+/* ── NOTIF ICONS ─────────────────────────────────*/
+.notif-dot-red{background:var(--red-light)}
+.notif-dot-yellow{background:var(--orange-light)}
+.notif-dot-green{background:var(--green-light)}
+
+/* ── TOOLBAR ROW ─────────────────────────────────*/
+.toolbar{display:flex;gap:.75rem;align-items:center;margin-bottom:1rem;flex-wrap:wrap}
+.toolbar-right{margin-left:auto;display:flex;gap:.5rem}
+
 /* ── RESPONSIVE ──────────────────────────────────*/
 @media(max-width:768px){
   .page-wrap{padding:1rem}
   .app-header{padding:0 1rem}
-  .main-nav{gap:.1rem}
-  .nav-item{padding:.4rem .7rem;font-size:.82rem}
+  .main-nav{display:none}
+  .burger-btn{display:flex}
+  .user-name{display:none}
   .week-grid{display:none}
   .form-row{grid-template-columns:1fr}
+  .today-tasks-row{gap:.5rem}
 }
 </style>
 </head>
@@ -259,15 +328,34 @@ textarea.form-control{resize:vertical;min-height:90px}
   <span style="margin-left:auto;opacity:.45;font-size:.78rem">демо-режим</span>
 </div>
 
+<!-- DRAWER OVERLAY -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<!-- NAV DRAWER (mobile) -->
+<div class="nav-drawer" id="navDrawer">
+  <div class="drawer-header">
+    <div class="drawer-logo">📚 Верный Курс</div>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div id="drawerNav"></div>
+</div>
+
 <!-- APP HEADER -->
 <header class="app-header">
   <div class="header-inner">
+    <button class="burger-btn" onclick="toggleDrawer()" aria-label="Меню">
+      <span></span><span></span><span></span>
+    </button>
     <div class="logo">📚 Верный Курс</div>
     <nav class="main-nav" id="mainNav"></nav>
     <div class="header-user">
-      <div class="notif-badge" onclick="switchTo('notifications')">
+      <div class="search-wrap" style="margin:0;width:200px;display:none" id="globalSearchWrap">
+        <span class="si">🔍</span>
+        <input type="text" placeholder="Поиск..." id="globalSearchInput" oninput="handleGlobalSearch(this.value)">
+        <div class="search-results" id="globalSearchResults" style="display:none"></div>
+      </div>
+      <div class="notif-badge" onclick="switchTo('notifications')" style="cursor:pointer">
         <span style="font-size:1.2rem">🔔</span>
-        <span class="badge">3</span>
+        <span class="badge" id="notifCount">3</span>
       </div>
       <div class="avatar" id="headerAvatar">П</div>
       <div class="user-name" id="headerName">Преподаватель</div>
@@ -393,13 +481,14 @@ const ROLES = {
   student:{
     label:'Ученик', avatar:'А',name:'Алексей Смирнов',
     nav:[
-      { id:'s-dash',   label:'Главная',      icon:'🏠' },
-      { id:'s-program',label:'Программа',    icon:'📖' },
-      { id:'s-calendar',label:'Расписание',  icon:'📅' },
-      { id:'s-materials',label:'Материалы',  icon:'📂' },
+      { id:'s-dash',    label:'Главная',         icon:'🏠' },
+      { id:'s-program', label:'Программа',       icon:'📖' },
+      { id:'s-calendar',label:'Расписание',      icon:'📅' },
+      { id:'s-materials',label:'Материалы',      icon:'📂' },
       { id:'s-homework',label:'Домашние задания',icon:'✏️' },
-      { id:'s-stats',  label:'Статистика',   icon:'📊' },
-      { id:'notifications',label:'Уведомления',icon:'🔔'},
+      { id:'s-stats',   label:'Статистика',      icon:'📊' },
+      { id:'s-trainer', label:'Тренажёр ошибок', icon:'🎯' },
+      { id:'notifications',label:'Уведомления',  icon:'🔔'},
     ]
   },
   teacher:{
@@ -434,13 +523,19 @@ const ROLES = {
 // ═══════════════════════════════════════════════════
 let currentRole = 'teacher';
 let currentSection = 't-dash';
-let lessons = JSON.parse(JSON.stringify(DEMO.lessons)); // mutable copy
+let lessons = JSON.parse(JSON.stringify(DEMO.lessons));
+let gradeFilter = 'all';
+let studentSearch = '';
+let bulkSelected = new Set();
 
 // ═══════════════════════════════════════════════════
 //  ROUTING
 // ═══════════════════════════════════════════════════
 function switchRole(role){
   currentRole = role;
+  gradeFilter = 'all';
+  studentSearch = '';
+  bulkSelected.clear();
   document.querySelectorAll('.role-pill').forEach(p => p.classList.toggle('active', p.dataset.role===role));
   const cfg = ROLES[role];
   document.getElementById('headerAvatar').textContent = cfg.avatar;
@@ -452,7 +547,9 @@ function switchRole(role){
 
 function buildNav(){
   const nav = document.getElementById('mainNav');
+  const drawer = document.getElementById('drawerNav');
   nav.innerHTML = '';
+  drawer.innerHTML = '';
   ROLES[currentRole].nav.forEach(item => {
     const btn = document.createElement('button');
     btn.className = 'nav-item' + (item.id===currentSection?' active':'');
@@ -460,7 +557,25 @@ function buildNav(){
     btn.innerHTML = `${item.icon} ${item.label}`;
     btn.onclick = () => switchTo(item.id);
     nav.appendChild(btn);
+
+    const dBtn = document.createElement('button');
+    dBtn.className = 'drawer-nav-item' + (item.id===currentSection?' active':'');
+    dBtn.innerHTML = `<span style="font-size:1.1rem">${item.icon}</span> ${item.label}`;
+    dBtn.onclick = () => { closeDrawer(); switchTo(item.id); };
+    drawer.appendChild(dBtn);
   });
+  // Show global search for admin
+  const sw = document.getElementById('globalSearchWrap');
+  if(sw) sw.style.display = currentRole==='admin' ? 'block' : 'none';
+}
+
+function toggleDrawer(){
+  document.getElementById('navDrawer').classList.toggle('open');
+  document.getElementById('drawerOverlay').classList.toggle('open');
+}
+function closeDrawer(){
+  document.getElementById('navDrawer').classList.remove('open');
+  document.getElementById('drawerOverlay').classList.remove('open');
 }
 
 function switchTo(id){
@@ -479,6 +594,7 @@ function renderSection(id){
     's-materials': renderStudentMaterials,
     's-homework': renderStudentHomework,
     's-stats': renderStudentStats,
+    's-trainer': renderMistakeTrainer,
     // Teacher
     't-dash': renderTeacherDash,
     't-students': renderTeacherStudents,
@@ -513,9 +629,22 @@ function renderStudentDash(){
   const pendingHW = DEMO.homeworks.filter(h=>h.studentId==='s1'&&h.status==='pending');
   const conducted = lessons.filter(l=>l.studentId==='s1'&&l.status==='conducted').length;
   const progress = Math.round(conducted/DEMO.curriculum.length*100);
+  const unread = DEMO.notifications.filter(n=>!n.read).length;
+
+  const todayChips = [
+    nextLesson ? `<div class="today-chip" onclick="switchTo('s-calendar')">📅 Занятие: ${nextLesson.time}</div>` : `<div class="today-chip ok">✅ Занятий сегодня нет</div>`,
+    pendingHW.length ? `<div class="today-chip urgent" onclick="switchTo('s-homework')">✏️ ДЗ не сдано: ${pendingHW.length}</div>` : `<div class="today-chip ok">✅ Все ДЗ сданы</div>`,
+    unread ? `<div class="today-chip" onclick="switchTo('notifications')">🔔 Уведомлений: ${unread}</div>` : '',
+    `<div class="today-chip" onclick="switchTo('s-trainer')">🎯 Тренажёр ошибок</div>`,
+  ].join('');
 
   return `
-<h2 class="page-title">Добро пожаловать, ${s.name.split(' ')[0]}!</h2>
+<div class="today-widget">
+  <div class="today-greeting">${getGreeting()}, ${s.name.split(' ')[0]}!</div>
+  <div class="today-date-line">${fmtDateFull('2026-06-05')}</div>
+  <div class="today-tasks-row">${todayChips}</div>
+</div>
+<h2 class="page-title" style="margin-bottom:1rem">Мой кабинет</h2>
 
 <div class="grid-4" style="margin-bottom:1.25rem">
   ${statCard('📅','Следующее занятие', nextLesson ? fmtDate(nextLesson.date)+' '+nextLesson.time : 'Не назначено','blue')}
@@ -697,6 +826,39 @@ function renderStudentStats(){
   const avgScore  = results.length>0?Math.round(results.reduce((a,b)=>a+b,0)/results.length):0;
   const lvl = getLevelInfo(s.xp);
 
+  // Прогресс по разделам
+  const sections = [...new Set(DEMO.curriculum.map(t=>t.section))];
+  const blockBars = sections.map(sec=>{
+    const topics = DEMO.curriculum.filter(t=>t.section===sec);
+    const done = topics.filter(t=>t.status==='conducted').length;
+    const pct = Math.round(done/topics.length*100);
+    const color = pct===100?'green':pct>0?'':'orange';
+    return `<div class="block-row">
+      <div class="block-name" style="font-size:.85rem">${sec}</div>
+      <div style="flex:1"><div class="progress"><div class="progress-bar ${color}" style="width:${pct}%"></div></div></div>
+      <div class="block-pct" style="color:${pct===100?'var(--green)':pct>0?'var(--blue)':'var(--muted)'}">${pct}%</div>
+    </div>`;
+  }).join('');
+
+  // История тестов
+  const testHistory = DEMO.homeworks.filter(h=>h.studentId==='s1'&&h.result!==null);
+  const historyRows = testHistory.map(h=>{
+    const lesson = lessons.find(l=>l.id===h.lessonId);
+    const diff = h.result - avgScore;
+    return `<tr>
+      <td>${lesson?fmtDate(lesson.date):'—'}</td>
+      <td>${h.title}</td>
+      <td><strong style="color:${h.result>=80?'var(--green)':h.result>=60?'var(--orange)':'var(--red)'}">${h.result}%</strong></td>
+      <td><span style="font-size:.82rem;color:${diff>=0?'var(--green)':'var(--red)'}">${diff>=0?'+':''}${diff}% к среднему</span></td>
+    </tr>`;
+  }).join('');
+
+  // Новый бейдж — улучшение (если результаты есть и последний выше первого)
+  const allResults = DEMO.homeworks.filter(h=>h.studentId==='s1'&&h.result!==null).map(h=>h.result);
+  if(allResults.length>=2 && allResults[allResults.length-1]-allResults[0]>=20){
+    DEMO.achievements.find(a=>a.id==='a3')&&(DEMO.achievements.find(a=>a.id==='a5').unlocked=true);
+  }
+
   return `
 <h2 class="page-title">Моя статистика</h2>
 <div class="grid-4" style="margin-bottom:1.25rem">
@@ -705,16 +867,13 @@ function renderStudentStats(){
   ${statCard('📝','Средний балл',avgScore+'%','orange')}
   ${statCard('⭐','Набрано XP',s.xp,'purple')}
 </div>
-<div class="grid-2">
+<div class="grid-2" style="margin-bottom:1rem">
   <div class="card">
-    <div class="card-title">Прогресс программы</div>
-    ${DEMO.curriculum.map(t=>`
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem">
-        <div style="font-size:.88rem;flex:1">${t.topic}</div>
-        <div style="width:120px;margin:0 1rem"><div class="progress"><div class="progress-bar${t.status==='conducted'?' green':''}" style="width:${t.status==='conducted'?100:0}%"></div></div></div>
-        <div style="font-size:.82rem;width:50px;text-align:right">${t.hwResult?t.hwResult+'%':'—'}</div>
-      </div>
-    `).join('')}
+    <div class="card-title">Прогресс по разделам</div>
+    ${blockBars}
+    <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border)">
+      <button class="btn btn-outline btn-sm" onclick="switchTo('s-trainer')">🎯 Тренажёр слабых мест</button>
+    </div>
   </div>
   <div class="card">
     <div class="card-title">Достижения</div>
@@ -727,7 +886,17 @@ function renderStudentStats(){
       `).join('')}
     </div>
   </div>
-</div>`;
+</div>
+${testHistory.length ? `
+<div class="card">
+  <div class="card-title">История тестов</div>
+  <div class="table-wrap" style="border:none;border-radius:0;box-shadow:none">
+  <table>
+    <thead><tr><th>Дата</th><th>Тест</th><th>Результат</th><th>Сравнение со средним</th></tr></thead>
+    <tbody>${historyRows}</tbody>
+  </table>
+  </div>
+</div>` : ''}`;
 }
 
 // ═══════════════════════════════════════════════════
@@ -739,8 +908,25 @@ function renderTeacherDash(){
   const pendingReviews = DEMO.homeworks.filter(h=>h.status==='submitted');
   const totalStudents = DEMO.students.length;
   const thisMonthConducted = lessons.filter(l=>l.date.startsWith('2026-06')&&l.status==='conducted').length;
+  const unread = DEMO.notifications.filter(n=>!n.read).length;
+
+  const todayChips = [
+    todayLessons.length
+      ? `<div class="today-chip urgent">📅 Занятий сегодня: ${todayLessons.length}</div>`
+      : `<div class="today-chip ok">✅ Занятий сегодня нет</div>`,
+    pendingReviews.length
+      ? `<div class="today-chip urgent" onclick="switchTo('t-homework')">✏️ На проверке ДЗ: ${pendingReviews.length}</div>`
+      : `<div class="today-chip ok">✅ Все ДЗ проверены</div>`,
+    unread ? `<div class="today-chip" onclick="switchTo('notifications')">🔔 Новых уведомлений: ${unread}</div>` : '',
+    `<div class="today-chip" onclick="switchTo('t-students')">🎓 Учеников: ${totalStudents}</div>`,
+  ].join('');
 
   return `
+<div class="today-widget">
+  <div class="today-greeting">${getGreeting()}, Мария!</div>
+  <div class="today-date-line">${fmtDateFull('2026-06-05')}</div>
+  <div class="today-tasks-row">${todayChips}</div>
+</div>
 <h2 class="page-title">Рабочий стол</h2>
 <div class="grid-4" style="margin-bottom:1.25rem">
   ${statCard('🎓','Активных учеников',totalStudents,'blue')}
@@ -809,13 +995,38 @@ function renderTeacherDash(){
 }
 
 function renderTeacherStudents(){
+  const grades = [...new Set(DEMO.students.map(s=>s.grade))].sort();
+  let filtered = DEMO.students.filter(s=>{
+    const gradeOk = gradeFilter==='all' || s.grade===+gradeFilter;
+    const searchOk = !studentSearch || s.name.toLowerCase().includes(studentSearch.toLowerCase());
+    return gradeOk && searchOk;
+  });
+
+  const pillsHTML = `<div class="filter-pills">
+    ${['all',...grades].map(g=>`<button class="filter-pill${gradeFilter===(g==='all'?'all':+g)?' active':''}" onclick="setGradeFilter('${g}')">${g==='all'?'Все классы':g+' класс'}</button>`).join('')}
+  </div>`;
+
+  const emptyState = `<div class="empty" style="padding:3rem;grid-column:1/-1">
+    <div class="empty-icon">🎓</div>
+    <div style="margin-bottom:1rem">Нет учеников по выбранному фильтру</div>
+    <button class="btn btn-primary" onclick="openAddStudentModal()">+ Добавить ученика</button>
+  </div>`;
+
   return `
-<h2 class="page-title" style="display:flex;justify-content:space-between;align-items:center">
-  Мои ученики
-  <button class="btn btn-primary" onclick="openAddStudentModal()">+ Добавить ученика</button>
-</h2>
+<div class="toolbar">
+  <h2 class="page-title" style="margin:0">Мои ученики</h2>
+  <div class="toolbar-right">
+    <button class="btn btn-outline btn-sm" onclick="exportStudentsCSV()">⬇ CSV</button>
+    <button class="btn btn-primary" onclick="openAddStudentModal()">+ Добавить</button>
+  </div>
+</div>
+${pillsHTML}
+<div class="search-wrap">
+  <span class="si">🔍</span>
+  <input type="text" placeholder="Поиск по имени..." value="${studentSearch}" oninput="debouncedStudentSearch(this.value)">
+</div>
 <div class="grid-auto">
-${DEMO.students.map(s=>{
+${filtered.length===0 ? emptyState : filtered.map(s=>{
   const conducted = lessons.filter(l=>l.studentId===s.id&&l.status==='conducted').length;
   const remaining = s.paidLessons - s.conductedLessons;
   const progress = Math.round(conducted/DEMO.curriculum.length*100);
@@ -1032,7 +1243,23 @@ function renderTeacherAnalytics(){
 // ═══════════════════════════════════════════════════
 function renderAdminDash(){
   const totalConducted = lessons.filter(l=>l.status==='conducted').length;
+  const weekLessons = lessons.filter(l=>l.date>='2026-06-01'&&l.date<='2026-06-07').length;
+  const newLeads = DEMO.leads.filter(l=>l.status==='new').length;
+  const unread = DEMO.notifications.filter(n=>!n.read).length;
+
+  const todayChips = [
+    newLeads ? `<div class="today-chip urgent" onclick="switchTo('a-crm')">📋 Новых заявок: ${newLeads}</div>` : `<div class="today-chip ok">✅ Новых заявок нет</div>`,
+    `<div class="today-chip" onclick="switchTo('a-finance')">💰 Выручка: 28 800 ₽</div>`,
+    unread ? `<div class="today-chip" onclick="switchTo('notifications')">🔔 Уведомлений: ${unread}</div>` : '',
+    `<div class="today-chip" onclick="switchTo('a-teachers')">👩‍🏫 Педагогов: 2</div>`,
+  ].join('');
+
   return `
+<div class="today-widget">
+  <div class="today-greeting">${getGreeting()}, Александр!</div>
+  <div class="today-date-line">${fmtDateFull('2026-06-05')}</div>
+  <div class="today-tasks-row">${todayChips}</div>
+</div>
 <h2 class="page-title">Панель администратора</h2>
 <div class="grid-4" style="margin-bottom:1.25rem">
   ${statCard('🎓','Учеников всего',DEMO.students.length,'blue')}
@@ -1075,17 +1302,36 @@ function renderAdminDash(){
 }
 
 function renderAdminStudents(){
+  const anySelected = bulkSelected.size > 0;
   return `
-<h2 class="page-title" style="display:flex;justify-content:space-between;align-items:center">
-  Управление учениками
-  <button class="btn btn-primary" onclick="openAddStudentModal()">+ Добавить</button>
-</h2>
+<div class="toolbar">
+  <h2 class="page-title" style="margin:0">Управление учениками</h2>
+  <div class="toolbar-right">
+    <button class="btn btn-outline btn-sm" onclick="exportStudentsCSV()">⬇ CSV</button>
+    <button class="btn btn-primary" onclick="openAddStudentModal()">+ Добавить</button>
+  </div>
+</div>
+<div class="search-wrap">
+  <span class="si">🔍</span>
+  <input type="text" placeholder="Поиск по имени, курсу..." value="${studentSearch}" oninput="debouncedStudentSearch(this.value)">
+</div>
+${anySelected ? `<div class="bulk-bar">
+  <span class="bulk-label">Выбрано: ${bulkSelected.size}</span>
+  <button class="btn btn-outline btn-sm" onclick="showToast('Сообщение отправлено ${bulkSelected.size} ученикам')">📨 Отправить сообщение</button>
+  <button class="btn btn-outline btn-sm" onclick="exportStudentsCSV()">⬇ Экспорт выбранных</button>
+  <button class="btn btn-danger btn-sm" onclick="bulkSelected.clear();renderSection(currentSection)">🗑 Удалить</button>
+  <button class="btn btn-secondary btn-sm" onclick="bulkSelected.clear();renderSection(currentSection)">Отмена</button>
+</div>` : ''}
 <div class="table-wrap">
 <table>
-  <thead><tr><th>Ученик</th><th>Класс</th><th>Курс</th><th>Тариф</th><th>Педагог</th><th>Оплачено</th><th>Остаток</th><th>Действия</th></tr></thead>
+  <thead><tr>
+    <th><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this.checked)" ${anySelected&&bulkSelected.size===DEMO.students.length?'checked':''}></th>
+    <th>Ученик</th><th>Класс</th><th>Курс</th><th>Тариф</th><th>Педагог</th><th>Оплачено</th><th>Остаток</th><th>Действия</th>
+  </tr></thead>
   <tbody>
-  ${DEMO.students.map(s=>`
-    <tr>
+  ${DEMO.students.filter(s=>!studentSearch||s.name.toLowerCase().includes(studentSearch.toLowerCase())).map(s=>`
+    <tr style="${bulkSelected.has(s.id)?'background:var(--blue-light)':''}">
+      <td><input type="checkbox" ${bulkSelected.has(s.id)?'checked':''} onchange="toggleBulkSelect('${s.id}',this.checked)"></td>
       <td><strong>${s.name}</strong><div style="font-size:.78rem;color:var(--muted)">${s.email}</div></td>
       <td>${s.grade}</td>
       <td>${s.course}</td>
@@ -1094,8 +1340,8 @@ function renderAdminStudents(){
       <td><span class="badge badge-green">${s.paidLessons} зан.</span></td>
       <td><span class="badge ${s.paidLessons-s.conductedLessons<=2?'badge-red':'badge-orange'}">${s.paidLessons-s.conductedLessons} зан.</span></td>
       <td><div style="display:flex;gap:.3rem">
-        <button class="btn btn-outline btn-sm">Карточка</button>
-        <button class="btn btn-danger btn-sm">Удалить</button>
+        <button class="btn btn-outline btn-sm" onclick="openStudentCard('${s.id}')">Карточка</button>
+        <button class="btn btn-danger btn-sm" onclick="showToast('Ученик удалён','error')">Удалить</button>
       </div></td>
     </tr>
   `).join('')}
@@ -1269,22 +1515,56 @@ function renderAdminAnalytics(){
 //  SHARED VIEWS
 // ═══════════════════════════════════════════════════
 function renderNotifications(){
+  const notifIcon = n => {
+    const txt = n.text.toLowerCase();
+    if(n.type==='lesson' && (txt.includes('не состоялось') || txt.includes('пропуск') || txt.includes('отменено')))
+      return {bg:'notif-dot-red',    emoji:'🔴'};
+    if(n.type==='lesson' && txt.includes('через'))
+      return {bg:'notif-dot-yellow', emoji:'🟡'};
+    if(n.type==='lesson')
+      return {bg:'notif-dot-green',  emoji:'🟢'};
+    if(n.type==='hw')     return {bg:'notif-dot-yellow', emoji:'🟡'};
+    if(n.type==='payment')return {bg:'notif-dot-green',  emoji:'🟢'};
+    return {bg:'', emoji:'🔔'};
+  };
+
+  const unreadCount = DEMO.notifications.filter(n=>!n.read).length;
+
   return `
-<h2 class="page-title">Уведомления</h2>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:.75rem">
+  <h2 class="page-title" style="margin:0">Уведомления</h2>
+  ${unreadCount?`<button class="btn btn-outline btn-sm" onclick="markAllRead()">Отметить все прочитанными</button>`:''}
+</div>
 <div class="card">
-  ${DEMO.notifications.map(n=>`
-    <div class="notif-item ${n.read?'':'unread'}">
-      <div class="notif-icon" style="background:${n.type==='lesson'?'var(--blue-light)':n.type==='hw'?'var(--green-light)':'var(--orange-light)'}">
-        ${n.type==='lesson'?'📅':n.type==='hw'?'✏️':'💰'}
+  ${DEMO.notifications.length===0?'<div class="empty"><div class="empty-icon">🔔</div>Нет уведомлений</div>':''}
+  ${DEMO.notifications.map(n=>{
+    const ic = notifIcon(n);
+    return `
+    <div class="notif-item ${n.read?'':'unread'}" style="cursor:pointer" onclick="markRead('${n.id}')">
+      <div class="notif-icon ${ic.bg}" style="font-size:1.2rem;background:${ic.bg?'':'var(--gray)'}">
+        ${ic.emoji}
       </div>
       <div class="notif-body">
         <div class="notif-text">${n.text}</div>
         <div class="notif-time">${n.time}</div>
       </div>
-      ${!n.read?'<span class="badge badge-blue" style="flex-shrink:0">Новое</span>':''}
-    </div>
-  `).join('')}
+      ${!n.read?'<span class="badge badge-blue" style="flex-shrink:0">Новое</span>':'<span style="width:52px"></span>'}
+    </div>`;
+  }).join('')}
 </div>`;
+}
+
+function markRead(id){
+  const n = DEMO.notifications.find(n=>n.id===id);
+  if(n) n.read = true;
+  updateNotifBadge();
+  renderSection(currentSection);
+}
+
+function markAllRead(){
+  DEMO.notifications.forEach(n=>n.read=true);
+  updateNotifBadge();
+  renderSection(currentSection);
 }
 
 // ═══════════════════════════════════════════════════
@@ -1611,9 +1891,139 @@ function showToast(msg, type='success'){
 }
 
 // ═══════════════════════════════════════════════════
+//  НОВЫЕ УТИЛИТЫ
+// ═══════════════════════════════════════════════════
+function getGreeting(){
+  const h = new Date().getHours();
+  if(h>=5&&h<12) return 'Доброе утро';
+  if(h>=12&&h<18) return 'Добрый день';
+  return 'Добрый вечер';
+}
+
+function fmtDateFull(dateStr){
+  const d = new Date(dateStr+'T00:00:00');
+  return d.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+
+function debounce(fn, delay){
+  let timer;
+  return (...args) => { clearTimeout(timer); timer = setTimeout(()=>fn(...args), delay); };
+}
+
+const debouncedStudentSearch = debounce((val)=>{
+  studentSearch = val;
+  renderSection(currentSection);
+}, 300);
+
+function setGradeFilter(g){
+  gradeFilter = g==='all' ? 'all' : +g;
+  renderSection(currentSection);
+}
+
+function toggleBulkSelect(id, checked){
+  if(checked) bulkSelected.add(id);
+  else bulkSelected.delete(id);
+  renderSection(currentSection);
+}
+
+function toggleSelectAll(checked){
+  if(checked) DEMO.students.forEach(s=>bulkSelected.add(s.id));
+  else bulkSelected.clear();
+  renderSection(currentSection);
+}
+
+function exportStudentsCSV(){
+  const rows = [
+    ['Имя','Класс','Курс','Тариф','Телефон','Email','Оплачено','Остаток'],
+    ...DEMO.students.map(s=>[s.name,s.grade,s.course,s.tariff,s.phone,s.email,s.paidLessons,s.paidLessons-s.conductedLessons])
+  ];
+  const csv = rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const blob = new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'ученики.csv';
+  a.click();
+  showToast('CSV-файл скачан');
+}
+
+function handleGlobalSearch(val){
+  const res = document.getElementById('globalSearchResults');
+  if(!val.trim()){ res.style.display='none'; return; }
+  const q = val.toLowerCase();
+  const hits = [
+    ...DEMO.students.filter(s=>s.name.toLowerCase().includes(q)).map(s=>({type:'Ученик',label:s.name,hint:s.grade+' кл. · '+s.course,go:'a-students'})),
+    ...DEMO.leads.filter(l=>l.name.toLowerCase().includes(q)).map(l=>({type:'Заявка',label:l.name,hint:l.subject+' · '+l.source,go:'a-crm'})),
+    ...[{name:'Мария Иванова',sub:'Обществознание'},{name:'Андрей Соколов',sub:'Математика'}].filter(t=>t.name.toLowerCase().includes(q)).map(t=>({type:'Педагог',label:t.name,hint:t.sub,go:'a-teachers'})),
+  ].slice(0,8);
+  if(!hits.length){ res.style.display='none'; return; }
+  res.style.display='block';
+  res.innerHTML = hits.map(h=>`<div class="sr-item" onclick="switchTo('${h.go}');document.getElementById('globalSearchResults').style.display='none'">
+    <span class="sr-type">${h.type}</span>
+    <div><div style="font-weight:500">${h.label}</div><div style="font-size:.76rem;color:var(--muted)">${h.hint}</div></div>
+  </div>`).join('');
+}
+
+// ── Тренажёр ошибок ────────────────────────────────
+const TRAINER_QUESTIONS = [
+  { id:'q1', topic:'Познание', q:'Что является результатом теоретического познания?', opts:['Ощущения','Научная теория','Практический навык','Образ предмета'], correct:1 },
+  { id:'q2', topic:'Деятельность', q:'Какой вид деятельности характеризуется созданием новых ценностей?', opts:['Репродуктивная','Потребление','Творческая','Игра'], correct:2 },
+  { id:'q3', topic:'Социальные отношения', q:'Что такое социальная мобильность?', opts:['Переезд в другой город','Изменение места в социальной структуре','Рост доходов','Смена работы'], correct:1 },
+];
+let trainerState = {};
+
+function renderMistakeTrainer(){
+  return `
+<h2 class="page-title">Тренажёр ошибок</h2>
+<div class="card" style="margin-bottom:1.25rem;background:var(--blue-light);border-color:#b3d0f5">
+  <strong>🎯 Как работает тренажёр</strong>
+  <p style="font-size:.88rem;margin-top:.4rem;color:var(--muted)">Здесь собраны вопросы по темам, где твои результаты ниже среднего. Ответь правильно — и вопрос уйдёт из списка.</p>
+</div>
+${TRAINER_QUESTIONS.map(q=>{
+  const state = trainerState[q.id];
+  return `
+<div class="trainer-card" id="tc-${q.id}">
+  <div style="font-size:.76rem;color:var(--muted);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.4px">${q.topic}</div>
+  <div class="trainer-q">${q.q}</div>
+  <div class="trainer-opts">
+    ${q.opts.map((o,i)=>{
+      let cls = '';
+      if(state!==undefined){ cls = i===q.correct?'correct':(i===state?'wrong':''); }
+      return `<button class="t-opt ${cls}" onclick="answerTrainer('${q.id}',${i})" ${state!==undefined?'disabled':''}>${o}</button>`;
+    }).join('')}
+  </div>
+  ${state!==undefined ? `<div style="margin-top:.75rem;font-size:.84rem;${state===q.correct?'color:var(--green)':'color:var(--red)'}">
+    ${state===q.correct?'✅ Верно! Молодец.':'❌ Неверно. Правильный ответ: '+q.opts[q.correct]}
+  </div>` : ''}
+</div>`;
+}).join('')}`;
+}
+
+function answerTrainer(qId, chosen){
+  trainerState[qId] = chosen;
+  renderSection(currentSection);
+}
+
+// ── Обновление бейджа уведомлений ─────────────────
+function updateNotifBadge(){
+  const cnt = DEMO.notifications.filter(n=>!n.read).length;
+  const el = document.getElementById('notifCount');
+  if(el){ el.textContent = cnt; el.style.display = cnt?'flex':'none'; }
+}
+
+// ═══════════════════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════════════════
 switchRole('teacher');
+updateNotifBadge();
+
+// Закрыть глобальный поиск при клике вне его
+document.addEventListener('click', e => {
+  const wrap = document.getElementById('globalSearchWrap');
+  if(wrap && !wrap.contains(e.target)){
+    const res = document.getElementById('globalSearchResults');
+    if(res) res.style.display = 'none';
+  }
+});
 </script>
 </body>
 </html>
